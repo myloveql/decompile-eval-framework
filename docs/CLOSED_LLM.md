@@ -1,7 +1,8 @@
 # 闭源 LLM 后端接入指南
 
-框架内置 `openai` 后端，使用 OpenAI Python SDK 调用 OpenAI API 或实现了
-OpenAI-compatible API 的其他闭源模型服务。后端只会收到 `required_inputs` 声明的公开字段，
+框架通过 `plugins/openai_compatible_backend.py` 提供闭源模型插件，使用 OpenAI Python SDK
+调用 OpenAI API 或实现了 OpenAI-compatible API 的其他闭源模型服务。插件只会收到
+`required_inputs` 声明的公开字段，
 不会收到参考源代码、测试代码、预期输出或其他评估答案。
 
 ## 1. 安装依赖
@@ -41,25 +42,28 @@ api_key: env:MY_LLM_API_KEY
 ```yaml
 decompilers:
   - id: my-closed-model
-    type: openai
-    provider: openai
-    model: your-model-name
-    api_key_env: OPENAI_API_KEY
-    api_mode: responses
+    type: python
+    plugin: plugins.openai_compatible_backend:OpenAICompatibleBackend
+    version: openai:your-model-name
     required_inputs: [assembly]
-
-    temperature: 0
-    max_output_tokens: 4096
-    timeout: 120
-    max_retries: 3
-    max_concurrency: 2
     batch_size: 4
+    plugin_config:
+      provider: openai
+      model: your-model-name
+      api_key_env: OPENAI_API_KEY
+      api_mode: responses
+      temperature: 0
+      max_output_tokens: 4096
+      timeout: 120
+      max_retries: 3
+      max_concurrency: 2
 ```
 
 `responses` 使用 SDK 的 Responses API。若具体模型或兼容服务只支持 Chat Completions，改为：
 
 ```yaml
-api_mode: chat_completions
+plugin_config:
+  api_mode: chat_completions
 ```
 
 ## 4. 其他 OpenAI-compatible 提供商
@@ -69,21 +73,25 @@ api_mode: chat_completions
 ```yaml
 decompilers:
   - id: vendor-model
-    type: openai
-    provider: vendor-name
-    base_url: https://api.vendor.example/v1
-    model: vendor-model-name
-    api_key_env: VENDOR_API_KEY
-    api_mode: chat_completions
+    type: python
+    plugin: plugins.openai_compatible_backend:OpenAICompatibleBackend
+    version: vendor-name:vendor-model-name
     required_inputs: [assembly]
+    plugin_config:
+      provider: vendor-name
+      base_url: https://api.vendor.example/v1
+      model: vendor-model-name
+      api_key_env: VENDOR_API_KEY
+      api_mode: chat_completions
 ```
 
 非 `openai` 提供商必须配置 `base_url`。框架不内置任何第三方地址，避免把供应商名称和
 可能变化的端点错误绑定。若服务需要额外的兼容参数，可使用：
 
 ```yaml
-extra_body:
-  top_k: 20
+plugin_config:
+  extra_body:
+    top_k: 20
 ```
 
 ## 5. 选择模型输入
@@ -117,15 +125,16 @@ datasets:
 默认 system prompt 要求模型输出完整、可编译且保留目标函数签名的 C/C++。可以覆盖：
 
 ```yaml
-system_prompt: |
-  You are a binary decompiler. Return only complete compilable C source code.
+plugin_config:
+  system_prompt: |
+    You are a binary decompiler. Return only complete compilable C source code.
 
-user_prompt_template: |
-  Recover function {function_name} as {language}.
-  Optimization: {optimization}
-  Assembly syntax: {assembly_syntax}
-  Assembly:
-  {assembly}
+  user_prompt_template: |
+    Recover function {function_name} as {language}.
+    Optimization: {optimization}
+    Assembly syntax: {assembly_syntax}
+    Assembly:
+    {assembly}
 ```
 
 支持的占位符：
@@ -165,8 +174,9 @@ API 密钥不会写入这些文件。`manifest.json` 中名为 `api_key`、`toke
 
 ```yaml
 batch_size: 8
-max_concurrency: 2
-max_retries: 3
+plugin_config:
+  max_concurrency: 2
+  max_retries: 3
 ```
 
 建议第一次使用 `limit: 1`、`batch_size: 1`、`max_concurrency: 1`。确认提示词、输入视图和

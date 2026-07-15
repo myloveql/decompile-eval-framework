@@ -63,25 +63,6 @@ def validate_config(config: dict[str, Any]) -> None:
         if backend.get("id") in ids:
             errors.append(f"duplicate decompiler id: {backend.get('id')}")
         ids.add(backend.get("id"))
-        if backend.get("type") == "openai":
-            if not backend.get("model"):
-                errors.append(f"decompilers[{index}].model is required for type openai")
-            if backend.get("api_mode", "responses") not in {"responses", "chat_completions"}:
-                errors.append(
-                    f"decompilers[{index}].api_mode must be responses or chat_completions"
-                )
-            provider = backend.get("provider", "openai")
-            if provider != "openai" and not backend.get("base_url"):
-                errors.append(
-                    f"decompilers[{index}].base_url is required for provider {provider!r}"
-                )
-            required = backend.get("required_inputs", ["assembly"])
-            if not isinstance(required, list) or not required:
-                errors.append(f"decompilers[{index}].required_inputs must be a non-empty list")
-            elif set(required) - {"assembly", "pseudocode"}:
-                errors.append(
-                    f"decompilers[{index}].required_inputs only supports assembly and pseudocode"
-                )
     if config.get("preflight", {}).get("mode") not in {"strict", "warn", "off"}:
         errors.append("preflight.mode must be strict, warn, or off")
     if errors:

@@ -15,21 +15,21 @@ datasets:
 
 decompilers:
   - id: closed-llm-pseudocode
-    type: openai
-    provider: openai
-    model: your-model-name
-    api_key_env: OPENAI_API_KEY
-    api_mode: responses
-
-    # 可改为 [assembly] 或 [assembly, pseudocode]。
+    type: python
+    plugin: plugins.openai_compatible_backend:OpenAICompatibleBackend
+    version: your-provider:your-model-name
     required_inputs: [pseudocode]
-
-    temperature: 0
-    max_output_tokens: 4096
-    timeout: 120
-    max_retries: 3
-    max_concurrency: 2
     batch_size: 4
+    plugin_config:
+      provider: openai
+      model: your-model-name
+      api_key_env: OPENAI_API_KEY
+      api_mode: responses
+      temperature: 0
+      max_output_tokens: 4096
+      timeout: 120
+      max_retries: 3
+      max_concurrency: 2
 
 postprocessors: [markdown_fence]
 metrics: [recompilable, behavioral_pass]

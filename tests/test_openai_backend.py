@@ -9,7 +9,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from decomp_eval.backends.openai_compatible import (
+from plugins.openai_compatible_backend import (
     OpenAICompatibleBackend,
     extract_candidate_code,
 )
@@ -71,13 +71,10 @@ class OpenAIBackendTests(unittest.TestCase):
 
     def _prepared_backend(self, **overrides):
         config = {
-            "id": "closed-model",
-            "type": "openai",
             "provider": "compatible-vendor",
             "base_url": "https://llm.example.test/v1",
             "model": "vendor-model",
             "api_key_env": "TEST_CLOSED_LLM_KEY",
-            "required_inputs": ["pseudocode"],
             **overrides,
         }
         backend = OpenAICompatibleBackend(config)
@@ -98,7 +95,7 @@ class OpenAIBackendTests(unittest.TestCase):
     def test_responses_api_uses_only_configured_public_input(self):
         _FakeOpenAI.response_text = "Analysis first.\n```c\nint target(void) { return 7; }\n```"
         backend = self._prepared_backend(api_mode="responses")
-        request = self._sample().public_request(backend.required_inputs)
+        request = self._sample().public_request(("pseudocode",))
         with tempfile.TemporaryDirectory() as temp:
             artifact_dir = Path(temp)
             result = backend.decompile(request, artifact_dir)
@@ -120,10 +117,9 @@ class OpenAIBackendTests(unittest.TestCase):
         _FakeOpenAI.response_text = "int target(void) { return 7; }"
         backend = self._prepared_backend(
             api_mode="chat_completions",
-            required_inputs=["assembly"],
             user_prompt_template="Recover {function_name} from:\n{assembly}",
         )
-        request = self._sample().public_request(backend.required_inputs)
+        request = self._sample().public_request(("assembly",))
         with tempfile.TemporaryDirectory() as temp:
             result = backend.decompile(request, Path(temp))
         self.assertTrue(result.success)
@@ -135,7 +131,7 @@ class OpenAIBackendTests(unittest.TestCase):
 
     def test_missing_key_is_clear_and_literal_key_is_redacted(self):
         backend = OpenAICompatibleBackend({
-            "id": "missing", "type": "openai", "model": "model",
+            "id": "missing", "model": "model",
             "api_key_env": "DEFINITELY_MISSING_LLM_KEY",
         })
         fake_module = SimpleNamespace(OpenAI=_FakeOpenAI)
@@ -150,7 +146,7 @@ class OpenAIBackendTests(unittest.TestCase):
     def test_provider_requires_base_url(self):
         with self.assertRaisesRegex(ValueError, "base_url"):
             OpenAICompatibleBackend({
-                "id": "vendor", "type": "openai", "provider": "vendor", "model": "m"
+                "id": "vendor", "provider": "vendor", "model": "m"
             })
 
 

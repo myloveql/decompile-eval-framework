@@ -8,8 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
-from .base import BaseBackend
-from ..models import CanonicalSample, DecompileRequest, DecompileResult
+from decomp_eval.backends.base import BaseBackend
+from decomp_eval.models import DecompileRequest, DecompileResult
 
 
 _FENCE_RE = re.compile(
@@ -53,7 +53,7 @@ class OpenAICompatibleBackend(BaseBackend):
 
     def __init__(self, config: dict[str, Any], **_: Any):
         self.config = dict(config)
-        self.backend_id = str(config["id"])
+        self.backend_id = str(config.get("id", "openai-compatible"))
         self.provider = str(config.get("provider", "openai"))
         self.model = str(config.get("model", "")).strip()
         if not self.model:
@@ -66,15 +66,6 @@ class OpenAICompatibleBackend(BaseBackend):
             raise ValueError(
                 f"Decompiler {self.backend_id}: base_url is required for provider {self.provider!r}"
             )
-        self.required_inputs = tuple(config.get("required_inputs", ("assembly",)))
-        unsupported = set(self.required_inputs) - {"assembly", "pseudocode"}
-        if unsupported:
-            raise ValueError(
-                "OpenAI-compatible backend only supports assembly and pseudocode inputs; got "
-                + ", ".join(sorted(unsupported))
-            )
-        if not self.required_inputs:
-            raise ValueError("required_inputs must contain assembly and/or pseudocode")
         self.system_prompt = str(config.get("system_prompt", self.DEFAULT_SYSTEM_PROMPT))
         self.user_prompt_template = config.get("user_prompt_template")
         self.temperature = config.get("temperature")
@@ -112,7 +103,7 @@ class OpenAICompatibleBackend(BaseBackend):
             )
         return key
 
-    def prepare(self, samples: list[CanonicalSample]) -> None:
+    def prepare(self, requests: list[DecompileRequest]) -> None:
         try:
             from openai import OpenAI
         except ImportError as error:
@@ -151,12 +142,12 @@ class OpenAICompatibleBackend(BaseBackend):
             f"Language: {request.language}",
             f"Compiler optimization: {request.optimization}",
         ]
-        if "assembly" in self.required_inputs:
+        if request.assembly.text.strip():
             sections.append(
                 f"Assembly ({request.assembly.syntax}, view={request.assembly.view}):\n"
                 f"```asm\n{request.assembly.text.strip()}\n```"
             )
-        if "pseudocode" in self.required_inputs and request.pseudocode:
+        if request.pseudocode and request.pseudocode.text.strip():
             sections.append(
                 f"Existing pseudocode (producer={request.pseudocode.producer}, "
                 f"view={request.pseudocode.view}):\n"
