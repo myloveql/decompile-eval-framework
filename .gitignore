@@ -209,6 +209,18 @@ tempCodeRunnerFile.py
 # PyPI configuration file
 .pypirc
 
+# Local decompiler-evaluation assets and outputs
+datasets/
+models/
+runs/
+precomputed/
+artifacts/
+.cache/decomp-eval/
+*.dataset.json
+*.arrow
+*.safetensors
+*.bin
+
 # Marimo
 marimo/_static/
 marimo/_lsp/

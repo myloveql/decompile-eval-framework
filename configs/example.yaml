@@ -1,0 +1,69 @@
+# 路径相对于本配置所在目录解析；configs/.. 即仓库根目录。
+workspace_root: ..
+
+datasets:
+  - id: exebench-1100
+    type: exebench_flat
+    path: datasets/exebench-1641/exebench_1641_source_multiopt_1100.dataset.json
+    include_path: datasets/exebench-include
+    assembly_view: objdump_att_instruction_only
+    optimizations: [O0, O1, O2, O3]
+    timeout: 30
+
+  - id: decompile-eval
+    type: decompile_eval
+    path: datasets/decompile-eval
+    splits: [humaneval, mbpp]
+    assembly_view: asm
+    optimizations: [O0, O1, O2, O3]
+    timeout: 30
+
+decompilers:
+  - id: my-command-decompiler
+    type: command
+    version: "1"
+    command:
+      - my-decompiler
+      - --assembly
+      - "{assembly_file}"
+      - --function
+      - "{function_name}"
+      - --output
+      - "{output_file}"
+    output_mode: file
+    timeout: 300
+
+  - id: existing-results
+    type: precomputed
+    version: "1"
+    path: precomputed/my-decompiler
+    pattern: "{sample_id}.c"
+
+  # Python 插件的 request 不包含参考源码和测试答案。
+  # - id: local-llm
+  #   type: python
+  #   version: "model-version"
+  #   plugin: my_package.my_model:MyDecompiler
+  #   plugin_config:
+  #     model_path: models/my-model
+
+postprocessors:
+  - markdown_fence
+  # 函数重命名必须显式启用，并会记录在样本处理轨迹中。
+  # - type: rename_target
+  #   pattern: '\bFUN_[0-9A-Fa-f]+\b'
+
+metrics: [recompilable, behavioral_pass]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 2048
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval
