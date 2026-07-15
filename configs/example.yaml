@@ -7,6 +7,8 @@ datasets:
     path: datasets/exebench-1641/exebench_1641_source_multiopt_1100.dataset.json
     include_path: datasets/exebench-include
     assembly_view: objdump_att_instruction_only
+    evaluation_protocol:
+      type: exebench_json_io
     optimizations: [O0, O1, O2, O3]
     timeout: 30
 
@@ -15,6 +17,8 @@ datasets:
     path: datasets/decompile-eval
     splits: [humaneval, mbpp]
     assembly_view: asm
+    evaluation_protocol:
+      type: decompile_eval_exitcode
     optimizations: [O0, O1, O2, O3]
     timeout: 30
 

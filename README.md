@@ -21,7 +21,7 @@ DatasetAdapter
   -> DecompileRequest（不含参考源码与测试答案）
   -> DecompilerBackend
   -> Postprocessor
-  -> DatasetAdapter.evaluate_candidate
+  -> EvaluationProtocol（由数据集绑定）
   -> EvaluationEvidence
   -> Metric / Report
 ```
@@ -33,6 +33,7 @@ DatasetAdapter
 - Python 3.10 或更高版本；
 - Linux 或 WSL；
 - GCC 和 G++（候选代码会被真实编译、链接和执行）；
+- Decompile-Bench-Eval 的默认 C++ 配置链接 OpenSSL crypto，需要提供 `libcrypto` 开发库；
 - 使用 `decompile-eval` Arrow 数据时需要 Hugging Face `datasets`，已包含在基础依赖中；
 - 使用内置 LLM4Decompile 后端时需要 PyTorch、Transformers 和可选 CUDA 环境。
 
@@ -46,6 +47,12 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -U pip
 pip install -e '.[test]'
+```
+
+Ubuntu/WSL 可安装系统依赖：
+
+```bash
+sudo apt-get install build-essential libssl-dev
 ```
 
 LLM4Decompile 用户安装额外依赖：
@@ -115,6 +122,8 @@ datasets:
     path: datasets/exebench-1641/exebench_1641_source_multiopt_1100.dataset.json
     include_path: datasets/exebench-include
     assembly_view: objdump_att_instruction_only
+    evaluation_protocol:
+      type: exebench_json_io
     optimizations: [O0, O1, O2, O3]
     timeout: 30
 
@@ -208,6 +217,8 @@ runs/my-run/
 - 反编译失败、空输出、编译失败、链接失败、崩溃、超时和输出不匹配都进入固定分母；
 - 单个样本只有所有测试全部通过，才计为行为成功。
 
+每条结果同时记录 `protocol_id`、`protocol_version`、能力集合和协议描述。报告默认按协议隔离；不同测试粒度或比较器的结果不会被合并。指标只有在协议声明所需能力时才进入分母，但模型反编译失败和后续阶段失败仍计入固定分母。
+
 ## 接入 LLM4Decompile
 
 内置插件位于 `plugins/llm4decompile_backend.py`，默认使用官方提示形式：
@@ -256,6 +267,7 @@ python plugins/llm4decompile_backend.py \
 - 外部工具：使用 command 后端和 `{assembly_file}`、`{output_file}` 等占位符；
 - 离线结果：使用 precomputed 后端；
 - 新数据集：实现 `DatasetAdapter`；
+- 新评估方式：实现 `EvaluationProtocol`，并由数据集配置显式绑定；
 - 新指标：实现 `Metric`；
 - 新后处理：实现 `Postprocessor`。
 

@@ -12,7 +12,7 @@ from typing import Any
 
 from .executor import LocalExecutor
 from .metrics import create_metrics
-from .models import DecompileResult, EvaluationEvidence
+from .models import DecompileResult
 from .plugins import create_backend, create_dataset
 from .postprocess import process_code
 from .reporting import read_jsonl, write_report
@@ -55,14 +55,24 @@ class EvaluationRunner:
         return self.samples_by_dataset
 
     def _reference_cache_path(self, sample, dataset_cfg: dict[str, Any]) -> Path:
+        protocol = self._protocol_for_sample(sample)
         evaluator_key = sha256_json(
             {
                 "sample": sample.content_hash,
                 "dataset": dataset_cfg,
                 "executor": self.config.get("executor"),
+                "protocol": protocol.descriptor.to_dict(),
+                "protocol_config": protocol.config,
             }
         )
         return self.cache_dir / "reference" / f"{evaluator_key}.json"
+
+    def _protocol_for_sample(self, sample):
+        return next(
+            adapter.evaluation_protocol
+            for adapter, cfg, _ in self.load_samples()
+            if cfg["id"] == sample.dataset_id
+        )
 
     def validate_datasets(self, *, force: bool = False) -> dict[str, Any]:
         self.executor.check_environment()
@@ -75,12 +85,15 @@ class EvaluationRunner:
                     record["cached"] = True
                 else:
                     with tempfile.TemporaryDirectory(prefix="decomp_eval_ref_") as temp:
-                        validation = adapter.validate_reference(sample, self.executor, Path(temp))
+                        validation = adapter.evaluation_protocol.validate_reference(
+                            sample, self.executor, Path(temp)
+                        )
                     record = {
                         "dataset_id": sample.dataset_id,
                         "split": sample.split,
                         "sample_id": sample.sample_id,
                         "optimization": sample.optimization,
+                        "protocol": adapter.evaluation_protocol.descriptor.to_dict(),
                         "valid": validation.valid,
                         "evidence": asdict(validation.evidence),
                         "cached": False,
@@ -99,6 +112,7 @@ class EvaluationRunner:
         return report
 
     def _result_cache_key(self, sample, backend_cfg: dict[str, Any]) -> str:
+        protocol = self._protocol_for_sample(sample)
         return sha256_json(
             {
                 "sample_hash": sample.content_hash,
@@ -107,20 +121,27 @@ class EvaluationRunner:
                 "postprocessors": self.postprocessors,
                 "executor": self.config["executor"],
                 "dataset_evaluation": next(cfg for _, cfg, _ in self.load_samples() if cfg["id"] == sample.dataset_id),
+                "protocol": protocol.descriptor.to_dict(),
+                "protocol_config": protocol.config,
             }
         )
 
     def _manifest(self) -> dict[str, Any]:
+        protocols = {
+            cfg["id"]: adapter.evaluation_protocol.descriptor.to_dict()
+            for adapter, cfg in self.datasets
+        }
         return {
-            "schema_version": 1,
+            "schema_version": 2,
             "created_at": datetime.now(timezone.utc).isoformat(),
-            "framework_version": "0.1.0",
+            "framework_version": "0.2.0",
             "config_hash": self.config["_config_hash"],
             "config": redact({key: value for key, value in self.config.items() if not key.startswith("_")}),
             "environment": {
                 "platform": platform.platform(),
                 "python": platform.python_version(),
             },
+            "evaluation_protocols": protocols,
             "denominator_policy": "all selected reference-valid samples; decompile/compile/link/test failures count as failures",
             "recompilable_definition": "object compilation and fixture linkage both succeed",
             "behavioral_definition": "all tests for the sample pass",
@@ -132,6 +153,10 @@ class EvaluationRunner:
         manifest_path = self.run_dir / "manifest.json"
         if self.resume and manifest_path.exists():
             previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if previous.get("schema_version") != 2:
+                raise RuntimeError(
+                    "Cannot resume a pre-protocol run; start a new run directory with framework 0.2+"
+                )
             if previous.get("config_hash") != self.config["_config_hash"]:
                 raise RuntimeError("Cannot resume: run manifest config hash differs from the current config")
         else:
@@ -144,7 +169,13 @@ class EvaluationRunner:
 
         results_path = self.run_dir / "results.jsonl"
         existing = read_jsonl(results_path) if self.resume else []
-        completed = {(row["dataset_id"], row["backend_id"], row["sample_id"]) for row in existing}
+        completed = {
+            (
+                row["dataset_id"], row["backend_id"], row["sample_id"],
+                row.get("protocol_id", "unknown"), row.get("protocol_version", "unknown"),
+            )
+            for row in existing
+        }
         file_mode = "a" if self.resume else "w"
         result_count = len(existing)
         all_samples = [sample for _, _, samples in self.load_samples() for sample in samples]
@@ -154,9 +185,13 @@ class EvaluationRunner:
                 backend.prepare(all_samples)
                 try:
                     for adapter, _, samples in self.load_samples():
+                        descriptor = adapter.evaluation_protocol.descriptor
                         pending = [
                             sample for sample in samples
-                            if (sample.dataset_id, backend.backend_id, sample.sample_id) not in completed
+                            if (
+                                sample.dataset_id, backend.backend_id, sample.sample_id,
+                                descriptor.protocol_id, descriptor.version,
+                            ) not in completed
                         ]
                         batch_size = max(1, int(backend_cfg.get("batch_size", 1)))
                         for offset in range(0, len(pending), batch_size):
@@ -270,14 +305,20 @@ class EvaluationRunner:
         _write_json(artifact_dir / "postprocess.json", processed_actions)
 
         if not decompiled.success or not candidate:
-            evidence = EvaluationEvidence(reason=decompiled.reason or "decompile_empty_output")
+            evidence = adapter.evaluation_protocol.failure_evidence(
+                decompiled.reason or "decompile_empty_output", stage="decompile"
+            )
             decompile_success = False
         else:
             decompile_success = True
             try:
-                evidence = adapter.evaluate_candidate(sample, candidate, self.executor, artifact_dir / "evaluation")
+                evidence = adapter.evaluation_protocol.evaluate_candidate(
+                    sample, candidate, self.executor, artifact_dir / "evaluation"
+                )
             except Exception as error:
-                evidence = EvaluationEvidence(reason="evaluator_exception", logs={"error": repr(error)})
+                evidence = adapter.evaluation_protocol.failure_evidence(
+                    "evaluator_exception", error=repr(error)
+                )
         _write_json(artifact_dir / "evaluation.json", asdict(evidence))
         metric_values = {metric.name: metric.evaluate(sample, evidence) for metric in self.metrics}
         record = {
@@ -289,6 +330,10 @@ class EvaluationRunner:
             "language": sample.language,
             "optimization": sample.optimization,
             "assembly_view": sample.assembly.view,
+            "protocol_id": evidence.protocol_id,
+            "protocol_version": evidence.protocol_version,
+            "protocol_capabilities": list(evidence.capabilities),
+            "protocol_descriptor": adapter.evaluation_protocol.descriptor.to_dict(),
             "backend_id": backend.backend_id,
             "backend_version": decompiled.backend_version or getattr(backend, "version", "unknown"),
             "decompile_success": decompile_success,

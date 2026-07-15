@@ -86,6 +86,9 @@ class CommandResult:
 
 @dataclass
 class EvaluationEvidence:
+    protocol_id: str = "unknown"
+    protocol_version: str = "unknown"
+    capabilities: tuple[str, ...] = ()
     compile_pass: bool = False
     link_pass: bool = False
     behavioral_pass: bool = False
@@ -94,6 +97,8 @@ class EvaluationEvidence:
     tests_passed: int = 0
     elapsed_seconds: float = 0.0
     logs: dict[str, Any] = field(default_factory=dict)
+    stages: list[dict[str, Any]] = field(default_factory=list)
+    details: dict[str, Any] = field(default_factory=dict)
 
     @property
     def recompilable(self) -> bool:
@@ -107,7 +112,21 @@ class ValidationResult:
     evidence: EvaluationEvidence
 
 
+@dataclass(frozen=True)
+class ProtocolDescriptor:
+    protocol_id: str
+    version: str
+    description: str
+    capabilities: tuple[str, ...]
+    compile_unit: str
+    test_granularity: str
+    comparator: str
+    denominator_policy: str = "all selected reference-valid samples"
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
 def ensure_artifact_dir(path: Path) -> Path:
     path.mkdir(parents=True, exist_ok=True)
     return path
-

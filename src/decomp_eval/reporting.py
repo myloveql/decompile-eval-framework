@@ -7,7 +7,10 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
-DIMENSIONS = ("dataset_id", "backend_id", "split", "language", "optimization")
+DIMENSIONS = (
+    "dataset_id", "backend_id", "protocol_id", "protocol_version",
+    "split", "language", "optimization",
+)
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -60,8 +63,9 @@ def build_summary(rows: list[dict[str, Any]], metrics: list[Any] | None = None) 
     overall: dict[tuple[str, ...], list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
         by_all[tuple(str(row.get(key, "")) for key in DIMENSIONS)].append(row)
-        by_opt[(row["dataset_id"], row["backend_id"], row["optimization"])].append(row)
-        overall[(row["dataset_id"], row["backend_id"])].append(row)
+        protocol = (str(row.get("protocol_id", "unknown")), str(row.get("protocol_version", "unknown")))
+        by_opt[(row["dataset_id"], row["backend_id"], *protocol, row["optimization"])].append(row)
+        overall[(row["dataset_id"], row["backend_id"], *protocol)].append(row)
 
     def records(groups, names):
         output = []
@@ -70,11 +74,15 @@ def build_summary(rows: list[dict[str, Any]], metrics: list[Any] | None = None) 
         return output
 
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "total_results": len(rows),
         "by_dimensions": records(by_all, DIMENSIONS),
-        "by_optimization": records(by_opt, ("dataset_id", "backend_id", "optimization")),
-        "overall": records(overall, ("dataset_id", "backend_id")),
+        "by_optimization": records(
+            by_opt, ("dataset_id", "backend_id", "protocol_id", "protocol_version", "optimization")
+        ),
+        "overall": records(
+            overall, ("dataset_id", "backend_id", "protocol_id", "protocol_version")
+        ),
     }
 
 

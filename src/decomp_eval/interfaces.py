@@ -8,6 +8,7 @@ from .models import (
     DecompileRequest,
     DecompileResult,
     EvaluationEvidence,
+    ProtocolDescriptor,
     ValidationResult,
 )
 
@@ -21,11 +22,19 @@ class DatasetAdapter(Protocol):
 
     def iter_samples(self) -> Iterable[CanonicalSample]: ...
 
+    evaluation_protocol: "EvaluationProtocol"
+
+
+class EvaluationProtocol(Protocol):
+    descriptor: ProtocolDescriptor
+
     def validate_reference(self, sample: CanonicalSample, executor: Executor, workdir: Path) -> ValidationResult: ...
 
     def evaluate_candidate(
         self, sample: CanonicalSample, code: str, executor: Executor, workdir: Path
     ) -> EvaluationEvidence: ...
+
+    def failure_evidence(self, reason: str, **details: Any) -> EvaluationEvidence: ...
 
 
 class DecompilerBackend(Protocol):

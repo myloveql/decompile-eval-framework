@@ -210,11 +210,11 @@ tempCodeRunnerFile.py
 .pypirc
 
 # Local decompiler-evaluation assets and outputs
-datasets/
-models/
-runs/
-precomputed/
-artifacts/
+/datasets/
+/models/
+/runs/
+/precomputed/
+/artifacts/
 .cache/decomp-eval/
 *.dataset.json
 *.arrow

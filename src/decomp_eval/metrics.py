@@ -8,8 +8,11 @@ from .util import load_object
 
 class RecompilableMetric:
     name = "recompilable"
+    required_capabilities = {"candidate_compile", "fixture_link"}
 
-    def evaluate(self, sample: CanonicalSample, evidence: EvaluationEvidence) -> bool:
+    def evaluate(self, sample: CanonicalSample, evidence: EvaluationEvidence) -> bool | None:
+        if not self.required_capabilities.issubset(evidence.capabilities):
+            return None
         return evidence.recompilable
 
     def aggregate(self, values):
@@ -20,8 +23,11 @@ class RecompilableMetric:
 
 class BehavioralPassMetric:
     name = "behavioral_pass"
+    required_capabilities = {"behavioral_test"}
 
-    def evaluate(self, sample: CanonicalSample, evidence: EvaluationEvidence) -> bool:
+    def evaluate(self, sample: CanonicalSample, evidence: EvaluationEvidence) -> bool | None:
+        if not self.required_capabilities.issubset(evidence.capabilities):
+            return None
         return evidence.behavioral_pass
 
     def aggregate(self, values):

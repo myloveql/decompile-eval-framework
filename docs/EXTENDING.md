@@ -9,7 +9,7 @@ DatasetAdapter
   -> CanonicalSample
   -> DecompilerBackend
   -> Postprocessor
-  -> DatasetAdapter.evaluate_candidate
+  -> EvaluationProtocol
   -> EvaluationEvidence
   -> Metric
   -> Report
@@ -25,6 +25,7 @@ LLM4Decompile 推荐使用 AT&T 视图。两者都来自真实对象文件的 ob
 
 - `src/decomp_eval/interfaces.py`
 - `src/decomp_eval/models.py`
+- `src/decomp_eval/protocols/`
 - `configs/example.yaml`
 
 ## 1. 准备运行环境
@@ -411,11 +412,11 @@ artifacts/.../postprocess.json
 
 ## 6. 扩展新数据集
 
-新数据集适配器需要完成三个职责：
+新数据集适配器只负责数据读取、规范化和私有载荷，并声明默认评估协议：
 
 1. 将原始记录转换为 `CanonicalSample`；
-2. 使用参考源码验证测试夹具；
-3. 编译、链接并测试候选代码。
+2. 将参考源码、fixture 和 oracle 放入 `private_payload`；
+3. 通过 `default_protocol` 声明默认协议。编译和测试逻辑属于独立的 `EvaluationProtocol`。
 
 ### 6.1 最小适配器
 
@@ -433,6 +434,7 @@ from decomp_eval.util import sha256_json
 
 class MyDatasetAdapter:
     plugin_name = "my_dataset"
+    default_protocol = "my_package.protocol:MyEvaluationProtocol"
 
     def __init__(self, config, *, base_dir: Path):
         self.dataset_id = config["id"]
@@ -440,6 +442,7 @@ class MyDatasetAdapter:
         self.path = path if path.is_absolute() else (base_dir / path).resolve()
         self.timeout = int(config.get("timeout", 30))
         self.assembly_view = config.get("assembly_view", "asm")
+        self.evaluation_protocol = None  # 框架在创建适配器后完成绑定
 
     def iter_samples(self):
         for row in self.load_records(self.path):
@@ -482,41 +485,44 @@ class MyDatasetAdapter:
 - `content_hash` 应覆盖所有会影响反编译或评估的原始字段；
 - `sample_id` 在同一数据集内必须唯一。
 
-### 6.2 参考源码预检
+### 6.2 实现评估协议和参考源码预检
 
 ```python
-def validate_reference(self, sample, executor, workdir):
-    source = sample.private_payload["reference_source"]
+from decomp_eval.models import ProtocolDescriptor, ValidationResult
+from decomp_eval.protocols.base import BaseEvaluationProtocol
 
-    evidence = self.evaluate_candidate(
-        sample,
-        source,
-        executor,
-        workdir,
+
+class MyEvaluationProtocol(BaseEvaluationProtocol):
+    descriptor = ProtocolDescriptor(
+        protocol_id="my_exitcode_protocol",
+        version="1",
+        description="Compile one test program and require exit code zero.",
+        capabilities=("candidate_compile", "fixture_link", "behavioral_test"),
+        compile_unit="candidate_dependencies_and_test",
+        test_granularity="single_test_program",
+        comparator="process_exit_code_zero",
     )
 
-    return ValidationResult(
-        sample_id=sample.sample_id,
-        valid=(
-            evidence.compile_pass
-            and evidence.link_pass
-            and evidence.behavioral_pass
-        ),
-        evidence=evidence,
-    )
+    def validate_reference(self, sample, executor, workdir):
+        source = sample.private_payload["reference_source"]
+
+        evidence = self.evaluate_candidate(sample, source, executor, workdir)
+
+        return ValidationResult(
+            sample_id=sample.sample_id,
+            valid=evidence.recompilable and evidence.behavioral_pass,
+            evidence=evidence,
+        )
 ```
 
-参考源码和模型生成代码必须调用同一个 `evaluate_candidate`，避免评估口径不一致。
+参考源码和模型生成代码必须调用同一个协议的 `evaluate_candidate`。协议的 ID、版本、能力和语义会进入缓存、manifest、逐样本结果及报告分组。
 
 ### 6.3 候选代码评估
 
-下面是单文件 C 测试的简化实现：
+下面是单文件 C 测试的简化实现。将该方法加入上面的 `MyEvaluationProtocol`：
 
 ```python
 import time
-
-from decomp_eval.models import EvaluationEvidence
-
 
 def evaluate_candidate(self, sample, code, executor, workdir):
     started = time.perf_counter()
@@ -545,14 +551,14 @@ def evaluate_candidate(self, sample, code, executor, workdir):
             str(object_path),
         ],
         cwd=workdir,
-        timeout=self.timeout,
+        timeout=self.adapter.timeout,
     )
 
     if compile_result.timed_out:
-        return EvaluationEvidence(reason="compile_timeout")
+        return self.evidence(reason="compile_timeout")
 
     if compile_result.returncode != 0:
-        return EvaluationEvidence(
+        return self.evidence(
             reason="compile_error",
             logs={"compile_stderr": compile_result.stderr},
         )
@@ -566,17 +572,17 @@ def evaluate_candidate(self, sample, code, executor, workdir):
             "-lm",
         ],
         cwd=workdir,
-        timeout=self.timeout,
+        timeout=self.adapter.timeout,
     )
 
     if link_result.timed_out:
-        return EvaluationEvidence(
+        return self.evidence(
             compile_pass=True,
             reason="link_timeout",
         )
 
     if link_result.returncode != 0:
-        return EvaluationEvidence(
+        return self.evidence(
             compile_pass=True,
             reason="link_error",
             logs={"link_stderr": link_result.stderr},
@@ -585,12 +591,12 @@ def evaluate_candidate(self, sample, code, executor, workdir):
     run_result = executor.run(
         [str(executable_path)],
         cwd=workdir,
-        timeout=self.timeout,
+        timeout=self.adapter.timeout,
     )
 
     passed = not run_result.timed_out and run_result.returncode == 0
 
-    return EvaluationEvidence(
+    return self.evidence(
         compile_pass=True,
         link_pass=True,
         behavioral_pass=passed,
@@ -613,10 +619,43 @@ datasets:
     type: my_package.dataset:MyDatasetAdapter
     path: data/my-benchmark
     assembly_view: asm
+    evaluation_protocol:
+      type: my_package.protocol:MyEvaluationProtocol
     timeout: 30
 ```
 
 使用 `module:object` 后不需要修改核心 Runner 或内置插件注册表。
+
+### 6.5 协议能力、版本与报告隔离
+
+协议必须使用稳定的 `protocol_id` 和显式 `version`。任何会改变成功语义的修改，例如比较器、编译单元、测试粒度或分母政策，都应提升协议版本。
+
+内置能力包括：
+
+```text
+candidate_compile       能判断候选编译是否成功
+fixture_link            能判断候选与测试夹具是否链接成功
+behavioral_test         能给出样本级全测试通过状态
+per_case_test           能逐测试样例计数
+aggregate_test_program  只能观察整个测试程序
+structured_output       测试产生结构化输出
+strict_json_compare     使用严格递归 JSON 比较
+```
+
+指标通过 `required_capabilities` 声明适用条件。不支持的指标返回 `None`，不会进入该指标分母；反编译、编译或测试失败仍具有协议能力，因此会以 `False` 进入固定分母。
+
+`results.jsonl` 保存：
+
+```text
+protocol_id
+protocol_version
+protocol_capabilities
+protocol_descriptor
+```
+
+`summary.json` 默认按协议 ID 和版本隔离。即使两个协议都产生 `behavioral_pass`，框架也不会将 JSON I/O 比较和进程退出码测试合并为同一总体结果。
+
+协议配置及描述符会进入缓存键。改变协议参数后不会误用旧结果。0.2 之前没有协议身份的运行目录不能使用 `--resume` 继续执行。
 
 ## 7. 扩展评估指标
 
@@ -631,6 +670,11 @@ evidence.tests_total
 evidence.tests_passed
 evidence.elapsed_seconds
 evidence.logs
+evidence.protocol_id
+evidence.protocol_version
+evidence.capabilities
+evidence.stages
+evidence.details
 ```
 
 ### 7.1 布尔指标

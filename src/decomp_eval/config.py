@@ -52,6 +52,9 @@ def validate_config(config: dict[str, Any]) -> None:
         if dataset.get("id") in dataset_ids:
             errors.append(f"duplicate dataset id: {dataset.get('id')}")
         dataset_ids.add(dataset.get("id"))
+        protocol = dataset.get("evaluation_protocol")
+        if protocol is not None and not isinstance(protocol, (str, dict)):
+            errors.append(f"datasets[{index}].evaluation_protocol must be a string or mapping")
     ids: set[str] = set()
     for index, backend in enumerate(config.get("decompilers", [])):
         for field in ("id", "type"):

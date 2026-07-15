@@ -14,6 +14,8 @@ from decomp_eval.backends.precomputed import PrecomputedBackend
 from decomp_eval.datasets.exebench import ExeBenchFlatAdapter
 from decomp_eval.datasets.decompile_eval import DecompileEvalAdapter
 from decomp_eval.models import AssemblyInput, CanonicalSample, EvaluationEvidence
+from decomp_eval.metrics import BehavioralPassMetric, RecompilableMetric
+from decomp_eval.plugins import plugin_inventory
 from decomp_eval.postprocess import process_code
 from decomp_eval.reporting import build_summary
 from decomp_eval.runner import EvaluationRunner
@@ -54,6 +56,37 @@ class FrameworkTests(unittest.TestCase):
         self.assertEqual(overall["total"], 2)
         self.assertEqual(overall["behavioral_pass_rate"], 0.5)
         self.assertEqual(len(summary["by_optimization"]), 2)
+
+    def test_metrics_require_protocol_capabilities(self):
+        evidence = EvaluationEvidence(protocol_id="syntax-only", capabilities=("candidate_compile",))
+        self.assertIsNone(RecompilableMetric().evaluate(self._sample(), evidence))
+        self.assertIsNone(BehavioralPassMetric().evaluate(self._sample(), evidence))
+        supported = EvaluationEvidence(
+            protocol_id="full",
+            capabilities=("candidate_compile", "fixture_link", "behavioral_test"),
+        )
+        self.assertFalse(RecompilableMetric().evaluate(self._sample(), supported))
+        self.assertFalse(BehavioralPassMetric().evaluate(self._sample(), supported))
+
+    def test_reports_do_not_merge_different_protocols(self):
+        rows = []
+        for protocol in ("json-io", "exit-code"):
+            rows.append({
+                "dataset_id": "d", "backend_id": "b", "protocol_id": protocol,
+                "protocol_version": "1", "split": "s", "language": "c",
+                "optimization": "O0", "decompile_success": True, "recompilable": True,
+                "behavioral_pass": True, "reason": None, "metrics": {},
+            })
+        summary = build_summary(rows)
+        self.assertEqual(len(summary["overall"]), 2)
+        self.assertEqual(
+            {row["protocol_id"] for row in summary["overall"]}, {"json-io", "exit-code"}
+        )
+
+    def test_protocols_are_listed_as_plugins(self):
+        inventory = plugin_inventory()
+        self.assertIn("exebench_json_io", inventory["protocols"])
+        self.assertIn("decompile_eval_exitcode", inventory["protocols"])
 
     def test_exebench_flat_loads_real_schema(self):
         row = {
@@ -148,6 +181,13 @@ class FrameworkTests(unittest.TestCase):
             summary = EvaluationRunner(config, run_dir=run_dir).run()
             self.assertEqual(summary["overall"][0]["total"], 4)
             self.assertEqual(summary["overall"][0]["behavioral_pass_rate"], 1.0)
+            self.assertEqual(summary["overall"][0]["protocol_id"], "fixture_exitcode")
+            manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["schema_version"], 2)
+            self.assertEqual(
+                manifest["evaluation_protocols"]["fixture"]["protocol_id"],
+                "fixture_exitcode",
+            )
             first_count = len((run_dir / "results.jsonl").read_text(encoding="utf-8").splitlines())
             EvaluationRunner(config, run_dir=run_dir, resume=True).run()
             second_count = len((run_dir / "results.jsonl").read_text(encoding="utf-8").splitlines())
