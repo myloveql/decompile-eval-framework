@@ -293,6 +293,12 @@ docs/EXTENDING.md         详细扩展教程
 
 候选 C/C++ 属于不可信代码。当前本地执行器提供超时和资源限制，但不是强隔离沙箱。不要在包含密钥或重要数据的宿主环境中运行不可信模型输出；高风险评估应使用一次性虚拟机或后续 Docker 执行器。
 
+## 闭源 LLM API
+
+内置 `openai` 后端可通过 OpenAI Python SDK 调用 OpenAI 或任意
+OpenAI-compatible 模型服务，并分别保存模型原始响应与提取后的候选 C/C++。
+配置、安全、提示词、伪代码优化和运行方法见 [闭源 LLM 后端接入指南](docs/CLOSED_LLM.md)。
+
 ## License
 
 [MIT](LICENSE)

@@ -141,7 +141,7 @@ class EvaluationRunner:
         return {
             "schema_version": 2,
             "created_at": datetime.now(timezone.utc).isoformat(),
-            "framework_version": "0.4.0",
+            "framework_version": "0.5.0",
             "config_hash": self.config["_config_hash"],
             "config": redact({key: value for key, value in self.config.items() if not key.startswith("_")}),
             "environment": {
@@ -325,8 +325,9 @@ class EvaluationRunner:
         (artifact_dir / "decompiler.log").write_text(decompiled.log, encoding="utf-8")
 
         processed_actions: list[dict[str, Any]] = []
-        if decompiled.success and raw_output.strip():
-            processed = process_code(raw_output, sample, self.postprocessors)
+        process_input = decompiled.code or raw_output
+        if decompiled.success and process_input.strip():
+            processed = process_code(process_input, sample, self.postprocessors)
             candidate = processed.code
             processed_actions = processed.actions
         else:
@@ -392,6 +393,7 @@ class EvaluationRunner:
             "assembly.s", "pseudocode.c", "request.json", "raw_output.txt", "candidate.c", "decompiler.log",
             "postprocess.json", "evaluation.json", "backend_output.c",
             "ghidra.stdout.log", "ghidra.stderr.log",
+            "model_prompt.txt", "response_metadata.json",
         ):
             source = artifact_dir / name
             if source.exists():
