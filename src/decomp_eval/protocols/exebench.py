@@ -100,15 +100,20 @@ class ExeBenchJsonIOProtocol(BaseEvaluationProtocol):
             entry = command_log(run_result)
             entry["index"] = index
             if run_result.timed_out:
-                entry["outcome"] = "timeout"; counts["timed_out"] += 1; reason = reason or "test_timeout"
+                entry["outcome"] = "timeout"
+                counts["timed_out"] += 1
+                reason = reason or "test_timeout"
             elif run_result.returncode != 0 or not output_path.exists():
-                entry["outcome"] = "runtime_error"; counts["crashed"] += 1; reason = reason or "runtime_error"
+                entry["outcome"] = "runtime_error"
+                counts["crashed"] += 1
+                reason = reason or "runtime_error"
             else:
                 try:
                     actual = json.loads(output_path.read_text(encoding="utf-8"))
                     expected = pair.get("output", {})
                     if strict_equal(actual, expected):
-                        passed += 1; entry["outcome"] = "pass"
+                        passed += 1
+                        entry["outcome"] = "pass"
                     else:
                         counts["mismatched"] += 1
                         entry.update({"outcome": "output_mismatch", "expected": expected, "actual": actual})

@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import time
-from pathlib import Path
 
-from decomp_eval.models import AssemblyInput, CanonicalSample, DecompileResult, EvaluationEvidence, ValidationResult
-from decomp_eval.models import ProtocolDescriptor
+from decomp_eval.models import (
+    AssemblyInput,
+    CanonicalSample,
+    DecompileResult,
+    ProtocolDescriptor,
+    ValidationResult,
+)
 from decomp_eval.protocols.base import BaseEvaluationProtocol
 from decomp_eval.util import sha256_json
 

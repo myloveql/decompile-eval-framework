@@ -1,13 +1,27 @@
 workspace_root: ../../..
 
+# HumanEval 与 MBPP 分开配置，使 limit 分别作用于两个 split。
 datasets:
-  - id: exebench-1100
-    type: exebench_flat
-    path: data/exebench/1641-Benchmark/exebench_1641_source_multiopt_1100.dataset.json
-    include_path: third_party/exebench/exebench
-    assembly_view: objdump_att_instruction_only
+  - id: decompile-eval-humaneval
+    type: decompile_eval
+    path: data/decompile-eval
+    splits: [humaneval]
+    assembly_view: asm
     evaluation_protocol:
-      type: exebench_json_io
+      type: decompile_eval_exitcode
+    languages: [c]
+    optimizations: [O0, O1, O2, O3]
+    limit: 10
+    timeout: 30
+
+  - id: decompile-eval-mbpp
+    type: decompile_eval
+    path: data/decompile-eval
+    splits: [mbpp]
+    assembly_view: asm
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+    languages: [c]
     optimizations: [O0, O1, O2, O3]
     limit: 10
     timeout: 30
@@ -15,7 +29,7 @@ datasets:
 decompilers:
   - id: llm4decompile-1.3b-v1.6
     type: python
-    version: "llm4decompile-1.3b-v1.6"
+    version: llm4decompile-1.3b-v1.6
     plugin: plugins.llm4decompile_backend:LLM4DecompileBackend
     batch_size: 1
     plugin_config:
