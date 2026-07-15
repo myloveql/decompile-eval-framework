@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import Any, Iterable
 
-from ..models import AssemblyInput, CanonicalSample
+from ..models import AssemblyInput, BinaryInput, CanonicalSample
 from ..util import resolve_path, sha256_json
 
 
@@ -31,6 +31,7 @@ class ExeBenchFlatAdapter:
 
     def __init__(self, config: dict[str, Any], *, base_dir: Path):
         self.config = config
+        self.base_dir = base_dir
         self.path = resolve_path(config["path"], base_dir)
         self.dataset_id = config.get("id", "exebench")
         self.split = config.get("split", "benchmark")
@@ -56,6 +57,16 @@ class ExeBenchFlatAdapter:
                 syntax = "Intel" if self.assembly_view.startswith("objdump_intel") else assembly_record.get(
                     "syntax", "GNU assembler AT&T"
                 )
+            binary_record = row.get("binary") or {}
+            binary_path = binary_record.get("path")
+            binary = BinaryInput(
+                path=str(resolve_path(binary_path, self.base_dir)),
+                sha256=binary_record.get("sha256"),
+                format=binary_record.get("format", "ELF"),
+                architecture=binary_record.get(
+                    "architecture", assembly_record.get("architecture", "x86_64")
+                ),
+            ) if binary_path else None
             yield CanonicalSample(
                 dataset_id=self.dataset_id,
                 split=self.split,
@@ -66,6 +77,7 @@ class ExeBenchFlatAdapter:
                 optimization=opt,
                 assembly=AssemblyInput(text=assembly, syntax=syntax, view=self.assembly_view),
                 content_hash=sha256_json(row),
+                binary=binary,
                 metadata={
                     "source_type": row.get("source_type"),
                     "signature": row.get("source", {}).get("signature", []),

@@ -8,6 +8,7 @@ from ..models import CanonicalSample, DecompileRequest, DecompileResult
 class BaseBackend:
     backend_id = "base"
     version = "unknown"
+    required_inputs = ("assembly",)
 
     def prepare(self, samples: list[CanonicalSample]) -> None:
         return None
@@ -19,4 +20,3 @@ class BaseBackend:
 
     def close(self) -> None:
         return None
-

@@ -5,7 +5,7 @@
 当前内置支持：
 
 - 数据集：ExeBench flat JSON、Decompile-Bench-Eval（HumanEval、MBPP）；
-- 反编译器：Python 插件、外部命令、预生成 C/C++；
+- 反编译器：Python 插件、外部命令、预生成 C/C++、Ghidra Headless；
 - 指标：可重新编译率 `recompilable`、全部测试通过率 `behavioral_pass`；
 - 后处理：Markdown 代码围栏提取、显式函数名修复；
 - 多数据集 × 多后端评估矩阵、参考源码预检、缓存和断点续跑；
@@ -218,6 +218,10 @@ runs/my-run/
 - 单个样本只有所有测试全部通过，才计为行为成功。
 
 每条结果同时记录 `protocol_id`、`protocol_version`、能力集合和协议描述。报告默认按协议隔离；不同测试粒度或比较器的结果不会被合并。指标只有在协议声明所需能力时才进入分母，但模型反编译失败和后续阶段失败仍计入固定分母。
+
+## 接入 Ghidra
+
+内置 `ghidra` 后端使用数据集提供的原始二进制运行 Ghidra Headless，并只导出指定目标函数。它与默认使用汇编输入的 LLM 后端采用独立输入契约。配置、运行方法、产物和失败原因见 [Ghidra 接入指南](docs/GHIDRA.md)。
 
 ## 接入 LLM4Decompile
 

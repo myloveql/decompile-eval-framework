@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import sys
 import tempfile
 import unittest
@@ -10,10 +11,11 @@ from pathlib import Path
 
 from decomp_eval.config import validate_config
 from decomp_eval.backends.command import CommandBackend
+from decomp_eval.backends.ghidra import GhidraHeadlessBackend
 from decomp_eval.backends.precomputed import PrecomputedBackend
 from decomp_eval.datasets.exebench import ExeBenchFlatAdapter
 from decomp_eval.datasets.decompile_eval import DecompileEvalAdapter
-from decomp_eval.models import AssemblyInput, CanonicalSample, EvaluationEvidence
+from decomp_eval.models import AssemblyInput, BinaryInput, CanonicalSample, EvaluationEvidence
 from decomp_eval.metrics import BehavioralPassMetric, RecompilableMetric
 from decomp_eval.plugins import plugin_inventory
 from decomp_eval.postprocess import process_code
@@ -42,6 +44,15 @@ class FrameworkTests(unittest.TestCase):
         ])
         self.assertIn("target", result.code)
         self.assertEqual([a["processor"] for a in result.actions], ["markdown_fence", "rename_target"])
+
+    def test_ghidra_compatibility_types_are_explicit_and_audited(self):
+        result = process_code(
+            "undefined4 target(undefined8 value) { return (undefined4)value; }",
+            self._sample(), ["ghidra_compat_types"],
+        )
+        self.assertIn("typedef unsigned int undefined4;", result.code)
+        self.assertIn("typedef unsigned long long undefined8;", result.code)
+        self.assertEqual(result.actions[0]["processor"], "ghidra_compat_types")
 
     def test_summary_denominator_and_optimization(self):
         rows = []
@@ -87,6 +98,7 @@ class FrameworkTests(unittest.TestCase):
         inventory = plugin_inventory()
         self.assertIn("exebench_json_io", inventory["protocols"])
         self.assertIn("decompile_eval_exitcode", inventory["protocols"])
+        self.assertIn("ghidra", inventory["backends"])
 
     def test_exebench_flat_loads_real_schema(self):
         row = {
@@ -159,6 +171,49 @@ class FrameworkTests(unittest.TestCase):
             self.assertTrue(result.success)
             self.assertIn("return 1", result.raw_output)
 
+    def test_ghidra_backend_uses_binary_and_named_function(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            ghidra = root / "ghidra"
+            headless = ghidra / "support" / "analyzeHeadless"
+            headless.parent.mkdir(parents=True)
+            headless.write_text("fake", encoding="utf-8")
+            binary = root / "sample.elf"
+            binary.write_bytes(b"ELF fixture")
+            digest = hashlib.sha256(binary.read_bytes()).hexdigest()
+            sample = self._sample()
+            sample.binary = BinaryInput(str(binary), digest, "ELF", "x86_64")
+            backend = GhidraHeadlessBackend({
+                "id": "ghidra-test", "ghidra_path": str(ghidra),
+            }, base_dir=PROJECT)
+
+            def fake_run(command, **kwargs):
+                (Path(kwargs["cwd"]) / "backend_output.c").write_text(
+                    "int target(void) { return 1; }", encoding="utf-8"
+                )
+                return SimpleNamespace(returncode=0, stdout="analysis complete", stderr="")
+
+            with patch("decomp_eval.backends.ghidra.subprocess.run", side_effect=fake_run) as run:
+                result = backend.decompile(sample.public_request(), root / "artifacts")
+            self.assertTrue(result.success)
+            command = run.call_args.args[0]
+            self.assertIn("target", command)
+            self.assertIn("DecompileFunction.java", command)
+            self.assertTrue((root / "artifacts" / "input_binary.elf").exists())
+
+    def test_backend_input_contract_distinguishes_binary_from_assembly(self):
+        sample = self._sample()
+        assembly_backend = SimpleNamespace(required_inputs=("assembly",))
+        binary_backend = SimpleNamespace(required_inputs=("binary",))
+        self.assertIsNone(EvaluationRunner._missing_backend_input(sample, assembly_backend))
+        self.assertEqual(
+            EvaluationRunner._missing_backend_input(sample, binary_backend), "binary_missing"
+        )
+        sample.binary = BinaryInput("fixture.elf")
+        self.assertIsNone(EvaluationRunner._missing_backend_input(sample, binary_backend))
+        self.assertEqual(sample.public_request(("binary",)).assembly.text, "")
+        self.assertIsNone(sample.public_request(("assembly",)).binary)
+
     def test_end_to_end_python_plugin_and_resume(self):
         with tempfile.TemporaryDirectory() as temp:
             temp_path = Path(temp)
@@ -166,9 +221,9 @@ class FrameworkTests(unittest.TestCase):
                 "_config_hash": "fixturehash",
                 "_config_path": str(PROJECT / "fixture.yaml"),
                 "workspace_root": str(PROJECT),
-                "datasets": [{"id": "fixture", "type": "fixtures:FixtureDataset", "path": "."}],
+                "datasets": [{"id": "fixture", "type": "tests.fixtures:FixtureDataset", "path": "."}],
                 "decompilers": [{
-                    "id": "python-fixture", "type": "python", "plugin": "fixtures:FixtureDecompiler",
+                    "id": "python-fixture", "type": "python", "plugin": "tests.fixtures:FixtureDecompiler",
                     "plugin_config": {"value": 7}, "batch_size": 4,
                 }],
                 "metrics": ["recompilable", "behavioral_pass"],

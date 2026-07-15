@@ -11,7 +11,7 @@ from decomp_eval.util import sha256_json
 
 class FixtureDataset:
     plugin_name = "fixture"
-    default_protocol = "fixtures:FixtureProtocol"
+    default_protocol = "tests.fixtures:FixtureProtocol"
 
     def __init__(self, config, **kwargs):
         self.dataset_id = config["id"]

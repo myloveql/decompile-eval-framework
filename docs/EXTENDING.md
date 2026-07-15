@@ -149,13 +149,21 @@ output_mode: stdout
     "syntax": "intel",
     "view": "objdump_intel_with_relocations"
   },
+  "binary": {
+    "path": "/absolute/path/to/sample.elf",
+    "sha256": "...",
+    "format": "ELF",
+    "architecture": "x86_64"
+  },
   "metadata": {
     "signature": ["int", "int *"]
   }
 }
 ```
 
-公开请求不会包含参考源代码、测试、wrapper、预期输出或行为 oracle。
+公开请求不会包含参考源代码、测试、wrapper、预期输出或行为 oracle。Runner 还会按照后端的
+`required_inputs` 过滤输入：普通 LLM 后端默认只获得 `assembly`；内置 Ghidra 后端只获得
+`binary`。完整 Ghidra 接入方法见 [GHIDRA.md](GHIDRA.md)。
 
 ## 3. 接入本地 LLM 或 API 模型
 
@@ -940,6 +948,10 @@ full-run/
 | reason | 含义 |
 |---|---|
 | `assembly_missing` | 指定汇编字段为空 |
+| `binary_missing` | 数据集没有提供后端所需的二进制 |
+| `binary_not_found` | 二进制路径不存在 |
+| `binary_hash_mismatch` | 二进制 SHA-256 与数据集不一致 |
+| `ghidra_headless_error` | Ghidra Headless、Java 或分析脚本失败 |
 | `decompile_timeout` | 反编译器超时 |
 | `decompile_command_error` | 命令行工具非零退出 |
 | `decompile_output_missing` | 命令没有产生输出文件 |

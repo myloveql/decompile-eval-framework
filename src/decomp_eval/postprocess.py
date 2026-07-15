@@ -38,9 +38,39 @@ class RenameTargetPostprocessor:
         }
 
 
+class GhidraCompatibilityTypesPostprocessor:
+    """Add portable definitions for Ghidra's width-specific unknown scalar types."""
+
+    name = "ghidra_compat_types"
+    definitions = {
+        "undefined": "typedef unsigned char undefined;",
+        "undefined1": "typedef unsigned char undefined1;",
+        "undefined2": "typedef unsigned short undefined2;",
+        "undefined4": "typedef unsigned int undefined4;",
+        "undefined8": "typedef unsigned long long undefined8;",
+        "undefined16": "typedef __uint128_t undefined16;",
+        "byte": "typedef unsigned char byte;",
+    }
+
+    def process(self, code: str, sample: CanonicalSample, config: dict[str, Any]):
+        added = [
+            declaration for name, declaration in self.definitions.items()
+            if re.search(rf"\b{re.escape(name)}\b", code)
+            and not re.search(rf"\btypedef\b[^;]*\b{re.escape(name)}\s*;", code)
+        ]
+        if not added:
+            return code, None
+        return "\n".join(added) + "\n\n" + code, {
+            "processor": self.name,
+            "definitions_added": len(added),
+            "types": [line.rsplit(" ", 1)[-1].rstrip(";") for line in added],
+        }
+
+
 BUILTINS = {
     "markdown_fence": MarkdownFencePostprocessor,
     "rename_target": RenameTargetPostprocessor,
+    "ghidra_compat_types": GhidraCompatibilityTypesPostprocessor,
 }
 
 
@@ -56,4 +86,3 @@ def process_code(raw_output: str, sample: CanonicalSample, configs: list[dict[st
         if action:
             actions.append(action)
     return ProcessedCode(raw_output=raw_output, code=code.strip(), actions=actions)
-

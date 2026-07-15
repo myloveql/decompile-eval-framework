@@ -12,6 +12,14 @@ class AssemblyInput:
     view: str
 
 
+@dataclass(frozen=True)
+class BinaryInput:
+    path: str
+    sha256: str | None = None
+    format: str | None = None
+    architecture: str | None = None
+
+
 @dataclass
 class CanonicalSample:
     dataset_id: str
@@ -23,10 +31,12 @@ class CanonicalSample:
     optimization: str
     assembly: AssemblyInput
     content_hash: str
+    binary: BinaryInput | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
     private_payload: dict[str, Any] = field(default_factory=dict, repr=False)
 
-    def public_request(self) -> "DecompileRequest":
+    def public_request(self, allowed_inputs: tuple[str, ...] | None = None) -> "DecompileRequest":
+        allowed = set(("assembly", "binary") if allowed_inputs is None else allowed_inputs)
         return DecompileRequest(
             dataset_id=self.dataset_id,
             split=self.split,
@@ -35,7 +45,10 @@ class CanonicalSample:
             function_name=self.function_name,
             language=self.language,
             optimization=self.optimization,
-            assembly=self.assembly,
+            assembly=self.assembly if "assembly" in allowed else AssemblyInput(
+                text="", syntax=self.assembly.syntax, view=self.assembly.view
+            ),
+            binary=self.binary if "binary" in allowed else None,
             metadata=self.metadata,
         )
 
@@ -51,6 +64,7 @@ class DecompileRequest:
     optimization: str
     assembly: AssemblyInput
     metadata: dict[str, Any]
+    binary: BinaryInput | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

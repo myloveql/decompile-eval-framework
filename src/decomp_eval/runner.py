@@ -113,11 +113,16 @@ class EvaluationRunner:
 
     def _result_cache_key(self, sample, backend_cfg: dict[str, Any]) -> str:
         protocol = self._protocol_for_sample(sample)
+        backend = next(item for item, cfg in self.backends if cfg is backend_cfg)
         return sha256_json(
             {
                 "sample_hash": sample.content_hash,
                 "assembly_view": sample.assembly.view,
                 "backend": backend_cfg,
+                "backend_version": backend.version,
+                "backend_required_inputs": list(
+                    getattr(backend, "required_inputs", ("assembly",))
+                ),
                 "postprocessors": self.postprocessors,
                 "executor": self.config["executor"],
                 "dataset_evaluation": next(cfg for _, cfg, _ in self.load_samples() if cfg["id"] == sample.dataset_id),
@@ -134,7 +139,7 @@ class EvaluationRunner:
         return {
             "schema_version": 2,
             "created_at": datetime.now(timezone.utc).isoformat(),
-            "framework_version": "0.2.0",
+            "framework_version": "0.3.0",
             "config_hash": self.config["_config_hash"],
             "config": redact({key: value for key, value in self.config.items() if not key.startswith("_")}),
             "environment": {
@@ -142,6 +147,10 @@ class EvaluationRunner:
                 "python": platform.python_version(),
             },
             "evaluation_protocols": protocols,
+            "decompiler_inputs": {
+                backend.backend_id: list(getattr(backend, "required_inputs", ("assembly",)))
+                for backend, _ in self.backends
+            },
             "denominator_policy": "all selected reference-valid samples; decompile/compile/link/test failures count as failures",
             "recompilable_definition": "object compilation and fixture linkage both succeed",
             "behavioral_definition": "all tests for the sample pass",
@@ -203,20 +212,23 @@ class EvaluationRunner:
                                 cache_path = self._result_cache_path(sample, backend_cfg)
                                 if cache_path.exists():
                                     records.append((sample, self._evaluate_one(adapter, sample, backend, backend_cfg, artifact_dir)))
-                                elif not sample.assembly.text.strip():
+                                elif missing := self._missing_backend_input(sample, backend):
                                     records.append((sample, self._evaluate_one(
                                         adapter, sample, backend, backend_cfg, artifact_dir,
                                         decompiled_override=DecompileResult(
-                                            success=False, reason="assembly_missing", backend_version=backend.version
+                                            success=False, reason=missing, backend_version=backend.version
                                         ),
                                     )))
                                 else:
-                                    self._prepare_request_artifacts(sample, artifact_dir)
+                                    self._prepare_request_artifacts(sample, backend, artifact_dir)
                                     uncached.append((sample, artifact_dir))
                             if uncached:
                                 try:
                                     decompiled_batch = backend.decompile_many(
-                                        [sample.public_request() for sample, _ in uncached],
+                                        [
+                                            sample.public_request(getattr(backend, "required_inputs", ("assembly",)))
+                                            for sample, _ in uncached
+                                        ],
                                         [path for _, path in uncached],
                                     )
                                     if len(decompiled_batch) != len(uncached):
@@ -252,12 +264,21 @@ class EvaluationRunner:
             safe_name(backend_id) / safe_name(sample.sample_id)
         )
 
+    @staticmethod
+    def _missing_backend_input(sample, backend) -> str | None:
+        for input_kind in getattr(backend, "required_inputs", ("assembly",)):
+            if input_kind == "assembly" and not sample.assembly.text.strip():
+                return "assembly_missing"
+            if input_kind == "binary" and (sample.binary is None or not sample.binary.path):
+                return "binary_missing"
+        return None
+
     def _result_cache_path(self, sample, backend_cfg: dict[str, Any]) -> Path:
         return self.cache_dir / "results" / f"{self._result_cache_key(sample, backend_cfg)}.json"
 
-    def _prepare_request_artifacts(self, sample, artifact_dir: Path) -> None:
+    def _prepare_request_artifacts(self, sample, backend, artifact_dir: Path) -> None:
         artifact_dir.mkdir(parents=True, exist_ok=True)
-        request = sample.public_request()
+        request = sample.public_request(getattr(backend, "required_inputs", ("assembly",)))
         (artifact_dir / "assembly.s").write_text(request.assembly.text, encoding="utf-8")
         _write_json(artifact_dir / "request.json", request.to_dict())
 
@@ -271,7 +292,7 @@ class EvaluationRunner:
             record = json.loads(cache_path.read_text(encoding="utf-8"))
             record["cache_hit"] = True
             record["artifact_dir"] = str(artifact_dir)
-            self._prepare_request_artifacts(sample, artifact_dir)
+            self._prepare_request_artifacts(sample, backend, artifact_dir)
             cached_artifacts = self.cache_dir / "artifacts" / cache_key
             if cached_artifacts.exists():
                 for source in cached_artifacts.iterdir():
@@ -280,8 +301,8 @@ class EvaluationRunner:
             _write_json(artifact_dir / "cache_hit.json", {"cache_key": cache_key, "cached_record": str(cache_path)})
             return record
 
-        self._prepare_request_artifacts(sample, artifact_dir)
-        request = sample.public_request()
+        self._prepare_request_artifacts(sample, backend, artifact_dir)
+        request = sample.public_request(getattr(backend, "required_inputs", ("assembly",)))
         started = time.perf_counter()
         if decompiled_override is not None:
             decompiled = decompiled_override
@@ -336,6 +357,7 @@ class EvaluationRunner:
             "protocol_descriptor": adapter.evaluation_protocol.descriptor.to_dict(),
             "backend_id": backend.backend_id,
             "backend_version": decompiled.backend_version or getattr(backend, "version", "unknown"),
+            "backend_required_inputs": list(getattr(backend, "required_inputs", ("assembly",))),
             "decompile_success": decompile_success,
             "compile_pass": evidence.compile_pass,
             "link_pass": evidence.link_pass,
@@ -358,7 +380,8 @@ class EvaluationRunner:
         cached_artifacts.mkdir(parents=True, exist_ok=True)
         for name in (
             "assembly.s", "request.json", "raw_output.txt", "candidate.c", "decompiler.log",
-            "postprocess.json", "evaluation.json",
+            "postprocess.json", "evaluation.json", "backend_output.c",
+            "ghidra.stdout.log", "ghidra.stderr.log",
         ):
             source = artifact_dir / name
             if source.exists():
