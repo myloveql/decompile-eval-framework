@@ -221,7 +221,7 @@ runs/my-run/
 
 ## 接入 Ghidra
 
-内置 `ghidra` 后端使用数据集提供的原始二进制运行 Ghidra Headless，并只导出指定目标函数。它与默认使用汇编输入的 LLM 后端采用独立输入契约。配置、运行方法、产物和失败原因见 [Ghidra 接入指南](docs/GHIDRA.md)。
+内置 `ghidra` 后端可将数据集原始二进制统一转换为固定伪代码视图；`pseudocode` 后端可直接评估该视图，Python/LLM 后端也可声明只读取伪代码并进行修复。配置、数据写回、模型修复方式和失败原因见 [Ghidra 接入指南](docs/GHIDRA.md)。
 
 ## 接入 LLM4Decompile
 

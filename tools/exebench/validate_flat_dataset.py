@@ -31,8 +31,8 @@ def sha256_json(value: Any) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", type=Path, required=True)
-    parser.add_argument("--source-report", type=Path, required=True)
-    parser.add_argument("--assembly-report", type=Path, required=True)
+    parser.add_argument("--source-report", type=Path)
+    parser.add_argument("--assembly-report", type=Path)
     parser.add_argument(
         "--asset-root", type=Path, required=True,
         help="Root used to resolve binary.path entries stored in the dataset.",
@@ -42,6 +42,7 @@ def main() -> int:
     asset_root = args.asset_root.resolve()
     dataset = json.loads(dataset_path.read_text(encoding="utf-8"))
     samples = dataset.get("samples", [])
+    ghidra_view = dataset.get("ghidra_pseudocode_view")
     errors: list[str] = []
 
     if dataset.get("schema") != "exebench_flat_source_dataset" or dataset.get("schema_version") != 1:
@@ -57,26 +58,27 @@ def main() -> int:
         errors.append(f"unexpected optimization counts: {dict(optimization_counts)}")
 
     by_group: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    report = json.loads(
-        args.source_report.resolve().read_text(encoding="utf-8")
-    )
-    report_pass_ids = {
-        row["sample_id"] for row in report["results"] if row["behavioral_pass"]
-    }
-    if set(sample_ids) != report_pass_ids:
-        errors.append("dataset samples differ from the 1100 passing report results")
-    assembly_report = json.loads(
-        args.assembly_report.resolve().read_text(encoding="utf-8")
-    )
-    assembly_results = {row["sample_id"]: row for row in assembly_report["results"]}
-    assembly_stats = assembly_report["statistics"]
-    if (
-        assembly_stats.get("total") != 1100
-        or assembly_stats.get("assemble_pass") != 1100
-        or assembly_stats.get("link_pass") != 1100
-        or assembly_stats.get("behavioral_pass") != 1100
-    ):
-        errors.append("assembly behavior report is not 1100/1100")
+    if args.source_report:
+        report = json.loads(args.source_report.resolve().read_text(encoding="utf-8"))
+        report_pass_ids = {
+            row["sample_id"] for row in report["results"] if row["behavioral_pass"]
+        }
+        if set(sample_ids) != report_pass_ids:
+            errors.append("dataset samples differ from the 1100 passing report results")
+    assembly_results = None
+    if args.assembly_report:
+        assembly_report = json.loads(
+            args.assembly_report.resolve().read_text(encoding="utf-8")
+        )
+        assembly_results = {row["sample_id"]: row for row in assembly_report["results"]}
+        assembly_stats = assembly_report["statistics"]
+        if (
+            assembly_stats.get("total") != 1100
+            or assembly_stats.get("assemble_pass") != 1100
+            or assembly_stats.get("link_pass") != 1100
+            or assembly_stats.get("behavioral_pass") != 1100
+        ):
+            errors.append("assembly behavior report is not 1100/1100")
 
     for row in samples:
         sample_id = row.get("sample_id", "<missing>")
@@ -85,6 +87,19 @@ def main() -> int:
         evaluation = row.get("evaluation", {})
         assembly = row.get("assembly", {})
         binary_data = row.get("binary", {})
+        if ghidra_view is not None:
+            pseudocode = (row.get("decompilation") or {}).get("ghidra") or {}
+            code = pseudocode.get("code", "")
+            if not code or sha256_text(code) != pseudocode.get("sha256"):
+                errors.append(f"{sample_id}: Ghidra pseudocode missing or hash mismatch")
+            if pseudocode.get("producer") != "ghidra" or not pseudocode.get("version"):
+                errors.append(f"{sample_id}: Ghidra producer/version metadata invalid")
+            if pseudocode.get("function_name") != row.get("function_name"):
+                errors.append(f"{sample_id}: Ghidra target function mismatch")
+            if pseudocode.get("input_kind") != "target-object":
+                errors.append(f"{sample_id}: Ghidra input kind is not target-object")
+            if not re.fullmatch(r"[0-9a-f]{64}", pseudocode.get("input_binary_sha256", "")):
+                errors.append(f"{sample_id}: Ghidra input object hash invalid")
         if not source.get("code") or sha256_text(source.get("code", "")) != source.get("code_sha256"):
             errors.append(f"{sample_id}: source code missing or hash mismatch")
         dependencies = evaluation.get("dependencies", "")
@@ -146,9 +161,10 @@ def main() -> int:
         if f"<{row.get('function_name')}>:" not in objdump:
             errors.append(f"{sample_id}: target symbol absent from disassembly")
         assembly_validation = row.get("assembly_validation", {})
-        result = assembly_results.get(sample_id)
-        if result is None or not result.get("behavioral_pass"):
-            errors.append(f"{sample_id}: missing passing result in assembly report")
+        if assembly_results is not None:
+            result = assembly_results.get(sample_id)
+            if result is None or not result.get("behavioral_pass"):
+                errors.append(f"{sample_id}: missing passing result in assembly report")
         if not (
             assembly_validation.get("assembled")
             and assembly_validation.get("linked")
@@ -196,6 +212,17 @@ def main() -> int:
         errors.append("instruction-only metadata relocation count mismatch")
     if instruction_view.get("internal_labels_generated") != label_total:
         errors.append("instruction-only metadata label count mismatch")
+    if ghidra_view is not None:
+        ghidra_count = sum(
+            bool(((row.get("decompilation") or {}).get("ghidra") or {}).get("code"))
+            for row in samples
+        )
+        if ghidra_view.get("samples_total") != len(samples):
+            errors.append("Ghidra metadata total sample count mismatch")
+        if ghidra_view.get("samples_available") != ghidra_count:
+            errors.append("Ghidra metadata available sample count mismatch")
+        if ghidra_count != len(samples) or ghidra_view.get("failures"):
+            errors.append("Ghidra pseudocode view is incomplete")
 
     validation = {
         "valid": not errors,
@@ -216,6 +243,10 @@ def main() -> int:
         ),
         "all_have_behavior_validated_assembly": sum(
             bool(row.get("assembly_validation", {}).get("behavioral_pass")) for row in samples
+        ),
+        "all_have_ghidra_pseudocode": sum(
+            bool(((row.get("decompilation") or {}).get("ghidra") or {}).get("code"))
+            for row in samples
         ),
         "errors": errors,
     }

@@ -13,6 +13,7 @@ pip install -e .
 - `objdump_instruction_view.py`：解析 objdump，生成带符号重定位的 Intel/AT&T 干净指令序列；
 - `rebuild_flat_assembly.py`：从每条记录的自包含源码重新编译对象文件并重建 GCC/Intel 汇编字段；
 - `add_att_instruction_view.py`：为已有 flat 数据集增加 `objdump_att_instruction_only`；
+- `add_ghidra_pseudocode.py`：从原始 ELF 生成固定 Ghidra 伪代码视图，支持并发、断点续跑和原子写入；
 - `validate_assembly_behavior.py`：重新汇编、链接 wrapper 并执行全部 I/O；
 - `validate_flat_dataset.py`：检查结构、哈希、报告、二进制和 1100 条完整性。
 

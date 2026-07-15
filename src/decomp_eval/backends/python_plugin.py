@@ -11,6 +11,7 @@ from ..util import load_object
 class PythonPluginBackend(BaseBackend):
     def __init__(self, config: dict[str, Any], **_: Any):
         self.backend_id = config["id"]
+        self.required_inputs = tuple(config.get("required_inputs", ("assembly",)))
         self.version = str(config.get("version", "unknown"))
         factory = load_object(config["plugin"])
         plugin_config = config.get("plugin_config", {})
@@ -20,7 +21,7 @@ class PythonPluginBackend(BaseBackend):
     def prepare(self, samples: list[CanonicalSample]) -> None:
         method = getattr(self.plugin, "prepare", None)
         if method:
-            method([sample.public_request() for sample in samples])
+            method([sample.public_request(self.required_inputs) for sample in samples])
 
     def decompile(self, request: DecompileRequest, artifact_dir: Path) -> DecompileResult:
         value = self.plugin.decompile(request, artifact_dir)

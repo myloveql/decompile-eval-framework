@@ -5,8 +5,8 @@ import re
 from pathlib import Path
 from typing import Any, Iterable
 
-from ..models import AssemblyInput, BinaryInput, CanonicalSample
-from ..util import resolve_path, sha256_json
+from ..models import AssemblyInput, BinaryInput, CanonicalSample, PseudocodeInput
+from ..util import resolve_path, sha256_json, sha256_text
 
 
 def sanitize_dependencies(deps: str, *, for_cpp_wrapper: bool) -> str:
@@ -36,6 +36,7 @@ class ExeBenchFlatAdapter:
         self.dataset_id = config.get("id", "exebench")
         self.split = config.get("split", "benchmark")
         self.assembly_view = config.get("assembly_view", "objdump_intel_instruction_only")
+        self.pseudocode_view = config.get("pseudocode_view")
         self.optimizations = set(config.get("optimizations", []))
         self.limit = config.get("limit")
         self.timeout = int(config.get("timeout", 30))
@@ -67,6 +68,22 @@ class ExeBenchFlatAdapter:
                     "architecture", assembly_record.get("architecture", "x86_64")
                 ),
             ) if binary_path else None
+            pseudocode = None
+            if self.pseudocode_view:
+                pseudocode_record = (row.get("decompilation") or {}).get(
+                    self.pseudocode_view
+                ) or {}
+                if isinstance(pseudocode_record, str):
+                    pseudocode_record = {"code": pseudocode_record}
+                pseudocode_text = pseudocode_record.get("code", "")
+                if pseudocode_text:
+                    pseudocode = PseudocodeInput(
+                        text=pseudocode_text,
+                        view=self.pseudocode_view,
+                        producer=pseudocode_record.get("producer", self.pseudocode_view),
+                        version=pseudocode_record.get("version"),
+                        sha256=pseudocode_record.get("sha256") or sha256_text(pseudocode_text),
+                    )
             yield CanonicalSample(
                 dataset_id=self.dataset_id,
                 split=self.split,
@@ -78,6 +95,7 @@ class ExeBenchFlatAdapter:
                 assembly=AssemblyInput(text=assembly, syntax=syntax, view=self.assembly_view),
                 content_hash=sha256_json(row),
                 binary=binary,
+                pseudocode=pseudocode,
                 metadata={
                     "source_type": row.get("source_type"),
                     "signature": row.get("source", {}).get("signature", []),

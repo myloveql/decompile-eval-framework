@@ -20,6 +20,15 @@ class BinaryInput:
     architecture: str | None = None
 
 
+@dataclass(frozen=True)
+class PseudocodeInput:
+    text: str
+    view: str
+    producer: str
+    version: str | None = None
+    sha256: str | None = None
+
+
 @dataclass
 class CanonicalSample:
     dataset_id: str
@@ -32,11 +41,14 @@ class CanonicalSample:
     assembly: AssemblyInput
     content_hash: str
     binary: BinaryInput | None = None
+    pseudocode: PseudocodeInput | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
     private_payload: dict[str, Any] = field(default_factory=dict, repr=False)
 
     def public_request(self, allowed_inputs: tuple[str, ...] | None = None) -> "DecompileRequest":
-        allowed = set(("assembly", "binary") if allowed_inputs is None else allowed_inputs)
+        allowed = set(
+            ("assembly", "binary", "pseudocode") if allowed_inputs is None else allowed_inputs
+        )
         return DecompileRequest(
             dataset_id=self.dataset_id,
             split=self.split,
@@ -49,6 +61,7 @@ class CanonicalSample:
                 text="", syntax=self.assembly.syntax, view=self.assembly.view
             ),
             binary=self.binary if "binary" in allowed else None,
+            pseudocode=self.pseudocode if "pseudocode" in allowed else None,
             metadata=self.metadata,
         )
 
@@ -65,6 +78,7 @@ class DecompileRequest:
     assembly: AssemblyInput
     metadata: dict[str, Any]
     binary: BinaryInput | None = None
+    pseudocode: PseudocodeInput | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

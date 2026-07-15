@@ -118,6 +118,8 @@ class EvaluationRunner:
             {
                 "sample_hash": sample.content_hash,
                 "assembly_view": sample.assembly.view,
+                "pseudocode_view": sample.pseudocode.view if sample.pseudocode else None,
+                "pseudocode_sha256": sample.pseudocode.sha256 if sample.pseudocode else None,
                 "backend": backend_cfg,
                 "backend_version": backend.version,
                 "backend_required_inputs": list(
@@ -139,7 +141,7 @@ class EvaluationRunner:
         return {
             "schema_version": 2,
             "created_at": datetime.now(timezone.utc).isoformat(),
-            "framework_version": "0.3.0",
+            "framework_version": "0.4.0",
             "config_hash": self.config["_config_hash"],
             "config": redact({key: value for key, value in self.config.items() if not key.startswith("_")}),
             "environment": {
@@ -271,6 +273,10 @@ class EvaluationRunner:
                 return "assembly_missing"
             if input_kind == "binary" and (sample.binary is None or not sample.binary.path):
                 return "binary_missing"
+            if input_kind == "pseudocode" and (
+                sample.pseudocode is None or not sample.pseudocode.text.strip()
+            ):
+                return "pseudocode_missing"
         return None
 
     def _result_cache_path(self, sample, backend_cfg: dict[str, Any]) -> Path:
@@ -280,6 +286,9 @@ class EvaluationRunner:
         artifact_dir.mkdir(parents=True, exist_ok=True)
         request = sample.public_request(getattr(backend, "required_inputs", ("assembly",)))
         (artifact_dir / "assembly.s").write_text(request.assembly.text, encoding="utf-8")
+        (artifact_dir / "pseudocode.c").write_text(
+            request.pseudocode.text if request.pseudocode else "", encoding="utf-8"
+        )
         _write_json(artifact_dir / "request.json", request.to_dict())
 
     def _evaluate_one(
@@ -351,6 +360,7 @@ class EvaluationRunner:
             "language": sample.language,
             "optimization": sample.optimization,
             "assembly_view": sample.assembly.view,
+            "pseudocode_view": sample.pseudocode.view if sample.pseudocode else None,
             "protocol_id": evidence.protocol_id,
             "protocol_version": evidence.protocol_version,
             "protocol_capabilities": list(evidence.capabilities),
@@ -379,7 +389,7 @@ class EvaluationRunner:
         cached_artifacts = self.cache_dir / "artifacts" / cache_key
         cached_artifacts.mkdir(parents=True, exist_ok=True)
         for name in (
-            "assembly.s", "request.json", "raw_output.txt", "candidate.c", "decompiler.log",
+            "assembly.s", "pseudocode.c", "request.json", "raw_output.txt", "candidate.c", "decompiler.log",
             "postprocess.json", "evaluation.json", "backend_output.c",
             "ghidra.stdout.log", "ghidra.stderr.log",
         ):

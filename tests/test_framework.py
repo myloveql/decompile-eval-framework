@@ -13,9 +13,12 @@ from decomp_eval.config import validate_config
 from decomp_eval.backends.command import CommandBackend
 from decomp_eval.backends.ghidra import GhidraHeadlessBackend
 from decomp_eval.backends.precomputed import PrecomputedBackend
+from decomp_eval.backends.pseudocode import DatasetPseudocodeBackend
 from decomp_eval.datasets.exebench import ExeBenchFlatAdapter
 from decomp_eval.datasets.decompile_eval import DecompileEvalAdapter
-from decomp_eval.models import AssemblyInput, BinaryInput, CanonicalSample, EvaluationEvidence
+from decomp_eval.models import (
+    AssemblyInput, BinaryInput, CanonicalSample, EvaluationEvidence, PseudocodeInput,
+)
 from decomp_eval.metrics import BehavioralPassMetric, RecompilableMetric
 from decomp_eval.plugins import plugin_inventory
 from decomp_eval.postprocess import process_code
@@ -107,17 +110,24 @@ class FrameworkTests(unittest.TestCase):
             "source_metadata": {"language": "c"}, "source": {"code": "int target(void){return 1;}", "signature": []},
             "assembly": {"objdump_att_instruction_only": "target:\n    mov $0x1, %eax\n    ret\n",
                          "objdump_att_instruction_only_syntax": "AT&T"},
+            "decompilation": {"ghidra": {
+                "code": "int target(void) { return 1; }", "producer": "ghidra",
+                "version": "11.0.3", "sha256": "pseudo-hash",
+            }},
             "evaluation": {},
         }
         with tempfile.TemporaryDirectory() as temp:
             dataset = Path(temp) / "exebench.json"
             dataset.write_text(json.dumps({"samples": [row]}), encoding="utf-8")
             adapter = ExeBenchFlatAdapter({
-                "id": "eb", "path": str(dataset), "assembly_view": "objdump_att_instruction_only"
+                "id": "eb", "path": str(dataset),
+                "assembly_view": "objdump_att_instruction_only", "pseudocode_view": "ghidra",
             }, base_dir=PROJECT)
             samples = list(adapter.iter_samples())
         self.assertEqual(len(samples), 1)
         self.assertEqual(samples[0].assembly.syntax, "AT&T")
+        self.assertEqual(samples[0].pseudocode.producer, "ghidra")
+        self.assertIn("return 1", samples[0].pseudocode.text)
         self.assertNotIn("row", samples[0].public_request().to_dict())
 
     def test_decompile_eval_normalization_and_github_exclusion(self):
@@ -125,15 +135,18 @@ class FrameworkTests(unittest.TestCase):
             "index": 1, "func_name": "target", "func_dep": "", "func": "int target(void){return 1;}",
             "test": "int main(void){return target()==1?0:1;}", "opt": "O2", "language": "c",
             "asm": "target:\n ret", "ida_asm": "", "ghidra_asm": "",
+            "ida_pseudo": "", "ghidra_pseudo": "int target(void){return 1;}",
         }
         fake = SimpleNamespace(load_from_disk=lambda path: [row])
         with patch.dict(sys.modules, {"datasets": fake}):
             adapter = DecompileEvalAdapter({
-                "id": "de", "path": ".", "splits": ["humaneval"], "assembly_view": "asm"
+                "id": "de", "path": ".", "splits": ["humaneval"],
+                "assembly_view": "asm", "pseudocode_view": "ghidra_pseudo",
             }, base_dir=PROJECT)
             sample = list(adapter.iter_samples())[0]
         self.assertEqual(sample.optimization, "O2")
         self.assertEqual(sample.assembly.syntax, "att")
+        self.assertEqual(sample.pseudocode.view, "ghidra_pseudo")
         with self.assertRaises(ValueError):
             DecompileEvalAdapter({"id": "de", "path": ".", "splits": ["github"]}, base_dir=PROJECT)
 
@@ -170,6 +183,19 @@ class FrameworkTests(unittest.TestCase):
             result = backend.decompile(self._sample().public_request(), root / "artifacts")
             self.assertTrue(result.success)
             self.assertIn("return 1", result.raw_output)
+
+    def test_dataset_pseudocode_backend(self):
+        sample = self._sample()
+        sample.pseudocode = PseudocodeInput(
+            "int target(void){return 1;}", "ghidra", "ghidra", "11.0.3", "hash"
+        )
+        backend = DatasetPseudocodeBackend({"id": "ghidra-fixed"})
+        request = sample.public_request(backend.required_inputs)
+        result = backend.decompile(request, Path("unused"))
+        self.assertTrue(result.success)
+        self.assertIn("return 1", result.code)
+        self.assertEqual(request.assembly.text, "")
+        self.assertIsNone(request.binary)
 
     def test_ghidra_backend_uses_binary_and_named_function(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -213,6 +239,17 @@ class FrameworkTests(unittest.TestCase):
         self.assertIsNone(EvaluationRunner._missing_backend_input(sample, binary_backend))
         self.assertEqual(sample.public_request(("binary",)).assembly.text, "")
         self.assertIsNone(sample.public_request(("assembly",)).binary)
+        self.assertEqual(
+            EvaluationRunner._missing_backend_input(
+                sample, SimpleNamespace(required_inputs=("pseudocode",))
+            ),
+            "pseudocode_missing",
+        )
+        sample.pseudocode = PseudocodeInput("code", "ghidra", "ghidra")
+        pseudocode_request = sample.public_request(("pseudocode",))
+        self.assertEqual(pseudocode_request.pseudocode.text, "code")
+        self.assertEqual(pseudocode_request.assembly.text, "")
+        self.assertIsNone(pseudocode_request.binary)
 
     def test_end_to_end_python_plugin_and_resume(self):
         with tempfile.TemporaryDirectory() as temp:

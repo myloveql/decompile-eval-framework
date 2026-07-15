@@ -40,6 +40,7 @@ class EvaluationProtocol(Protocol):
 class DecompilerBackend(Protocol):
     backend_id: str
     version: str
+    required_inputs: tuple[str, ...]
 
     def prepare(self, samples: list[CanonicalSample]) -> None: ...
 

@@ -5,6 +5,7 @@ import os
 import re
 import shutil
 import subprocess
+import tempfile
 import time
 from pathlib import Path
 from typing import Any
@@ -56,6 +57,9 @@ class GhidraHeadlessBackend(BaseBackend):
             raise FileNotFoundError(f"Ghidra analyzeHeadless not found: {self.analyze_headless}")
         if not self.script.is_file():
             raise FileNotFoundError(f"Ghidra post-script not found: {self.script}")
+        batch_script = self.script.parent / "DecompileBatch.java"
+        if not batch_script.is_file():
+            raise FileNotFoundError(f"Ghidra batch post-script not found: {batch_script}")
 
     @staticmethod
     def _sha256(path: Path) -> str:
@@ -134,6 +138,88 @@ class GhidraHeadlessBackend(BaseBackend):
             elapsed_seconds=time.perf_counter() - started,
             backend_version=self.version,
         )
+
+    def decompile_many(self, requests, artifact_dirs):
+        if len(requests) <= 1:
+            return super().decompile_many(requests, artifact_dirs)
+        started = time.perf_counter()
+        results: list[DecompileResult | None] = [None] * len(requests)
+        valid: list[tuple[int, DecompileRequest, Path, Path]] = []
+        for index, (request, artifact) in enumerate(zip(requests, artifact_dirs)):
+            artifact = ensure_artifact_dir(artifact).resolve()
+            if request.binary is None or not request.binary.path:
+                results[index] = self._failure("binary_missing", started)
+                continue
+            source = Path(request.binary.path)
+            if not source.is_file():
+                results[index] = self._failure("binary_not_found", started, str(source))
+                continue
+            if (
+                self.verify_binary_hash
+                and request.binary.sha256
+                and self._sha256(source).lower() != request.binary.sha256.lower()
+            ):
+                results[index] = self._failure("binary_hash_mismatch", started, str(source))
+                continue
+            shutil.copy2(source, artifact / ("input_binary" + source.suffix))
+            valid.append((index, request, artifact, source))
+        if not valid:
+            return [result for result in results if result is not None]
+
+        with tempfile.TemporaryDirectory(prefix="decomp_eval_ghidra_batch_") as temporary:
+            root = Path(temporary)
+            inputs = root / "inputs"
+            outputs = root / "outputs"
+            project = root / "project"
+            inputs.mkdir()
+            outputs.mkdir()
+            project.mkdir()
+            mapping_lines = []
+            for position, (_, request, _, source) in enumerate(valid):
+                key = f"sample_{position:06d}"
+                shutil.copy2(source, inputs / key)
+                mapping_lines.append(f"{key}\t{request.function_name}")
+            mapping = root / "functions.tsv"
+            mapping.write_text("\n".join(mapping_lines) + "\n", encoding="utf-8")
+            batch_script = self.script.parent / "DecompileBatch.java"
+            command = [
+                str(self.analyze_headless), str(project), "decompile_batch",
+                "-import", str(inputs), "-recursive",
+                "-analysisTimeoutPerFile", str(self.analysis_timeout),
+                "-scriptPath", str(self.script.parent),
+                "-postScript", batch_script.name, str(outputs), str(mapping),
+                str(self.analysis_timeout), "-deleteProject",
+            ]
+            if os.name == "nt" and self.analyze_headless.suffix.lower() in {".bat", ".cmd"}:
+                command = [os.environ.get("COMSPEC", "cmd.exe"), "/d", "/c", *command]
+            try:
+                completed = subprocess.run(
+                    command, cwd=root, capture_output=True, text=True, encoding="utf-8",
+                    errors="replace", timeout=max(self.timeout, self.timeout * len(valid)),
+                )
+            except subprocess.TimeoutExpired as error:
+                for index, _, _, _ in valid:
+                    results[index] = self._failure("decompile_timeout", started, str(error))
+                return [result for result in results if result is not None]
+            log = (completed.stdout + "\n" + completed.stderr)[-16000:]
+            for position, (index, _, artifact, _) in enumerate(valid):
+                (artifact / "ghidra.stdout.log").write_text(completed.stdout, encoding="utf-8")
+                (artifact / "ghidra.stderr.log").write_text(completed.stderr, encoding="utf-8")
+                generated = outputs / f"sample_{position:06d}.c"
+                if generated.is_file() and generated.read_text(
+                    encoding="utf-8", errors="replace"
+                ).strip():
+                    raw = generated.read_text(encoding="utf-8", errors="replace")
+                    shutil.copy2(generated, artifact / "backend_output.c")
+                    results[index] = DecompileResult(
+                        success=True, raw_output=raw, code=raw, log=log,
+                        elapsed_seconds=time.perf_counter() - started,
+                        backend_version=self.version,
+                    )
+                else:
+                    reason = "ghidra_headless_error" if completed.returncode else "decompile_output_missing"
+                    results[index] = self._failure(reason, started, log)
+        return [result for result in results if result is not None]
 
     def _failure(self, reason: str, started: float, log: str = "") -> DecompileResult:
         return DecompileResult(

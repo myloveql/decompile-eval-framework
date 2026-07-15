@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Iterable
 
-from ..models import AssemblyInput, CanonicalSample
-from ..util import resolve_path, sha256_json
+from ..models import AssemblyInput, CanonicalSample, PseudocodeInput
+from ..util import resolve_path, sha256_json, sha256_text
 
 
 class DecompileEvalAdapter:
@@ -21,6 +21,7 @@ class DecompileEvalAdapter:
         if unsupported:
             raise ValueError(f"Unsupported or intentionally excluded splits: {sorted(unsupported)}")
         self.assembly_view = config.get("assembly_view", "asm")
+        self.pseudocode_view = config.get("pseudocode_view")
         self.optimizations = set(config.get("optimizations", []))
         self.languages = set(config.get("languages", []))
         self.limit = config.get("limit")
@@ -47,6 +48,15 @@ class DecompileEvalAdapter:
                 if self.languages and language not in self.languages:
                     continue
                 assembly = row.get(self.assembly_view, "") or ""
+                pseudocode_text = (
+                    row.get(self.pseudocode_view, "") or "" if self.pseudocode_view else ""
+                )
+                pseudocode = PseudocodeInput(
+                    text=pseudocode_text,
+                    view=self.pseudocode_view,
+                    producer=self.pseudocode_view.removesuffix("_pseudo"),
+                    sha256=sha256_text(pseudocode_text),
+                ) if pseudocode_text else None
                 index = str(row.get("index", row_number))
                 yield CanonicalSample(
                     dataset_id=self.dataset_id,
@@ -58,9 +68,11 @@ class DecompileEvalAdapter:
                     optimization=opt,
                     assembly=AssemblyInput(text=assembly, syntax=self._syntax(), view=self.assembly_view),
                     content_hash=sha256_json(row),
+                    pseudocode=pseudocode,
                     metadata={
                         "index": row.get("index"),
                         "available_assembly_views": ["asm", "ida_asm", "ghidra_asm"],
+                        "available_pseudocode_views": ["ida_pseudo", "ghidra_pseudo"],
                         "assembly_available": bool(assembly.strip()),
                     },
                     private_payload={"row": dict(row)},
