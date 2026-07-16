@@ -17,7 +17,8 @@ from decomp_eval.backends.pseudocode import DatasetPseudocodeBackend
 from decomp_eval.datasets.exebench import ExeBenchFlatAdapter
 from decomp_eval.datasets.decompile_eval import DecompileEvalAdapter
 from decomp_eval.models import (
-    AssemblyInput, BinaryInput, CanonicalSample, EvaluationEvidence, PseudocodeInput,
+    AssemblyInput, BinaryInput, CandidateCompileContext, CanonicalSample,
+    EvaluationEvidence, PseudocodeInput,
 )
 from decomp_eval.metrics import BehavioralPassMetric, RecompilableMetric
 from decomp_eval.plugins import plugin_inventory
@@ -250,6 +251,20 @@ class FrameworkTests(unittest.TestCase):
         self.assertEqual(pseudocode_request.pseudocode.text, "code")
         self.assertEqual(pseudocode_request.assembly.text, "")
         self.assertIsNone(pseudocode_request.binary)
+
+    def test_compile_context_is_explicit_and_does_not_expose_private_payload(self):
+        sample = self._sample()
+        sample.compile_context = CandidateCompileContext(
+            language="c", compiler="gcc", flags=("-w",), prelude="typedef int public_t;"
+        )
+        sample.private_payload = {"reference_source": "SECRET_REFERENCE_ANSWER"}
+        backend = SimpleNamespace(required_inputs=("assembly", "compile_context"))
+        self.assertIsNone(EvaluationRunner._missing_backend_input(sample, backend))
+        request = sample.public_request(backend.required_inputs)
+        serialized = json.dumps(request.to_dict())
+        self.assertIn("typedef int public_t", serialized)
+        self.assertNotIn("SECRET_REFERENCE_ANSWER", serialized)
+        self.assertIsNone(sample.public_request(("assembly",)).compile_context)
 
     def test_end_to_end_python_plugin_and_resume(self):
         with tempfile.TemporaryDirectory() as temp:

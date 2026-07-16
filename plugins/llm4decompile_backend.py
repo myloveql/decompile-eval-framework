@@ -156,10 +156,23 @@ class LLM4DecompileBackend:
             )
 
     def build_prompt(self, request: DecompileRequest) -> str:
-        # 与 LLM4Decompile 训练数据中的提示形式保持一致。
+        # Keep the exact LLM4Decompile training prompt for both supported
+        # representations. required_inputs decides which public field survives.
+        assembly = request.assembly.text.strip()
+        pseudocode = (
+            request.pseudocode.text.strip()
+            if request.pseudocode is not None
+            else ""
+        )
+        if assembly:
+            model_input = assembly
+        elif pseudocode:
+            model_input = pseudocode
+        else:
+            raise ValueError("LLM4Decompile requires non-empty assembly or pseudocode input")
         return (
             "# This is the assembly code:\n"
-            f"{request.assembly.text.strip()}\n"
+            f"{model_input}\n"
             "# What is the source code?\n"
         )
 

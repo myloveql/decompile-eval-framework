@@ -3,7 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Iterable
 
-from ..models import AssemblyInput, CanonicalSample, PseudocodeInput
+from ..models import (
+    AssemblyInput,
+    CandidateCompileContext,
+    CanonicalSample,
+    PseudocodeInput,
+)
 from ..util import resolve_path, sha256_json, sha256_text
 
 
@@ -69,6 +74,21 @@ class DecompileEvalAdapter:
                     assembly=AssemblyInput(text=assembly, syntax=self._syntax(), view=self.assembly_view),
                     content_hash=sha256_json(row),
                     pseudocode=pseudocode,
+                    compile_context=CandidateCompileContext(
+                        language=language,
+                        compiler="g++" if language in {"cpp", "c++", "cxx"} else "gcc",
+                        flags=tuple(
+                            self.cpp_flags
+                            if language in {"cpp", "c++", "cxx"}
+                            else self.c_flags
+                        ),
+                        libraries=tuple(
+                            self.cpp_libraries
+                            if language in {"cpp", "c++", "cxx"}
+                            else self.c_libraries
+                        ),
+                        prelude=str(row.get("func_dep", "")),
+                    ),
                     metadata={
                         "index": row.get("index"),
                         "available_assembly_views": ["asm", "ida_asm", "ghidra_asm"],

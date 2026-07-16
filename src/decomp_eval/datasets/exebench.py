@@ -5,7 +5,13 @@ import re
 from pathlib import Path
 from typing import Any, Iterable
 
-from ..models import AssemblyInput, BinaryInput, CanonicalSample, PseudocodeInput
+from ..models import (
+    AssemblyInput,
+    BinaryInput,
+    CandidateCompileContext,
+    CanonicalSample,
+    PseudocodeInput,
+)
 from ..util import resolve_path, sha256_json, sha256_text
 
 
@@ -96,6 +102,16 @@ class ExeBenchFlatAdapter:
                 content_hash=sha256_json(row),
                 binary=binary,
                 pseudocode=pseudocode,
+                compile_context=CandidateCompileContext(
+                    language="c",
+                    compiler="gcc",
+                    flags=("-std=gnu11", "-fcommon", "-w"),
+                    libraries=("-lm",),
+                    prelude=sanitize_dependencies(
+                        (row.get("evaluation") or {}).get("dependencies", ""),
+                        for_cpp_wrapper=False,
+                    ),
+                ),
                 metadata={
                     "source_type": row.get("source_type"),
                     "signature": row.get("source", {}).get("signature", []),

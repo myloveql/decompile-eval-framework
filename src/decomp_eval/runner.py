@@ -293,6 +293,8 @@ class EvaluationRunner:
                 sample.pseudocode is None or not sample.pseudocode.text.strip()
             ):
                 return "pseudocode_missing"
+            if input_kind == "compile_context" and sample.compile_context is None:
+                return "compile_context_missing"
         return None
 
     def _result_cache_path(self, sample, backend_cfg: dict[str, Any]) -> Path:
@@ -413,6 +415,10 @@ class EvaluationRunner:
             "sk2_pseudocode_normalized.c", "sk2_struct_prompt.txt",
             "sk2_struct_output.c", "sk2_ident_prompt.txt", "sk2_ident_output.c",
             "sk2_final_output.c", "sk2_metadata.json",
+            "sccdec_first_messages.json", "sccdec_first_raw.txt",
+            "sccdec_first_candidate.c", "sccdec_self_context.s",
+            "sccdec_second_messages.json", "sccdec_second_raw.txt",
+            "sccdec_final_candidate.c", "sccdec_metadata.json",
         ):
             source = artifact_dir / name
             if source.exists():

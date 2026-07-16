@@ -1,5 +1,41 @@
 # LLM4Decompile vLLM 推理指南
 
+## 汇编与伪代码输入
+
+`LLM4DecompileBackend` 同时支持数据集中的汇编和伪代码。输入由顶层 `required_inputs` 明确选择，
+模型提示词在两种输入下保持完全相同：
+
+```text
+# This is the assembly code:
+{selected_input}
+# What is the source code?
+```
+
+汇编输入：
+
+```yaml
+required_inputs: [assembly]
+```
+
+伪代码输入还要求数据集选择具体视图：
+
+```yaml
+datasets:
+  - type: decompile_eval
+    pseudocode_view: ghidra_pseudo
+
+decompilers:
+  - plugin: plugins.llm4decompile_backend:LLM4DecompileBackend
+    required_inputs: [pseudocode]
+```
+
+ExeBench 的 Ghidra 视图名称为 `ghidra`；decompile-eval 通常使用 `ghidra_pseudo` 或
+`ida_pseudo`。如果同时配置 `[assembly, pseudocode]`，当前后端为保持历史行为优先使用汇编；
+需要纯伪代码实验时必须只写 `[pseudocode]`。
+
+可运行示例见 `configs/llm4decompile-pseudocode-smoke.yaml.example`。manifest 和逐样本结果会记录
+`backend_required_inputs`，因此汇编实验与伪代码实验不会混淆。
+
 `plugins/llm4decompile_backend.py` 同时支持 Transformers 与 vLLM。两种引擎使用完全相同的
 LLM4Decompile 提示词、`DecompileRequest` 输入边界、候选代码评估协议和报告格式，因此可以在
 不改变数据集及指标的情况下比较吞吐量和评估结果。

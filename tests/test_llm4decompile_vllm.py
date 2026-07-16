@@ -3,11 +3,12 @@ from __future__ import annotations
 import sys
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from decomp_eval.models import AssemblyInput, DecompileRequest
+from decomp_eval.models import AssemblyInput, DecompileRequest, PseudocodeInput
 from plugins.llm4decompile_backend import LLM4DecompileBackend
 
 
@@ -133,6 +134,43 @@ class LLM4DecompileVLLMTests(unittest.TestCase):
         self.assertFalse(result.success)
         self.assertEqual(result.reason, "empty_model_output")
         self.assertEqual(result.backend_version, "llm4decompile-1.3b-v1.6:vllm")
+
+    def test_pseudocode_uses_the_unchanged_llm4decompile_prompt(self):
+        request = replace(
+            self._request(0),
+            assembly=AssemblyInput(text="", syntax="AT&T", view="asm"),
+            pseudocode=PseudocodeInput(
+                text="int func0(void) { return 7; }",
+                view="ghidra_pseudo",
+                producer="ghidra",
+            ),
+        )
+        with tempfile.TemporaryDirectory() as temp:
+            backend = self._backend(Path(temp))
+            prompt = backend.build_prompt(request)
+            result = backend.decompile(request, Path(temp))
+        self.assertTrue(result.success)
+        self.assertEqual(
+            prompt,
+            "# This is the assembly code:\n"
+            "int func0(void) { return 7; }\n"
+            "# What is the source code?\n",
+        )
+        sent_prompt = _FakeLLM.instances[-1].calls[0][0][0]
+        self.assertEqual(sent_prompt, prompt)
+
+    def test_assembly_remains_preferred_when_both_views_are_available(self):
+        request = replace(
+            self._request(0),
+            pseudocode=PseudocodeInput(
+                text="int pseudo(void);", view="ghidra_pseudo", producer="ghidra"
+            ),
+        )
+        with tempfile.TemporaryDirectory() as temp:
+            backend = self._backend(Path(temp))
+            prompt = backend.build_prompt(request)
+        self.assertIn("mov $7, %eax", prompt)
+        self.assertNotIn("int pseudo", prompt)
 
     def test_vllm_rejects_impossible_token_budget(self):
         with tempfile.TemporaryDirectory() as temp:

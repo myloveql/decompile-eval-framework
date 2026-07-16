@@ -29,6 +29,17 @@ class PseudocodeInput:
     sha256: str | None = None
 
 
+@dataclass(frozen=True)
+class CandidateCompileContext:
+    """Public, test-free context for recompiling a generated candidate."""
+
+    language: str
+    compiler: str
+    flags: tuple[str, ...] = ()
+    libraries: tuple[str, ...] = ()
+    prelude: str = ""
+
+
 @dataclass
 class CanonicalSample:
     dataset_id: str
@@ -42,6 +53,7 @@ class CanonicalSample:
     content_hash: str
     binary: BinaryInput | None = None
     pseudocode: PseudocodeInput | None = None
+    compile_context: CandidateCompileContext | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
     private_payload: dict[str, Any] = field(default_factory=dict, repr=False)
 
@@ -62,6 +74,9 @@ class CanonicalSample:
             ),
             binary=self.binary if "binary" in allowed else None,
             pseudocode=self.pseudocode if "pseudocode" in allowed else None,
+            compile_context=(
+                self.compile_context if "compile_context" in allowed else None
+            ),
             metadata=self.metadata,
         )
 
@@ -79,6 +94,7 @@ class DecompileRequest:
     metadata: dict[str, Any]
     binary: BinaryInput | None = None
     pseudocode: PseudocodeInput | None = None
+    compile_context: CandidateCompileContext | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

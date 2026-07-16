@@ -1,0 +1,52 @@
+workspace_root: ../../..
+
+datasets:
+  - id: decompile-eval-humaneval
+    type: decompile_eval
+    path: data/decompile-eval
+    splits: [humaneval]
+    assembly_view: asm
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+    languages: [c]
+    optimizations: [O0, O1, O2, O3]
+    limit: 8
+    timeout: 30
+
+decompilers:
+  - id: sccdec
+    type: python
+    version: sccdec-openai-compatible-v1
+    plugin: plugins.sccdec_backend:SCCDecBackend
+    required_inputs: [assembly, compile_context]
+    batch_size: 4
+    plugin_config:
+      base_url: http://127.0.0.1:8000/v1
+      model: sccdec
+      api_key_env: SCCDEC_API_KEY
+      mode: scc
+      one_shot: false
+      recompile_optimization: same
+      max_tokens: 1024
+      temperature: 0
+      timeout: 300
+      compile_timeout: 30
+      max_retries: 3
+      retry_backoff: 1
+      max_concurrency: 4
+
+postprocessors: [markdown_fence]
+metrics: [recompilable, behavioral_pass]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval
