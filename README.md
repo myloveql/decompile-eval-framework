@@ -61,6 +61,12 @@ LLM4Decompile 用户安装额外依赖：
 pip install -e '.[llm4decompile,test]'
 ```
 
+SK²Decompile 两阶段后端：
+
+```bash
+pip install -e '.[sk2decompile,vllm,test]'
+```
+
 使用 vLLM 推理引擎：
 
 ```bash
@@ -300,6 +306,20 @@ docs/EXTENDING.md         详细扩展教程
 ## 安全说明
 
 候选 C/C++ 属于不可信代码。当前本地执行器提供超时和资源限制，但不是强隔离沙箱。不要在包含密钥或重要数据的宿主环境中运行不可信模型输出；高风险评估应使用一次性虚拟机或后续 Docker 执行器。
+
+## 接入 SK²Decompile
+
+`plugins/sk2decompile_backend.py` 实现伪代码规范化、struct→ident 两阶段推理、顺序模型
+驻留和目标函数名恢复。推荐使用 decompile-eval 的 `ida_pseudo` 与 C 语言记录。配置与产物说明见
+[SK²Decompile 后端使用指南](docs/SK2DECOMPILE.md)。
+
+可直接运行小规模示例：
+
+```bash
+python -m decomp_eval run \
+  --config configs/sk2decompile-decompile-eval-smoke.yaml \
+  --run-dir runs/sk2decompile-smoke
+```
 
 ## 闭源 LLM API
 

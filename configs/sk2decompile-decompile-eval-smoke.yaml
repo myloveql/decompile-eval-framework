@@ -1,0 +1,76 @@
+# SK2Decompile two-stage smoke test on C records with IDA pseudocode.
+workspace_root: ../../..
+
+datasets:
+  - id: decompile-eval-humaneval
+    type: decompile_eval
+    path: data/decompile-eval
+    splits: [humaneval]
+    assembly_view: asm
+    pseudocode_view: ida_pseudo
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+    languages: [c]
+    optimizations: [O0, O1, O2, O3]
+    limit: 5
+    timeout: 30
+
+  - id: decompile-eval-mbpp
+    type: decompile_eval
+    path: data/decompile-eval
+    splits: [mbpp]
+    assembly_view: asm
+    pseudocode_view: ida_pseudo
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+    languages: [c]
+    optimizations: [O0, O1, O2, O3]
+    limit: 5
+    timeout: 30
+
+decompilers:
+  - id: sk2decompile-ida
+    type: python
+    plugin: plugins.sk2decompile_backend:SK2DecompileBackend
+    version: sk2decompile-struct+ident-6.7b:vllm
+    required_inputs: [pseudocode]
+    batch_size: 8
+
+    plugin_config:
+      # 可以替换为已经下载好的 WSL 本地目录。
+      struct_model_path: LLM4Binary/sk2decompile-struct-6.7b
+      ident_model_path: LLM4Binary/sk2decompile-ident-6.7b
+      engine: vllm
+      tensor_parallel_size: 1
+      max_num_seqs: 8
+      stage_batch_size: 8
+      gpu_memory_utilization: 0.8
+      max_model_len: 32768
+      max_new_tokens: 4096
+      temperature: 0
+      seed: 0
+      use_tqdm: false
+      preprocess: true
+      clang_format: clang-format
+      preprocess_timeout: 2
+      # 固定评估分母；不要像官方数据准备脚本一样静默删除短/长函数。
+      enforce_official_filter: false
+      # 官方推理流程会把最终生成的函数名恢复为数据集目标函数名。
+      rename_target: true
+      allowed_languages: [c]
+
+postprocessors: [markdown_fence]
+metrics: [recompilable, behavioral_pass]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

@@ -189,11 +189,27 @@ class EvaluationRunner:
         }
         file_mode = "a" if self.resume else "w"
         result_count = len(existing)
-        all_samples = [sample for _, _, samples in self.load_samples() for sample in samples]
-
         with results_path.open(file_mode, encoding="utf-8") as output:
             for backend, backend_cfg in self.backends:
-                backend.prepare(all_samples)
+                prepare_samples = []
+                for adapter, _, samples in self.load_samples():
+                    descriptor = adapter.evaluation_protocol.descriptor
+                    for sample in samples:
+                        completed_key = (
+                            sample.dataset_id,
+                            backend.backend_id,
+                            sample.sample_id,
+                            descriptor.protocol_id,
+                            descriptor.version,
+                        )
+                        if completed_key in completed:
+                            continue
+                        if self._result_cache_path(sample, backend_cfg).exists():
+                            continue
+                        if self._missing_backend_input(sample, backend):
+                            continue
+                        prepare_samples.append(sample)
+                backend.prepare(prepare_samples)
                 try:
                     for adapter, _, samples in self.load_samples():
                         descriptor = adapter.evaluation_protocol.descriptor
@@ -394,6 +410,9 @@ class EvaluationRunner:
             "postprocess.json", "evaluation.json", "backend_output.c",
             "ghidra.stdout.log", "ghidra.stderr.log",
             "model_prompt.txt", "response_metadata.json",
+            "sk2_pseudocode_normalized.c", "sk2_struct_prompt.txt",
+            "sk2_struct_output.c", "sk2_ident_prompt.txt", "sk2_ident_output.c",
+            "sk2_final_output.c", "sk2_metadata.json",
         ):
             source = artifact_dir / name
             if source.exists():
