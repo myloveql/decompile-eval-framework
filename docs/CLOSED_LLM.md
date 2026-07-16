@@ -56,6 +56,9 @@ decompilers:
       max_output_tokens: 4096
       timeout: 120
       max_retries: 3
+      empty_output_retries: 2
+      empty_output_backoff_seconds: 1
+      empty_output_backoff_max_seconds: 8
       max_concurrency: 2
 ```
 
@@ -170,18 +173,22 @@ API 密钥不会写入这些文件。`manifest.json` 中名为 `api_key`、`toke
 ## 8. 并发、重试和成本控制
 
 `batch_size` 决定 Runner 一次交给后端多少个样本；`max_concurrency` 决定这一批中最多同时
-发出多少个 API 请求：
+发出多少个 API 请求。网络重试与空响应重试是两层独立机制：
 
 ```yaml
 batch_size: 8
 plugin_config:
   max_concurrency: 2
-  max_retries: 3
+  max_retries: 3                  # SDK：连接错误、429、部分 5xx
+  empty_output_retries: 2         # HTTP 成功但响应文本为空
+  empty_output_backoff_seconds: 1 # 指数退避：1、2、4……秒
+  empty_output_backoff_max_seconds: 8
 ```
 
 建议第一次使用 `limit: 1`、`batch_size: 1`、`max_concurrency: 1`。确认提示词、输入视图和
-候选代码正确后，再逐渐扩大。SDK 会负责配置范围内的瞬时错误重试；最终失败会记录为
-鉴权、限流、超时、API 或响应格式错误，而不会从评估分母中删除。
+候选代码正确后，再逐渐扩大。每次空响应尝试的请求 ID、状态、token 用量、结果和退避时间
+都会写入 `response_metadata.json`。重试预算耗尽后才记录 `closed_llm_empty_output`，且仍然
+进入评估分母。
 
 ## 9. 运行步骤
 

@@ -29,6 +29,9 @@ decompilers:
       max_output_tokens: 4096
       timeout: 120
       max_retries: 3
+      empty_output_retries: 2
+      empty_output_backoff_seconds: 1
+      empty_output_backoff_max_seconds: 8
       max_concurrency: 2
 
 postprocessors: [markdown_fence]

@@ -20,6 +20,7 @@ from decomp_eval.util import redact
 class _FakeOpenAI:
     instances = []
     response_text = ""
+    response_texts = []
 
     def __init__(self, **kwargs):
         self.options = kwargs
@@ -32,20 +33,22 @@ class _FakeOpenAI:
 
     def _responses_create(self, **kwargs):
         self.calls.append(("responses", kwargs))
+        text = self.response_texts.pop(0) if self.response_texts else self.response_text
         return SimpleNamespace(
             id="resp-test",
             status="completed",
-            output_text=self.response_text,
+            output_text=text,
             usage=SimpleNamespace(model_dump=lambda: {"input_tokens": 10, "output_tokens": 5}),
         )
 
     def _chat_create(self, **kwargs):
         self.calls.append(("chat_completions", kwargs))
+        text = self.response_texts.pop(0) if self.response_texts else self.response_text
         return SimpleNamespace(
             id="chat-test",
             choices=[SimpleNamespace(
                 finish_reason="stop",
-                message=SimpleNamespace(content=self.response_text),
+                message=SimpleNamespace(content=text),
             )],
             usage=SimpleNamespace(model_dump=lambda: {"prompt_tokens": 10, "completion_tokens": 5}),
         )
@@ -57,6 +60,8 @@ class _FakeOpenAI:
 class OpenAIBackendTests(unittest.TestCase):
     def setUp(self):
         _FakeOpenAI.instances.clear()
+        _FakeOpenAI.response_text = ""
+        _FakeOpenAI.response_texts = []
 
     @staticmethod
     def _sample() -> CanonicalSample:
@@ -128,6 +133,41 @@ class OpenAIBackendTests(unittest.TestCase):
         self.assertIn("Recover target", call["messages"][1]["content"])
         self.assertIn("mov eax, 7", call["messages"][1]["content"])
         self.assertEqual(call["max_tokens"], 4096)
+
+    def test_empty_output_is_retried_and_attempts_are_audited(self):
+        _FakeOpenAI.response_texts = ["", "   ", "```c\nint target(void) { return 7; }\n```"]
+        backend = self._prepared_backend(
+            api_mode="chat_completions",
+            empty_output_retries=2,
+            empty_output_backoff_seconds=0,
+        )
+        request = self._sample().public_request(("assembly",))
+        with tempfile.TemporaryDirectory() as temp:
+            artifact_dir = Path(temp)
+            result = backend.decompile(request, artifact_dir)
+            metadata = json.loads(
+                (artifact_dir / "response_metadata.json").read_text(encoding="utf-8")
+            )
+        self.assertTrue(result.success)
+        self.assertEqual(len(_FakeOpenAI.instances[-1].calls), 3)
+        self.assertEqual(metadata["attempt_count"], 3)
+        self.assertEqual(
+            [attempt["outcome"] for attempt in metadata["attempts"]],
+            ["empty_output", "empty_output", "success"],
+        )
+
+    def test_empty_output_failure_after_retry_budget_is_exhausted(self):
+        _FakeOpenAI.response_texts = ["", ""]
+        backend = self._prepared_backend(
+            empty_output_retries=1,
+            empty_output_backoff_seconds=0,
+        )
+        request = self._sample().public_request(("assembly",))
+        with tempfile.TemporaryDirectory() as temp:
+            result = backend.decompile(request, Path(temp))
+        self.assertFalse(result.success)
+        self.assertEqual(result.reason, "closed_llm_empty_output")
+        self.assertIn("after 2 attempts", result.log)
 
     def test_missing_key_is_clear_and_literal_key_is_redacted(self):
         backend = OpenAICompatibleBackend({

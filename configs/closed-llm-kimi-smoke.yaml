@@ -1,0 +1,79 @@
+# Kimi OpenAI-compatible API smoke test. Set KIMI_API_KEY before running.
+workspace_root: ../../..
+
+datasets:
+  - id: exebench-1100
+    type: exebench_flat
+    path: data/exebench/1641-Benchmark/exebench_1641_source_multiopt_1100.with-ghidra.dataset.json
+    include_path: third_party/exebench/exebench
+    assembly_view: objdump_att_instruction_only
+    pseudocode_view: ghidra
+    evaluation_protocol:
+      type: exebench_json_io
+    optimizations: [O0, O1, O2, O3]
+    limit: 10
+    timeout: 30
+
+  - id: decompile-eval-humaneval
+    type: decompile_eval
+    path: data/decompile-eval
+    splits: [humaneval]
+    assembly_view: asm
+    pseudocode_view: ghidra_pseudo
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+    languages: [c]
+    optimizations: [O0, O1, O2, O3]
+    limit: 10
+    timeout: 30
+
+  - id: decompile-eval-mbpp
+    type: decompile_eval
+    path: data/decompile-eval
+    splits: [mbpp]
+    assembly_view: asm
+    pseudocode_view: ghidra_pseudo
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+    languages: [c]
+    optimizations: [O0, O1, O2, O3]
+    limit: 10
+    timeout: 30
+
+decompilers:
+  - id: closed-llm-assembly
+    type: python
+    plugin: plugins.openai_compatible_backend:OpenAICompatibleBackend
+    version: kimi:kimi-k2.7-code
+    required_inputs: [assembly]
+    batch_size: 4
+    plugin_config:
+      provider: kimi
+      base_url: https://api.moonshot.cn/v1
+      model: kimi-k2.7-code
+      api_key_env: KIMI_API_KEY
+      api_mode: chat_completions
+      temperature: 1
+      max_output_tokens: 4096
+      timeout: 120
+      max_retries: 3
+      empty_output_retries: 2
+      empty_output_backoff_seconds: 1
+      empty_output_backoff_max_seconds: 8
+      max_concurrency: 2
+
+postprocessors: [markdown_fence]
+metrics: [recompilable, behavioral_pass]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

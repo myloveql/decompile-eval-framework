@@ -73,6 +73,14 @@ class OpenAICompatibleBackend(BaseBackend):
         self.max_concurrency = max(1, int(config.get("max_concurrency", 1)))
         self.timeout = float(config.get("timeout", 120))
         self.max_retries = max(0, int(config.get("max_retries", 3)))
+        self.empty_output_retries = max(0, int(config.get("empty_output_retries", 2)))
+        self.empty_output_backoff_seconds = max(
+            0.0, float(config.get("empty_output_backoff_seconds", 1.0))
+        )
+        self.empty_output_backoff_max_seconds = max(
+            self.empty_output_backoff_seconds,
+            float(config.get("empty_output_backoff_max_seconds", 8.0)),
+        )
         self.extra_body = dict(config.get("extra_body", {}))
         self.version = str(config.get("version", f"{self.provider}:{self.model}"))
         self._client: Any = None
@@ -250,29 +258,56 @@ class OpenAICompatibleBackend(BaseBackend):
             "provider": self.provider,
             "model": self.model,
             "api_mode": self.api_mode,
+            "sdk_max_retries": self.max_retries,
+            "empty_output_retries": self.empty_output_retries,
+            "attempts": [],
         }
         try:
-            raw_output, response_metadata = self._infer(prompt)
-            code, extraction = extract_candidate_code(raw_output)
-            metadata.update(response_metadata)
-            metadata["extraction"] = extraction
+            raw_output = ""
+            code = ""
+            extraction = "empty"
+            total_attempts = self.empty_output_retries + 1
+            for attempt in range(1, total_attempts + 1):
+                raw_output, response_metadata = self._infer(prompt)
+                code, extraction = extract_candidate_code(raw_output)
+                attempt_record = {
+                    "attempt": attempt,
+                    "outcome": "success" if code else "empty_output",
+                    "extraction": extraction,
+                    **response_metadata,
+                }
+                metadata["attempts"].append(attempt_record)
+                metadata.update(response_metadata)
+                metadata["extraction"] = extraction
+                metadata["attempt_count"] = attempt
+                if code:
+                    break
+                if attempt < total_attempts:
+                    delay = min(
+                        self.empty_output_backoff_seconds * (2 ** (attempt - 1)),
+                        self.empty_output_backoff_max_seconds,
+                    )
+                    attempt_record["retry_delay_seconds"] = delay
+                    if delay:
+                        time.sleep(delay)
             (artifact_dir / "response_metadata.json").write_text(
                 json.dumps(metadata, ensure_ascii=False, indent=2, default=str) + "\n",
                 encoding="utf-8",
             )
-            if not raw_output.strip():
+            if not code:
                 return DecompileResult(
                     success=False,
                     raw_output=raw_output,
                     reason="closed_llm_empty_output",
+                    log=f"Empty model output after {metadata['attempt_count']} attempts",
                     elapsed_seconds=time.perf_counter() - started,
                     backend_version=self.version,
                 )
             return DecompileResult(
-                success=bool(code),
+                success=True,
                 raw_output=raw_output,
                 code=code,
-                reason=None if code else "closed_llm_empty_output",
+                reason=None,
                 elapsed_seconds=time.perf_counter() - started,
                 backend_version=self.version,
             )
