@@ -277,6 +277,27 @@ class OpenAIBackendTests(unittest.TestCase):
             {"top_k": 10, "enable_thinking": False},
         )
 
+    def test_siliconflow_automatically_uses_boolean_thinking_switch(self):
+        disabled = OpenAICompatibleBackend({
+            "provider": "siliconflow",
+            "base_url": "https://api.siliconflow.cn/v1",
+            "model": "Pro/zai-org/GLM-4.7",
+            "thinking_mode": "disabled",
+            "extra_body": {"thinking_budget": 1024},
+        })
+        enabled = OpenAICompatibleBackend({
+            "provider": "siliconcloud",
+            "base_url": "https://api.siliconflow.cn/v1",
+            "model": "Qwen/Qwen3-8B",
+            "thinking_mode": "enabled",
+        })
+        self.assertEqual(disabled.thinking_protocol, "enable_thinking")
+        self.assertEqual(
+            disabled.extra_body,
+            {"thinking_budget": 1024, "enable_thinking": False},
+        )
+        self.assertEqual(enabled.extra_body, {"enable_thinking": True})
+
 
 if __name__ == "__main__":
     unittest.main()

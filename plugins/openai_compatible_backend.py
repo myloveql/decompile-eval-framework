@@ -94,8 +94,10 @@ class OpenAICompatibleBackend(BaseBackend):
         self._client: Any = None
 
     def _resolve_thinking_protocol(self, configured: str) -> str:
-        if configured not in {"auto", "thinking_type", "custom"}:
-            raise ValueError("thinking_protocol must be auto, thinking_type, or custom")
+        if configured not in {"auto", "thinking_type", "enable_thinking", "custom"}:
+            raise ValueError(
+                "thinking_protocol must be auto, thinking_type, enable_thinking, or custom"
+            )
         if configured != "auto":
             return configured
         provider = self.provider.strip().lower()
@@ -103,6 +105,8 @@ class OpenAICompatibleBackend(BaseBackend):
             return "thinking_type"
         if provider in {"zhipu", "zhipuai", "bigmodel"}:
             return "thinking_type"
+        if provider in {"siliconflow", "siliconcloud"}:
+            return "enable_thinking"
         return "none"
 
     @classmethod
@@ -124,6 +128,8 @@ class OpenAICompatibleBackend(BaseBackend):
             return extra_body
         if self.thinking_protocol == "thinking_type":
             payload = {"thinking": {"type": self.thinking_mode}}
+        elif self.thinking_protocol == "enable_thinking":
+            payload = {"enable_thinking": self.thinking_mode == "enabled"}
         elif self.thinking_protocol == "custom":
             payload = copy.deepcopy(self.config.get("thinking_payload"))
             if not isinstance(payload, dict) or not payload:

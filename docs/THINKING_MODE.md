@@ -14,7 +14,12 @@ plugin_config:
 - `enabled`：请求开启思考，由供应商协议转换为实际字段。
 - `disabled`：请求关闭思考，由供应商协议转换为实际字段。
 
-Kimi 和智谱 BigModel 内置了 `thinking_type` 协议。对其他供应商，框架不会猜测其参数格式。
+框架目前内置以下厂商协议：
+
+- Kimi/Moonshot 和智谱 BigModel：`thinking: {type: enabled|disabled}`。
+- SiliconFlow/SiliconCloud：`enable_thinking: true|false`。
+
+对其他供应商，框架不会猜测其参数格式。
 
 ## Kimi
 
@@ -54,6 +59,38 @@ plugin_config:
 ```
 
 不同 GLM 型号对思考模式的支持能力可能不同，运行前应确认所选模型的官方说明。
+
+## SiliconFlow
+
+SiliconFlow 使用顶层布尔字段 `enable_thinking`。设置 provider 后会自动选择正确协议：
+
+```yaml
+plugin_config:
+  provider: siliconflow
+  base_url: https://api.siliconflow.cn/v1
+  model: Pro/zai-org/GLM-4.7
+  api_key_env: SILICONFLOW_API_KEY
+  api_mode: chat_completions
+  thinking_mode: disabled
+```
+
+等价的实际额外请求字段是：
+
+```json
+{"enable_thinking": false}
+```
+
+如果所选模型支持思考预算，可以通过 `extra_body` 一并配置：
+
+```yaml
+plugin_config:
+  thinking_mode: enabled
+  extra_body:
+    thinking_budget: 4096
+```
+
+并非 SiliconFlow 上的所有模型都支持动态思考开关。应以其 Chat Completions 文档中的
+`enable_thinking` 支持模型列表为准。
 
 ## 与 `extra_body` 一起使用
 
@@ -120,3 +157,4 @@ plugin_config:
 
 - [Kimi K2 思考模型使用指南](https://platform.kimi.com/docs/guide/use-kimi-k2-thinking-model)
 - [智谱 BigModel 深度思考](https://docs.bigmodel.cn/cn/guide/capabilities/thinking)
+- [SiliconFlow Chat Completions API](https://api-docs.siliconflow.cn/docs/api/chat-completions-post)
