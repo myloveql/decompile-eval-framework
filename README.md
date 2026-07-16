@@ -61,6 +61,12 @@ LLM4Decompile 用户安装额外依赖：
 pip install -e '.[llm4decompile,test]'
 ```
 
+使用 vLLM 推理引擎：
+
+```bash
+pip install -e '.[vllm,test]'
+```
+
 检查安装：
 
 ```bash
@@ -251,6 +257,8 @@ decompilers:
 ```
 
 ExeBench 建议使用 `objdump_att_instruction_only`，因为它更接近 LLM4Decompile 的训练和官方评估输入分布。
+插件支持 `engine: transformers` 和 `engine: vllm` 两种推理路径；vLLM 的批处理、张量并行、
+显存与 token 配置见 [LLM4Decompile vLLM 指南](docs/LLM4DECOMPILE_VLLM.md)。
 
 也可以独立测试一个请求：
 

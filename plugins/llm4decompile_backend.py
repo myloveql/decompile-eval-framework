@@ -1,14 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-@Time ： 2026/7/15 09:39
-@Auth ： fcq
-@File ：llm4decompile_backend.py
-@IDE ：PyCharm
-@Motto：ABC(Always Be Coding)
-"""
+"""LLM4Decompile backend with Transformers and vLLM inference engines."""
+
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import time
 from dataclasses import asdict
@@ -19,11 +14,21 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from decomp_eval.models import AssemblyInput, DecompileRequest, DecompileResult
 
+
 class LLM4DecompileBackend:
     version = "llm4decompile-1.3b-v1.6"
 
     def __init__(self, config):
-        self.model_path = Path(config['model_path']).expanduser().resolve()
+        self.config = dict(config)
+        self.model_path = Path(config["model_path"]).expanduser().resolve()
+        self.engine = str(config.get("engine", "transformers")).lower()
+        if self.engine not in {"transformers", "vllm"}:
+            raise ValueError("engine must be transformers or vllm")
+        self.version = (
+            f"{type(self).version}:vllm" if self.engine == "vllm" else type(self).version
+        )
+        if not self.model_path.is_dir():
+            raise ValueError(f"model_path is not a directory: {self.model_path}")
         self.device = config.get(
             "device", "cuda" if torch.cuda.is_available() else "cpu"
         )
@@ -32,29 +37,91 @@ class LLM4DecompileBackend:
         self.do_sample = bool(config.get("do_sample", False))
         self.temperature = float(config.get("temperature", 0.0))
         self.top_p = float(config.get("top_p", 1.0))
+        self.top_k = int(config.get("top_k", -1))
+        self.repetition_penalty = float(config.get("repetition_penalty", 1.0))
+        self.seed = int(config.get("seed", 0))
+        self.use_tqdm = bool(config.get("use_tqdm", False))
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_path,
-            trust_remote_code=False
+            trust_remote_code=False,
         )
         self.tokenizer.padding_side = "left"
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
 
+        if self.engine == "vllm":
+            self._init_vllm(config)
+        else:
+            self._init_transformers()
+
+    def _init_transformers(self) -> None:
         dtype = self._choose_dtype()
-
-        print(
-            f"Loading {self.model_path} "
-            f"on {self.device} with {dtype}"
-        )
-
+        print(f"Loading {self.model_path} with Transformers on {self.device} using {dtype}")
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_path,
             torch_dtype=dtype,
-            trust_remote_code=False).to(self.device)
-
+            trust_remote_code=False,
+        ).to(self.device)
         self.model.eval()
         self.model.config.use_cache = True
+
+    def _init_vllm(self, config) -> None:
+        try:
+            from vllm import LLM, SamplingParams
+        except ImportError as error:
+            raise RuntimeError(
+                "vLLM is required for engine=vllm; install with: pip install -e '.[vllm]'"
+            ) from error
+
+        self.tensor_parallel_size = max(
+            1, int(config.get("tensor_parallel_size", config.get("gpus", 1)))
+        )
+        self.gpu_memory_utilization = float(config.get("gpu_memory_utilization", 0.82))
+        self.max_model_len = int(
+            config.get(
+                "max_model_len",
+                config.get("max_total_tokens", self.max_input_tokens + self.max_new_tokens),
+            )
+        )
+        if self.max_model_len <= self.max_new_tokens:
+            raise ValueError("max_model_len must be greater than max_new_tokens")
+        self.max_num_seqs = max(1, int(config.get("max_num_seqs", 8)))
+        max_prompt_tokens = min(
+            self.max_input_tokens,
+            self.max_model_len - self.max_new_tokens,
+        )
+        llm_options = {
+            "model": str(self.model_path),
+            "tensor_parallel_size": self.tensor_parallel_size,
+            "max_model_len": self.max_model_len,
+            "max_num_seqs": self.max_num_seqs,
+            "gpu_memory_utilization": self.gpu_memory_utilization,
+            "dtype": config.get("dtype", "auto"),
+            "seed": self.seed,
+            "trust_remote_code": False,
+            **dict(config.get("vllm_kwargs", {})),
+        }
+        print(
+            f"Loading {self.model_path} with vLLM using "
+            f"tensor_parallel_size={self.tensor_parallel_size}, "
+            f"max_model_len={self.max_model_len}"
+        )
+        self.model = LLM(**llm_options)
+        stop = config.get("stop")
+        if stop is None and self.tokenizer.eos_token:
+            stop = [self.tokenizer.eos_token]
+        sampling_temperature = self.temperature if self.do_sample else 0.0
+        self.sampling_params = SamplingParams(
+            temperature=sampling_temperature,
+            top_p=self.top_p if self.do_sample else 1.0,
+            top_k=self.top_k if self.do_sample else -1,
+            repetition_penalty=self.repetition_penalty,
+            max_tokens=self.max_new_tokens,
+            stop=stop,
+            seed=self.seed,
+            truncate_prompt_tokens=max_prompt_tokens,
+        )
 
     def _choose_dtype(self):
         if self.device == "cpu":
@@ -65,7 +132,7 @@ class LLM4DecompileBackend:
 
     def prepare(self, requests):
         """可选的模型预热。"""
-        if not requests:
+        if not requests or self.engine == "vllm":
             return
 
         warmup_prompt = (
@@ -119,6 +186,9 @@ class LLM4DecompileBackend:
         request: DecompileRequest,
         artifact_dir: Path,
     ) -> DecompileResult:
+        if self.engine == "vllm":
+            return self._decompile_many_vllm([request])[0]
+
         started = time.perf_counter()
 
         try:
@@ -176,6 +246,8 @@ class LLM4DecompileBackend:
         """批量推理；返回结果数量必须与请求数量完全一致。"""
         if not requests:
             return []
+        if self.engine == "vllm":
+            return self._decompile_many_vllm(requests)
 
         started = time.perf_counter()
         prompts = [self.build_prompt(request) for request in requests]
@@ -244,9 +316,75 @@ class LLM4DecompileBackend:
                 for _ in requests
             ]
 
-    def close(self):
-        del self.model
+    def _decompile_many_vllm(self, requests):
+        started = time.perf_counter()
+        prompts = [self.build_prompt(request) for request in requests]
+        try:
+            outputs = self.model.generate(
+                prompts,
+                self.sampling_params,
+                use_tqdm=self.use_tqdm,
+            )
+            if len(outputs) != len(requests):
+                raise ValueError(
+                    f"vLLM returned {len(outputs)} outputs for {len(requests)} prompts"
+                )
+            elapsed = time.perf_counter() - started
+            per_sample_elapsed = elapsed / len(requests)
+            results = []
+            for output in outputs:
+                candidates = getattr(output, "outputs", None) or []
+                code = str(getattr(candidates[0], "text", "") if candidates else "").strip()
+                results.append(
+                    DecompileResult(
+                        success=bool(code),
+                        raw_output=code,
+                        code=code,
+                        reason=None if code else "empty_model_output",
+                        elapsed_seconds=per_sample_elapsed,
+                        backend_version=self.version,
+                    )
+                )
+            return results
+        except torch.cuda.OutOfMemoryError as error:
+            torch.cuda.empty_cache()
+            return [
+                DecompileResult(
+                    success=False,
+                    reason="cuda_out_of_memory",
+                    log=repr(error),
+                    elapsed_seconds=time.perf_counter() - started,
+                    backend_version=self.version,
+                )
+                for _ in requests
+            ]
+        except Exception as error:
+            return [
+                DecompileResult(
+                    success=False,
+                    reason="vllm_inference_error",
+                    log=repr(error),
+                    elapsed_seconds=time.perf_counter() - started,
+                    backend_version=self.version,
+                )
+                for _ in requests
+            ]
 
+    def close(self):
+        if hasattr(self, "model"):
+            del self.model
+        if self.engine == "vllm":
+            try:
+                from vllm.distributed.parallel_state import (
+                    destroy_distributed_environment,
+                    destroy_model_parallel,
+                )
+
+                destroy_model_parallel()
+                destroy_distributed_environment()
+            except (ImportError, RuntimeError):
+                pass
+        gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
@@ -352,8 +490,13 @@ def parse_args() -> argparse.Namespace:
         "--device",
         default="cuda" if torch.cuda.is_available() else "cpu",
     )
+    parser.add_argument("--engine", choices=("transformers", "vllm"), default="transformers")
     parser.add_argument("--max-input-tokens", type=int, default=14000)
     parser.add_argument("--max-new-tokens", type=int, default=2048)
+    parser.add_argument("--max-model-len", type=int, default=16384)
+    parser.add_argument("--tensor-parallel-size", type=int, default=1)
+    parser.add_argument("--max-num-seqs", type=int, default=8)
+    parser.add_argument("--gpu-memory-utilization", type=float, default=0.82)
     parser.add_argument(
         "--artifact-dir",
         type=Path,
@@ -395,9 +538,14 @@ def main() -> int:
     backend = LLM4DecompileBackend(
         {
             "model_path": str(args.model_path.resolve()),
+            "engine": args.engine,
             "device": args.device,
             "max_input_tokens": args.max_input_tokens,
             "max_new_tokens": args.max_new_tokens,
+            "max_model_len": args.max_model_len,
+            "tensor_parallel_size": args.tensor_parallel_size,
+            "max_num_seqs": args.max_num_seqs,
+            "gpu_memory_utilization": args.gpu_memory_utilization,
             "do_sample": False,
         }
     )
