@@ -216,6 +216,8 @@ tempCodeRunnerFile.py
 /precomputed/
 /artifacts/
 .cache/decomp-eval/
+# Local runnable configurations may contain paths, model settings, or API keys.
+/configs/*.yaml
 *.dataset.json
 *.arrow
 *.safetensors

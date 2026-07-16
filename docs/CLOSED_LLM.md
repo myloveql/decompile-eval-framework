@@ -195,7 +195,7 @@ plugin_config:
 复制示例并修改模型名：
 
 ```bash
-cp configs/closed-llm-pseudocode-example.yaml configs/my-closed-llm.yaml
+cp configs/closed-llm-pseudocode-example.yaml.example configs/my-closed-llm.yaml
 ```
 
 然后执行：

@@ -23,7 +23,7 @@ nvidia-smi
 
 ## 2. 最小配置
 
-复制 `configs/llm4decompile-vllm-smoke.yaml`，至少确认模型路径和 GPU 数量：
+复制 `configs/llm4decompile-vllm-smoke.yaml.example` 为本地 `.yaml` 配置，至少确认模型路径和 GPU 数量：
 
 ```yaml
 decompilers:
@@ -147,14 +147,14 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3
 
 ```bash
 python -m decomp_eval validate-config \
-  --config configs/llm4decompile-vllm-smoke.yaml
+  --config configs/llm4decompile-vllm-smoke.yaml.example
 ```
 
 运行 10 条 O0 smoke test：
 
 ```bash
 python -m decomp_eval run \
-  --config configs/llm4decompile-vllm-smoke.yaml \
+  --config configs/llm4decompile-vllm-smoke.yaml.example \
   --run-dir runs/llm4decompile-vllm-smoke
 ```
 

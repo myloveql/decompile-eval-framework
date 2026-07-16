@@ -26,7 +26,7 @@ LLM4Decompile 推荐使用 AT&T 视图。两者都来自真实对象文件的 ob
 - `src/decomp_eval/interfaces.py`
 - `src/decomp_eval/models.py`
 - `src/decomp_eval/protocols/`
-- `configs/example.yaml`
+- `configs/example.yaml.example`
 
 ## 1. 准备运行环境
 
@@ -44,7 +44,7 @@ pip install -e '.[test]'
 
 ```bash
 python -m decomp_eval list-plugins
-python -m decomp_eval validate-config --config configs/example.yaml
+python -m decomp_eval validate-config --config configs/example.yaml.example
 ```
 
 内置插件包括：

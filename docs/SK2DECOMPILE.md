@@ -34,15 +34,15 @@ sudo apt-get install clang-format
 
 ## 快速运行
 
-示例 `configs/sk2decompile-decompile-eval-smoke.yaml` 分别选择 HumanEval、MBPP 中的 C 语言、
+示例 `configs/sk2decompile-decompile-eval-smoke.yaml.example` 分别选择 HumanEval、MBPP 中的 C 语言、
 IDA 伪代码和前 5 个样本：
 
 ```bash
 python -m decomp_eval validate-config \
-  --config configs/sk2decompile-decompile-eval-smoke.yaml
+  --config configs/sk2decompile-decompile-eval-smoke.yaml.example
 
 python -m decomp_eval run \
-  --config configs/sk2decompile-decompile-eval-smoke.yaml \
+  --config configs/sk2decompile-decompile-eval-smoke.yaml.example \
   --run-dir runs/sk2decompile-smoke
 ```
 

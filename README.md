@@ -77,7 +77,7 @@ pip install -e '.[vllm,test]'
 
 ```bash
 decomp-eval list-plugins
-decomp-eval validate-config --config configs/example.yaml
+decomp-eval validate-config --config configs/example.yaml.example
 pytest -q
 ```
 
@@ -123,7 +123,10 @@ ExeBench 的 wrapper 还需要其 C++ 头文件。通过数据集配置的 `incl
 
 ## 最小配置
 
-复制 `configs/example.yaml`，只启用你实际拥有的数据集和后端：
+复制 `configs/example.yaml.example` 为本地 `configs/my-eval.yaml`，只启用你实际拥有的数据集和后端：
+
+仓库只跟踪 `*.yaml.example` 示例；`configs/*.yaml` 被 `.gitignore` 忽略，专门用于本地模型路径、
+API Key 和实际运行参数。不要直接在 `.yaml.example` 中填写密钥。
 
 ```yaml
 workspace_root: ..
@@ -317,7 +320,7 @@ docs/EXTENDING.md         详细扩展教程
 
 ```bash
 python -m decomp_eval run \
-  --config configs/sk2decompile-decompile-eval-smoke.yaml \
+  --config configs/sk2decompile-decompile-eval-smoke.yaml.example \
   --run-dir runs/sk2decompile-smoke
 ```
 
