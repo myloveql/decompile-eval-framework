@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import os
 import re
@@ -81,9 +82,71 @@ class OpenAICompatibleBackend(BaseBackend):
             self.empty_output_backoff_seconds,
             float(config.get("empty_output_backoff_max_seconds", 8.0)),
         )
-        self.extra_body = dict(config.get("extra_body", {}))
+        self.thinking_mode = str(config.get("thinking_mode", "auto")).strip().lower()
+        if self.thinking_mode not in {"auto", "enabled", "disabled"}:
+            raise ValueError("thinking_mode must be auto, enabled, or disabled")
+        self.thinking_protocol = self._resolve_thinking_protocol(
+            str(config.get("thinking_protocol", "auto")).strip().lower()
+        )
+        self.extra_body = self._build_extra_body(config.get("extra_body", {}))
+        self._validate_thinking_mode()
         self.version = str(config.get("version", f"{self.provider}:{self.model}"))
         self._client: Any = None
+
+    def _resolve_thinking_protocol(self, configured: str) -> str:
+        if configured not in {"auto", "thinking_type", "custom"}:
+            raise ValueError("thinking_protocol must be auto, thinking_type, or custom")
+        if configured != "auto":
+            return configured
+        provider = self.provider.strip().lower()
+        if provider in {"kimi", "moonshot", "moonshotai"}:
+            return "thinking_type"
+        if provider in {"zhipu", "zhipuai", "bigmodel"}:
+            return "thinking_type"
+        return "none"
+
+    @classmethod
+    def _merge_payload(
+        cls, target: dict[str, Any], payload: dict[str, Any], path: str = ""
+    ) -> None:
+        for key, value in payload.items():
+            field = f"{path}.{key}" if path else key
+            if key not in target:
+                target[key] = value
+            elif isinstance(target[key], dict) and isinstance(value, dict):
+                cls._merge_payload(target[key], value, field)
+            elif target[key] != value:
+                raise ValueError(f"thinking payload conflicts with extra_body.{field}")
+
+    def _build_extra_body(self, configured: Any) -> dict[str, Any]:
+        extra_body = copy.deepcopy(dict(configured or {}))
+        if self.thinking_mode == "auto":
+            return extra_body
+        if self.thinking_protocol == "thinking_type":
+            payload = {"thinking": {"type": self.thinking_mode}}
+        elif self.thinking_protocol == "custom":
+            payload = copy.deepcopy(self.config.get("thinking_payload"))
+            if not isinstance(payload, dict) or not payload:
+                raise ValueError(
+                    "thinking_protocol: custom requires a non-empty thinking_payload object"
+                )
+        else:
+            raise ValueError(
+                f"Provider {self.provider!r} has no built-in thinking protocol; set "
+                "thinking_protocol and, when custom, thinking_payload explicitly"
+            )
+        self._merge_payload(extra_body, payload)
+        return extra_body
+
+    def _validate_thinking_mode(self) -> None:
+        provider = self.provider.strip().lower()
+        model = self.model.lower()
+        is_kimi = provider in {"kimi", "moonshot", "moonshotai"}
+        if is_kimi and model.startswith("kimi-k2.7-code") and self.thinking_mode != "auto":
+            raise ValueError(
+                f"Model {self.model!r} is always-thinking and must use thinking_mode: auto; "
+                "Kimi rejects disabled and recommends omitting the thinking parameter for this model"
+            )
 
     def _resolve_api_key(self) -> str:
         configured = self.config.get("api_key")
@@ -215,7 +278,8 @@ class OpenAICompatibleBackend(BaseBackend):
                 "usage": self._serializable(getattr(response, "usage", None)),
             }
         choice = choices[0]
-        content = getattr(getattr(choice, "message", None), "content", "") or ""
+        message = getattr(choice, "message", None)
+        content = getattr(message, "content", "") or ""
         if isinstance(content, list):
             content = "".join(
                 str(getattr(part, "text", "") or (part.get("text", "") if isinstance(part, dict) else ""))
@@ -226,6 +290,9 @@ class OpenAICompatibleBackend(BaseBackend):
             "finish_reason": getattr(choice, "finish_reason", None),
             "usage": self._serializable(getattr(response, "usage", None)),
         }
+        reasoning_content = getattr(message, "reasoning_content", None)
+        metadata["reasoning_content_present"] = bool(reasoning_content)
+        metadata["reasoning_content_chars"] = len(str(reasoning_content or ""))
         return str(content), metadata
 
     @staticmethod
@@ -258,6 +325,8 @@ class OpenAICompatibleBackend(BaseBackend):
             "provider": self.provider,
             "model": self.model,
             "api_mode": self.api_mode,
+            "thinking_mode": self.thinking_mode,
+            "thinking_protocol": self.thinking_protocol,
             "sdk_max_retries": self.max_retries,
             "empty_output_retries": self.empty_output_retries,
             "attempts": [],

@@ -53,7 +53,8 @@ decompilers:
       model: kimi-k2.7-code
       api_key_env: KIMI_API_KEY
       api_mode: chat_completions
-      temperature: 1
+      # K2.7 Code 始终启用思考，官方要求不传 thinking 参数。
+      thinking_mode: auto
       max_output_tokens: 4096
       timeout: 120
       max_retries: 3

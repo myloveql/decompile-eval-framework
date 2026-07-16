@@ -306,6 +306,8 @@ docs/EXTENDING.md         详细扩展教程
 `plugins/openai_compatible_backend.py` 可通过 OpenAI Python SDK 调用 OpenAI 或任意
 OpenAI-compatible 模型服务，并分别保存模型原始响应与提取后的候选 C/C++。
 配置、安全、提示词、伪代码优化和运行方法见 [闭源 LLM 后端接入指南](docs/CLOSED_LLM.md)。
+供应商思考开关、Kimi K2.7 限制及自定义载荷见
+[闭源 LLM 思考模式配置](docs/THINKING_MODE.md)。
 
 ## License
 
