@@ -149,6 +149,16 @@ class EvaluationEvidence:
         return self.compile_pass and self.link_pass
 
 
+@dataclass(frozen=True)
+class MetricContext:
+    candidate_code: str
+    candidate_sha256: str
+    artifact_dir: str
+    generation_key: str
+    candidate_key: str
+    evaluation_key: str | None
+
+
 @dataclass
 class ValidationResult:
     sample_id: str

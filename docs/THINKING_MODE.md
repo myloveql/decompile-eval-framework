@@ -14,6 +14,43 @@ plugin_config:
 - `enabled`：请求开启思考，由供应商协议转换为实际字段。
 - `disabled`：请求关闭思考，由供应商协议转换为实际字段。
 
+### `auto` 的精确定义
+
+`thinking_mode: auto` 表示“框架不干预思考模式”，并不表示“关闭思考”。在该模式下，后端
+不会自动向请求加入以下任何字段：
+
+```json
+{"thinking": {"type": "enabled"}}
+```
+
+```json
+{"thinking": {"type": "disabled"}}
+```
+
+```json
+{"enable_thinking": true}
+```
+
+```json
+{"enable_thinking": false}
+```
+
+最终是否启用思考，由模型或 API 服务商的默认行为决定。因此：
+
+- 希望明确关闭且服务商支持关闭参数时，使用 `disabled`；
+- 模型始终思考、服务商要求省略参数，或代理接口不接受思考参数时，使用 `auto`；
+- 不要把 `auto` 的实验结果标记为“关闭思考”，除非服务商明确声明其默认行为就是关闭。
+
+唯一的例外是用户显式配置的 `extra_body`：`auto` 只阻止框架自动生成思考字段，不会删除
+`extra_body` 中已有的字段。例如下面的配置仍然会发送 `enable_thinking`：
+
+```yaml
+plugin_config:
+  thinking_mode: auto
+  extra_body:
+    enable_thinking: false
+```
+
 框架目前内置以下厂商协议：
 
 - Kimi/Moonshot 和智谱 BigModel：`thinking: {type: enabled|disabled}`。
@@ -59,6 +96,36 @@ plugin_config:
 ```
 
 不同 GLM 型号对思考模式的支持能力可能不同，运行前应确认所选模型的官方说明。
+
+通过 AutoDL 等 OpenAI-compatible 代理调用 GLM 时，如果代理支持智谱的
+`thinking: {type: ...}` 格式，可以显式配置：
+
+```yaml
+plugin_config:
+  provider: zhipu
+  base_url: https://www.autodl.art/api/v1
+  model: glm-5.1
+  api_key_env: AUTODL_API_KEY
+  api_mode: chat_completions
+  thinking_mode: disabled
+  thinking_protocol: thinking_type
+```
+
+实际附加字段为：
+
+```json
+{"thinking": {"type": "disabled"}}
+```
+
+如果代理拒绝该字段，改为下面的配置会完全省略框架生成的 thinking 参数：
+
+```yaml
+plugin_config:
+  thinking_mode: auto
+```
+
+这只表示“不传参数”，不能据此断言 GLM-5.1 已关闭思考；需要以 AutoDL 对该模型的默认行为
+为准。`thinking_protocol` 在 `auto` 模式下不会被用于生成参数，可以删除以减少歧义。
 
 ## SiliconFlow
 

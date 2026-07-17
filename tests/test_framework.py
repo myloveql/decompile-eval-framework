@@ -22,9 +22,13 @@ from decomp_eval.models import (
 )
 from decomp_eval.metrics import BehavioralPassMetric, RecompilableMetric
 from decomp_eval.plugins import plugin_inventory
+from decomp_eval.history import derive_subset, import_run
 from decomp_eval.postprocess import process_code
 from decomp_eval.reporting import build_summary
 from decomp_eval.runner import EvaluationRunner
+from decomp_eval.selection import SelectionManifest, build_selection_manifest
+from decomp_eval.cache_layers import evaluation_key, generation_key
+from tests.fixtures import FixtureDataset
 
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -158,6 +162,166 @@ class FrameworkTests(unittest.TestCase):
                 "decompilers": [{"id": "b", "type": "x"}, {"id": "b", "type": "x"}],
                 "preflight": {"mode": "off"},
             })
+
+    def test_config_rejects_manifest_with_limit(self):
+        with self.assertRaises(ValueError):
+            validate_config({
+                "datasets": [{
+                    "id": "d", "type": "x", "path": "p",
+                    "selection_manifest": "selection.json", "limit": 10,
+                }],
+                "decompilers": [{"id": "b", "type": "x"}],
+                "preflight": {"mode": "off"},
+            })
+
+    def test_selection_manifest_is_exact_and_content_addressed(self):
+        selected = self._sample()
+        ignored = self._sample()
+        ignored.sample_id = "other"
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "selection.json"
+            payload = build_selection_manifest([selected])
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            manifest = SelectionManifest(path)
+            result = list(manifest.filter([ignored, selected], dataset_id="d"))
+            self.assertEqual([sample.sample_id for sample in result], ["id"])
+            changed = self._sample()
+            changed.content_hash = "changed"
+            with self.assertRaisesRegex(ValueError, "content_hash"):
+                list(manifest.filter([changed], dataset_id="d"))
+
+    def test_selection_manifest_reports_missing_samples(self):
+        selected = self._sample()
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "selection.json"
+            path.write_text(
+                json.dumps(build_selection_manifest([selected])), encoding="utf-8"
+            )
+            with self.assertRaisesRegex(ValueError, "missing 1 samples"):
+                list(SelectionManifest(path).filter([], dataset_id="d"))
+
+    def test_layer_keys_separate_selection_generation_and_evaluation(self):
+        sample = self._sample()
+        request = sample.public_request(("assembly",))
+        first_generation = generation_key(
+            request, {"id": "b", "type": "python", "batch_size": 1}, "v1", ["assembly"]
+        )
+        second_generation = generation_key(
+            request, {"id": "b", "type": "python", "batch_size": 64}, "v1", ["assembly"]
+        )
+        self.assertEqual(first_generation, second_generation)
+        legacy_request = request.to_dict()
+        legacy_request.pop("compile_context")
+        self.assertEqual(
+            first_generation,
+            generation_key(
+                legacy_request,
+                {"id": "b", "type": "python", "batch_size": 8},
+                "v1",
+                ["assembly"],
+            ),
+        )
+        self.assertEqual(
+            first_generation,
+            generation_key(
+                request,
+                {
+                    "id": "b", "type": "python", "batch_size": 16,
+                    "plugin_config": {
+                        "api_key_env": "KEY_B", "max_concurrency": 8,
+                    },
+                },
+                "v1",
+                ["assembly"],
+            ),
+        )
+        common = {
+            "sample_content_hash": sample.content_hash,
+            "candidate_code": "int target(void){return 1;}",
+            "protocol_descriptor": {"protocol_id": "p", "version": "1"},
+            "protocol_config": {},
+            "executor_config": {"type": "local"},
+        }
+        full_key = evaluation_key(
+            **common,
+            dataset_config={"id": "d", "type": "x", "path": "p", "limit": 1000},
+        )
+        subset_key = evaluation_key(
+            **common,
+            dataset_config={
+                "id": "d", "type": "x", "path": "p",
+                "selection_manifest": "selection.json", "optimizations": ["O0"],
+            },
+        )
+        self.assertEqual(full_key, subset_key)
+
+    def test_evaluate_only_refuses_missing_generation_cache(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            config = {
+                "_config_hash": "missing-cache",
+                "_config_path": str(PROJECT / "fixture.yaml"),
+                "workspace_root": str(PROJECT),
+                "datasets": [{
+                    "id": "fixture", "type": "tests.fixtures:FixtureDataset", "path": "."
+                }],
+                "decompilers": [{
+                    "id": "model", "type": "python",
+                    "plugin": "tests.fixtures:FixtureDecompiler", "plugin_config": {"value": 7},
+                }],
+                "metrics": ["behavioral_pass"],
+                "postprocessors": ["markdown_fence"],
+                "executor": {
+                    "type": "local", "require_linux": False,
+                    "memory_mb": 512, "max_file_mb": 16,
+                },
+                "preflight": {"mode": "off"},
+                "output": {"root": str(root / "runs"), "cache": str(root / "cache")},
+            }
+            with self.assertRaisesRegex(RuntimeError, "missing 4 generation cache entries"):
+                EvaluationRunner(
+                    config, run_dir=root / "evaluate-only", evaluate_only=True
+                ).run()
+
+    def test_generate_only_creates_candidates_without_evaluation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            config = {
+                "_config_hash": "generate-only",
+                "_config_path": str(PROJECT / "fixture.yaml"),
+                "workspace_root": str(PROJECT),
+                "datasets": [{
+                    "id": "fixture", "type": "tests.fixtures:FixtureDataset", "path": "."
+                }],
+                "decompilers": [{
+                    "id": "model", "type": "python",
+                    "plugin": "tests.fixtures:FixtureDecompiler", "plugin_config": {"value": 7},
+                    "batch_size": 2,
+                }],
+                "metrics": ["behavioral_pass"],
+                "postprocessors": ["markdown_fence"],
+                "executor": {
+                    "type": "local", "require_linux": False,
+                    "memory_mb": 512, "max_file_mb": 16,
+                },
+                "preflight": {"mode": "strict"},
+                "output": {"root": str(root / "runs"), "cache": str(root / "cache")},
+            }
+            run_dir = root / "generation"
+            with patch(
+                "tests.fixtures.FixtureProtocol.evaluate_candidate",
+                side_effect=AssertionError("evaluation must not run"),
+            ):
+                summary = EvaluationRunner(
+                    config, run_dir=run_dir, generate_only=True
+                ).generate()
+            self.assertEqual(summary["total"], 4)
+            self.assertEqual(summary["candidate_available"], 4)
+            self.assertTrue((run_dir / "generations.jsonl").exists())
+            self.assertFalse((run_dir / "results.jsonl").exists())
+            imported = import_run(run_dir, root / "imported-generation-cache")
+            self.assertEqual(imported["record_source"], "generations.jsonl")
+            self.assertEqual(imported["imported"], 4)
 
     def test_command_backend_protocol(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -310,6 +474,104 @@ class FrameworkTests(unittest.TestCase):
             changed["_config_hash"] = "different"
             with self.assertRaises(RuntimeError):
                 EvaluationRunner(changed, run_dir=run_dir, resume=True).run()
+
+    def test_historical_run_import_supports_evaluate_only_subset(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            base_config = {
+                "_config_hash": "historical-full",
+                "_config_path": str(PROJECT / "fixture.yaml"),
+                "workspace_root": str(PROJECT),
+                "datasets": [{
+                    "id": "fixture", "type": "tests.fixtures:FixtureDataset", "path": "."
+                }],
+                "decompilers": [{
+                    "id": "historical-model", "type": "python",
+                    "plugin": "tests.fixtures:FixtureDecompiler",
+                    "plugin_config": {"value": 7},
+                }],
+                "metrics": ["recompilable", "behavioral_pass"],
+                "postprocessors": ["markdown_fence"],
+                "executor": {
+                    "type": "local", "require_linux": False,
+                    "memory_mb": 512, "max_file_mb": 16,
+                },
+                "preflight": {"mode": "off"},
+                "output": {
+                    "root": str(root / "runs"), "cache": str(root / "old-cache")
+                },
+            }
+            source_run = root / "source-run"
+            EvaluationRunner(base_config, run_dir=source_run).run()
+            imported_cache = root / "imported-cache"
+            imported = import_run(
+                source_run, imported_cache, config=base_config, base_dir=PROJECT
+            )
+            self.assertEqual(imported["imported"], 4)
+            self.assertEqual(imported["evaluations_imported"], 4)
+            self.assertEqual(imported["skipped"], 0)
+
+            selected_samples = list(FixtureDataset({"id": "fixture"}).iter_samples())[:2]
+            selection_path = root / "selection.json"
+            selection_path.write_text(
+                json.dumps(build_selection_manifest(selected_samples)), encoding="utf-8"
+            )
+            subset_config = dict(base_config)
+            subset_config["_config_hash"] = "historical-subset"
+            subset_config["datasets"] = [{
+                "id": "fixture", "type": "tests.fixtures:FixtureDataset", "path": ".",
+                "selection_manifest": str(selection_path),
+            }]
+            subset_config["output"] = {
+                "root": str(root / "runs"), "cache": str(imported_cache)
+            }
+            with patch(
+                "tests.fixtures.FixtureDecompiler.decompile",
+                side_effect=AssertionError("model must not be called"),
+            ):
+                output_run = root / "evaluate-only"
+                summary = EvaluationRunner(
+                    subset_config, run_dir=output_run, evaluate_only=True
+                ).run()
+            self.assertEqual(summary["total_results"], 2)
+            rows = [json.loads(line) for line in (
+                output_run / "results.jsonl"
+            ).read_text(encoding="utf-8").splitlines()]
+            self.assertTrue(all(row["generation_cache_hit"] for row in rows))
+            self.assertTrue(all(row["candidate_cache_hit"] for row in rows))
+            self.assertTrue(all(row["evaluation_cache_hit"] for row in rows))
+
+            metric_config = dict(subset_config)
+            metric_config["_config_hash"] = "new-metrics"
+            metric_config["metrics"] = [
+                "behavioral_pass", "tests.fixtures:CandidateContainsMetric"
+            ]
+            with patch(
+                "tests.fixtures.FixtureDecompiler.decompile",
+                side_effect=AssertionError("model must not be called"),
+            ):
+                metric_run = root / "new-metrics"
+                EvaluationRunner(
+                    metric_config, run_dir=metric_run, evaluate_only=True
+                ).run()
+            metric_rows = [json.loads(line) for line in (
+                metric_run / "results.jsonl"
+            ).read_text(encoding="utf-8").splitlines()]
+            self.assertTrue(all(row["evaluation_cache_hit"] for row in metric_rows))
+            self.assertTrue(all(
+                set(row["metrics"]) == {
+                    "behavioral_pass", "candidate_contains_return_7"
+                }
+                for row in metric_rows
+            ))
+            self.assertTrue(all(
+                row["metrics"]["candidate_contains_return_7"] for row in metric_rows
+            ))
+
+            derived_run = root / "derived-subset"
+            derived = derive_subset(source_run, selection_path, derived_run)
+            self.assertEqual(derived["selected_samples"], 2)
+            self.assertEqual(derived["results"], 2)
 
 
 if __name__ == "__main__":

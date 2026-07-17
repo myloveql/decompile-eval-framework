@@ -1,0 +1,60 @@
+# Agent4Decompile fair L1/L2 refinement over dataset-provided Ghidra pseudocode.
+workspace_root: ../../..
+
+datasets:
+  - id: decompile-eval-humaneval
+    type: decompile_eval
+    path: data/decompile-eval
+    splits: [humaneval]
+    assembly_view: asm
+    pseudocode_view: ghidra_pseudo
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+    languages: [c]
+    optimizations: [O0]
+    limit: 2
+    timeout: 30
+
+decompilers:
+  - id: agent4decompile-ghidra-l2
+    type: python
+    plugin: plugins.agent4decompile_backend:Agent4DecompileBackend
+    version: agent4decompile-adapter-v1
+    required_inputs: [pseudocode, compile_context]
+    batch_size: 1
+    plugin_config:
+      agent4_root: ../Agent4Decompile
+      mode: pseudocode_refine
+      constraint_level: 2
+      max_iterations: 5
+      architecture: x86_64
+      allowed_languages: [c]
+      compile_optimization: same
+      compile_timeout: 60
+      llm:
+        provider: openai_compatible
+        base_url: https://api.example.com/v1
+        api_key_env: AGENT4DECOMPILE_API_KEY
+        model: model-name
+        temperature: 0.2
+        max_tokens: 8000
+        timeout: 300
+        max_retries: 5
+        retry_backoff: 2
+        thinking_mode: auto
+
+postprocessors: [markdown_fence]
+metrics: [recompilable, behavioral_pass]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

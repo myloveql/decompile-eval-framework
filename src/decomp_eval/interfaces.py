@@ -8,6 +8,7 @@ from .models import (
     DecompileRequest,
     DecompileResult,
     EvaluationEvidence,
+    MetricContext,
     ProtocolDescriptor,
     ValidationResult,
 )
@@ -56,7 +57,10 @@ class DecompilerBackend(Protocol):
 class Metric(Protocol):
     name: str
 
-    def evaluate(self, sample: CanonicalSample, evidence: EvaluationEvidence) -> bool | float | None: ...
+    def evaluate(
+        self, sample: CanonicalSample, evidence: EvaluationEvidence,
+        *, context: MetricContext | None = None,
+    ) -> bool | float | None: ...
 
     def aggregate(self, values: list[bool | float | None]) -> dict[str, Any]: ...
 

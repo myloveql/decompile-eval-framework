@@ -1,5 +1,11 @@
 # Decompile Eval Framework
 
+历史模型输出复用、只评估模式和固定子集报告请参阅
+[`docs/RESULT_REUSE.md`](docs/RESULT_REUSE.md)。
+
+闭源模型的“多模型 × 汇编/伪代码”统一实验参见
+[`docs/CLOSED_MODEL_MATRIX.md`](docs/CLOSED_MODEL_MATRIX.md)。
+
 一个面向传统反编译器和 LLM 反编译器的可扩展评估框架。框架从数据集读取汇编，将公开字段交给反编译后端，再把生成的 C/C++ 放回数据集原有测试夹具中编译、链接和执行。
 
 当前内置支持：
@@ -348,6 +354,15 @@ vLLM 基础模型与 LoRA 服务，并只接收汇编和不含测试答案的公
 
 可运行示例为 `configs/sccdec-decompile-eval-smoke.yaml.example`，部署方式、配置参数、回退语义和
 逐样本产物见 [SCCDec 后端使用指南](docs/SCCDEC.md)。
+
+## 接入 Agent4Decompile
+
+`plugins/agent4decompile_backend.py` 支持数据集伪代码修复、单传统反编译器和多反编译器共识。
+适配器运行时直接复用 Agent4Decompile 原始 `SYSTEM_PROMPT`、`_build_prompt()`、预处理和迭代
+流程，不复制或改写提示词。公平主实验只开放不含正式测试答案的 L1/L2 约束。
+
+三种可运行模板、模型 API 配置、提示词审计、缓存语义和限制见
+[Agent4Decompile 后端使用指南](docs/AGENT4DECOMPILE.md)。
 
 ## License
 

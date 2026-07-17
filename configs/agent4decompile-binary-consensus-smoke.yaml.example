@@ -1,0 +1,59 @@
+# Agent4Decompile full traditional consensus, followed by fair L1/L2 refinement.
+workspace_root: ../../..
+
+datasets:
+  - id: exebench-1100
+    type: exebench_flat
+    path: data/exebench/1641-Benchmark/exebench_1641_source_multiopt_1100.with-ghidra.dataset.json
+    include_path: third_party/exebench/exebench
+    assembly_view: objdump_att_instruction_only
+    evaluation_protocol:
+      type: exebench_json_io
+    optimizations: [O0]
+    limit: 1
+    timeout: 30
+
+decompilers:
+  - id: agent4decompile-consensus-l2
+    type: python
+    plugin: plugins.agent4decompile_backend:Agent4DecompileBackend
+    version: agent4decompile-adapter-v1
+    required_inputs: [binary, compile_context]
+    batch_size: 1
+    plugin_config:
+      agent4_root: ../Agent4Decompile
+      mode: binary_consensus
+      ghidra_path: /path/to/ghidra_11.0.3_PUBLIC
+      retdec_path: /path/to/retdec
+      constraint_level: 2
+      max_iterations: 5
+      architecture: x86_64
+      allowed_languages: [c]
+      compile_optimization: same
+      llm:
+        provider: openai_compatible
+        base_url: https://api.example.com/v1
+        api_key_env: AGENT4DECOMPILE_API_KEY
+        model: model-name
+        temperature: 0.2
+        max_tokens: 8000
+        timeout: 300
+        max_retries: 5
+        retry_backoff: 2
+        thinking_mode: auto
+
+postprocessors: [markdown_fence]
+metrics: [recompilable, behavioral_pass]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

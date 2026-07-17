@@ -87,3 +87,18 @@ class FixtureDecompiler:
         assert not hasattr(request, "private_payload")
         code = f"```c\nint {request.function_name}(void) {{ return {self.value}; }}\n```"
         return DecompileResult(success=True, raw_output=code, code=code)
+
+
+class CandidateContainsMetric:
+    name = "candidate_contains_return_7"
+
+    def evaluate(self, sample, evidence, *, context=None):
+        return context is not None and "return 7" in context.candidate_code
+
+    def aggregate(self, values):
+        eligible = [bool(value) for value in values if value is not None]
+        return {
+            "eligible": len(eligible),
+            "passed": sum(eligible),
+            "rate": sum(eligible) / len(eligible) if eligible else 0.0,
+        }

@@ -55,6 +55,11 @@ def validate_config(config: dict[str, Any]) -> None:
         protocol = dataset.get("evaluation_protocol")
         if protocol is not None and not isinstance(protocol, (str, dict)):
             errors.append(f"datasets[{index}].evaluation_protocol must be a string or mapping")
+        if dataset.get("selection_manifest") and dataset.get("limit") is not None:
+            errors.append(
+                f"datasets[{index}] cannot combine selection_manifest with limit; "
+                "remove limit after freezing the selection"
+            )
     ids: set[str] = set()
     for index, backend in enumerate(config.get("decompilers", [])):
         for field in ("id", "type"):

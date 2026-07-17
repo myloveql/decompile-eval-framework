@@ -9,12 +9,13 @@ from .metrics import BUILTIN_METRICS
 from .postprocess import BUILTINS as BUILTIN_POSTPROCESSORS
 from .protocols import BUILTIN_PROTOCOLS
 from .util import load_object
+from .selection import apply_selection
 
 
 def create_dataset(config: dict[str, Any], base_dir: Path):
     kind = config["type"]
     factory = BUILTIN_DATASETS.get(kind) or load_object(kind)
-    adapter = factory(config, base_dir=base_dir)
+    adapter = apply_selection(factory(config, base_dir=base_dir), config, base_dir)
     protocol_entry = config.get("evaluation_protocol", getattr(adapter, "default_protocol", None))
     if not protocol_entry:
         raise ValueError(f"Dataset {config['id']} does not declare an evaluation protocol")

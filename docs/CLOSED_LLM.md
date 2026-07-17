@@ -1,5 +1,8 @@
 # 闭源 LLM 后端接入指南
 
+多个闭源模型同时覆盖汇编/伪代码输入的固定子集矩阵，参见
+[`CLOSED_MODEL_MATRIX.md`](CLOSED_MODEL_MATRIX.md)。
+
 框架通过 `plugins/openai_compatible_backend.py` 提供闭源模型插件，使用 OpenAI Python SDK
 调用 OpenAI API 或实现了 OpenAI-compatible API 的其他闭源模型服务。插件只会收到
 `required_inputs` 声明的公开字段，
