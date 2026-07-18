@@ -4,21 +4,25 @@
 Agent4Decompile。适配器支持已有伪代码修复、单传统反编译器和多传统反编译器共识；
 最终可重新编译率与行为通过率仍由数据集绑定的 EvaluationProtocol 计算。
 
-## 公平性边界
+## L1/L2 公平模式与 L3 oracle-assisted 模式
 
-普通后端只开放 L1/L2：
+默认的公平后端使用 L1/L2：
 
 - L1：将公开的 `compile_context.prelude` 与候选函数组合，执行语法检查；
 - L2：使用数据集声明的编译器、参数和当前 O0/O1/O2/O3，将候选编译为对象文件；
-- L3：不向后端传递正式测试、期望输出、参考源码或 ExeBench wrapper。
+- L3：使用 ExeBench JSON-I/O 或 Decompile-Eval 聚合测试程序执行候选，并将失败状态反馈给下一轮 LLM。
 
-`constraint_level` 只能设置成 `1` 或 `2`。设置成 `3` 会直接失败，而不是静默降级。
-Agent4Decompile 原项目支持将 ExeBench 正式测试反馈给 LLM，但这种结果属于
-benchmark-oracle-assisted 实验，不能与静态反编译器放在同一公平主表中，所以当前通用
-Backend 不提供该入口。
+`constraint_level` 支持 `1`、`2`、`3`。L3 必须同时显式配置
+`allow_oracle_assisted: true`，并在 `required_inputs` 中加入 `oracle_context`；缺少任一项都会
+直接失败，不会静默降级。`oracle_context` 只有被后端显式请求时才会从 CanonicalSample
+复制到 DecompileRequest，普通 L1/L2 后端仍然看不到正式测试。
 
-内部 L1/L2 只负责给 Agent 生成反馈。正式 `recompilable`、`behavioral_pass` 和新增指标
-始终由框架在候选生成完成后独立计算。
+L3 是 benchmark-oracle-assisted 实验，不能与只使用静态输入的反编译器放在同一公平主表。
+无论是否启用 L3，正式 `recompilable`、`behavioral_pass` 和新增指标仍由框架在候选生成完成后
+独立计算；L3 内部执行结果只用于 Agent 迭代反馈。
+
+当前 L3 支持 `exebench_json_io` 和 `decompile_eval_exitcode`。前者复用 Agent4Decompile
+原生执行器并反馈 expected/actual；后者由适配层运行聚合测试程序，只反馈状态和退出码。
 
 ## 提示词对齐保证
 
@@ -119,6 +123,86 @@ decompilers:
 `required_inputs` 必须包含 `pseudocode` 和不含测试的 `compile_context`。ExeBench 使用保存
 Ghidra 结果的数据文件时通常设置 `pseudocode_view: ghidra`；decompile-eval 可以使用
 `ghidra_pseudo` 或 `ida_pseudo`。第一版只支持 C，数据集应设置 `languages: [c]`。
+
+## 伪代码 + L1/L2/L3（oracle-assisted）
+
+### ExeBench JSON-I/O L3
+
+```bash
+cp configs/agent4decompile-pseudocode-l3-smoke.yaml.example \
+   configs/agent4decompile-pseudocode-l3-smoke.yaml
+```
+
+关键配置：
+
+```yaml
+datasets:
+  - type: exebench_flat
+    pseudocode_view: ghidra
+    include_path: third_party/exebench/exebench
+    evaluation_protocol:
+      type: exebench_json_io
+
+decompilers:
+  - id: agent4decompile-ghidra-pseudo-l3-oracle-assisted
+    required_inputs: [pseudocode, compile_context, oracle_context]
+    plugin_config:
+      mode: pseudocode_refine
+      constraint_level: 3
+      allow_oracle_assisted: true
+```
+
+ExeBench adapter 提供的 `oracle_context` 仅包含 L3 所需内容：`io_pairs`、
+`executable_wrapper`、依赖声明、目标函数签名和 ExeBench include 路径，不包含参考函数源码。
+Agent4Decompile 原生 `evaluate_execution_exebench()` 负责构建 wrapper、执行正式 I/O，并把失败
+用例的期望值和实际值写入原生 L3 feedback。该 feedback 会出现在
+`iteration_NN_prompt.txt` 中。
+
+L1/L2 仍使用框架的 `compile_context`；L3 则保持 Agent4Decompile 原生语义，将当前候选代码
+交给其 `gcc -S` 和 ExeBench wrapper 流程。因而只依赖框架自动附加 prelude、但自身不完整的
+候选可能通过 L2、随后在 L3 收到原生编译或链接错误反馈。
+
+开启 L3 后，`request.json` 和 `agent4_metadata.json` 属于含 benchmark oracle 的敏感审计产物；
+其中前者会保存传入后端的 wrapper、输入和期望输出。发布运行产物前应按实验披露策略处理。
+
+### Decompile-Eval exit-code L3
+
+复制 Decompile-Eval 示例：
+
+```bash
+cp configs/agent4decompile-pseudocode-l3-decompile-eval-smoke.yaml.example \
+   configs/agent4decompile-pseudocode-l3-decompile-eval-smoke.yaml
+```
+
+关键配置与 ExeBench 相同，但数据集协议为：
+
+```yaml
+datasets:
+  - type: decompile_eval
+    pseudocode_view: ghidra_pseudo
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+
+decompilers:
+  - required_inputs: [pseudocode, compile_context, oracle_context]
+    plugin_config:
+      constraint_level: 3
+      allow_oracle_assisted: true
+```
+
+Decompile-Eval adapter 将测试程序放入 `oracle_context`，L3 按正式协议拼接并执行：
+
+```text
+func_dep + candidate + test → compile → link → run
+```
+
+反馈策略固定为 `exitcode_only`：LLM 只会看到组合编译失败、链接失败、超时、通过或具体退出码；
+不会在 L3 message 中看到测试源码、断言内容、编译器详细诊断、stdout 或 stderr。完整测试源码和
+命令日志仍保存在本地 `request.json`、`constraint_NN_l3_test.c/.cpp` 与
+`constraint_NN.json`，因此这些运行产物仍然属于含 oracle 的敏感产物。
+
+Decompile-Eval 是单个聚合测试程序，不能像 ExeBench 一样提供逐用例 expected/actual；这里的
+L3 反馈粒度因此更低，但迭代停止条件仍是组合程序成功编译、链接并以退出码 0 结束。
 
 ## 模型配置
 
@@ -236,20 +320,23 @@ agent4_final_candidate.c         交给正式评估协议的候选代码
 agent4_metadata.json             模式、迭代历史和审计字段
 ```
 
-审计字段固定包含：
+L3 的通过状态和执行详情也写入 `constraint_NN.json`。审计字段固定包含：
 
 ```json
 {
   "prompt_policy": "runtime_import_from_agent4decompile",
-  "oracle_assisted": false,
-  "request_has_private_tests": false
+  "oracle_assisted": true,
+  "request_has_private_tests": true,
+  "oracle_protocol": "decompile_eval_exitcode"
 }
 ```
+
+L1/L2 运行的这两个布尔值均为 `false`。
 
 ## 当前限制
 
 - 只支持 C；
-- 不支持正式测试反馈 L3；
+- Decompile-Eval L3 仅提供聚合测试程序状态/退出码，不提供逐用例 expected/actual；
 - 没有批量推理，建议 `batch_size: 1`；
 - 二进制模式沿用 Agent4Decompile 的整文件输出，复杂二进制可能包含多个函数；
 - 后端会自动将外部 `src/**/*.py` 的内容哈希写入版本；仍建议在实验记录中注明上游版本来源。
@@ -261,4 +348,6 @@ agent4decompile-ghidra-pseudo-l2
 agent4decompile-ida-pseudo-l2
 agent4decompile-binary-ghidra-l2
 agent4decompile-binary-consensus-l2
+agent4decompile-ghidra-pseudo-l3-oracle-assisted
+agent4decompile-ghidra-pseudo-l3-decompile-eval-oracle-assisted
 ```

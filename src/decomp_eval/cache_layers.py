@@ -35,6 +35,7 @@ def generation_key(
     request_value.setdefault("binary", None)
     request_value.setdefault("pseudocode", None)
     request_value.setdefault("compile_context", None)
+    request_value.setdefault("oracle_context", None)
     request_value.setdefault("metadata", {})
     def normalize_backend(value: Any, *, parent: str = "") -> Any:
         if isinstance(value, dict):

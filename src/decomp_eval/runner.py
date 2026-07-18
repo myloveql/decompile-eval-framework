@@ -444,6 +444,8 @@ class EvaluationRunner:
                 return "pseudocode_missing"
             if input_kind == "compile_context" and sample.compile_context is None:
                 return "compile_context_missing"
+            if input_kind == "oracle_context" and sample.oracle_context is None:
+                return "oracle_context_missing"
         return None
 
     def _generation_cache_key(self, sample, backend, backend_cfg: dict[str, Any]) -> str:

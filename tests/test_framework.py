@@ -18,7 +18,7 @@ from decomp_eval.datasets.exebench import ExeBenchFlatAdapter
 from decomp_eval.datasets.decompile_eval import DecompileEvalAdapter
 from decomp_eval.models import (
     AssemblyInput, BinaryInput, CandidateCompileContext, CanonicalSample,
-    EvaluationEvidence, PseudocodeInput,
+    EvaluationEvidence, OracleContext, PseudocodeInput,
 )
 from decomp_eval.metrics import BehavioralPassMetric, RecompilableMetric
 from decomp_eval.plugins import plugin_inventory
@@ -152,6 +152,9 @@ class FrameworkTests(unittest.TestCase):
         self.assertEqual(sample.optimization, "O2")
         self.assertEqual(sample.assembly.syntax, "att")
         self.assertEqual(sample.pseudocode.view, "ghidra_pseudo")
+        self.assertEqual(sample.oracle_context.protocol, "decompile_eval_exitcode")
+        self.assertEqual(sample.oracle_context.payload["feedback_policy"], "exitcode_only")
+        self.assertIsNone(sample.public_request(("pseudocode",)).oracle_context)
         with self.assertRaises(ValueError):
             DecompileEvalAdapter({"id": "de", "path": ".", "splits": ["github"]}, base_dir=PROJECT)
 
@@ -429,6 +432,17 @@ class FrameworkTests(unittest.TestCase):
         self.assertIn("typedef int public_t", serialized)
         self.assertNotIn("SECRET_REFERENCE_ANSWER", serialized)
         self.assertIsNone(sample.public_request(("assembly",)).compile_context)
+
+    def test_oracle_context_requires_explicit_backend_input(self):
+        sample = self._sample()
+        sample.oracle_context = OracleContext(
+            protocol="exebench_json_io",
+            payload={"io_pairs": [{"input": 1, "output": 7}]},
+        )
+        self.assertIsNone(sample.public_request(("pseudocode",)).oracle_context)
+        request = sample.public_request(("pseudocode", "oracle_context"))
+        self.assertEqual(request.oracle_context.protocol, "exebench_json_io")
+        self.assertEqual(request.oracle_context.payload["io_pairs"][0]["output"], 7)
 
     def test_end_to_end_python_plugin_and_resume(self):
         with tempfile.TemporaryDirectory() as temp:

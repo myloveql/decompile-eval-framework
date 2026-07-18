@@ -18,7 +18,7 @@ decompilers:
   - id: agent4decompile-binary-ghidra-l2
     type: python
     plugin: plugins.agent4decompile_backend:Agent4DecompileBackend
-    version: agent4decompile-adapter-v1
+    version: agent4decompile-adapter-v3
     required_inputs: [binary, compile_context]
     batch_size: 1
     plugin_config:

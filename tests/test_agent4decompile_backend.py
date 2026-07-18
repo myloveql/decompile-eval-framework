@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -13,6 +14,7 @@ from decomp_eval.models import (
     AssemblyInput,
     CandidateCompileContext,
     DecompileRequest,
+    OracleContext,
     PseudocodeInput,
 )
 from plugins.agent4decompile_backend import (
@@ -88,6 +90,17 @@ class _FakePipeline:
     pass
 
 
+class _FakeConstraintEvaluator:
+    calls: list[dict] = []
+
+    def __init__(self, **kwargs):
+        self.options = kwargs
+
+    def evaluate_execution_exebench(self, code, **kwargs):
+        self.__class__.calls.append({"code": code, **kwargs})
+        return True, "All fixture tests pass", {"total": 1, "passed": 1, "failed": 0}
+
+
 def _preprocess(code: str, decompiler: str) -> str:
     return f"/* {decompiler} */\n{code}"
 
@@ -95,6 +108,7 @@ def _preprocess(code: str, decompiler: str) -> str:
 class Agent4DecompileBackendTests(unittest.TestCase):
     def setUp(self):
         _FakeCompletions.calls = []
+        _FakeConstraintEvaluator.calls = []
 
     @staticmethod
     def _request() -> DecompileRequest:
@@ -142,7 +156,9 @@ class Agent4DecompileBackendTests(unittest.TestCase):
         failed = subprocess.CompletedProcess(["gcc"], 1, "", "fixture syntax error")
         with tempfile.TemporaryDirectory() as temporary, patch(
             "plugins.agent4decompile_backend._import_agent4",
-            return_value=(_FakeRefiner, _FakePipeline, _preprocess),
+            return_value=(
+                _FakeRefiner, _FakePipeline, _FakeConstraintEvaluator, _preprocess
+            ),
         ), patch.dict(sys.modules, {"openai": SimpleNamespace(OpenAI=_FakeOpenAI)}), patch(
             "plugins.agent4decompile_backend.subprocess.run", return_value=failed
         ):
@@ -200,22 +216,102 @@ class Agent4DecompileBackendTests(unittest.TestCase):
         self.assertNotIn("-lm", commands[1])
         self.assertTrue(all("#include <stdint.h>" in source for source in sources))
 
-    def test_benchmark_oracle_constraint_level_is_rejected(self):
+    def test_benchmark_oracle_constraint_level_requires_explicit_opt_in(self):
         with tempfile.TemporaryDirectory() as temporary, patch(
             "plugins.agent4decompile_backend._import_agent4",
-            return_value=(_FakeRefiner, _FakePipeline, _preprocess),
+            return_value=(
+                _FakeRefiner, _FakePipeline, _FakeConstraintEvaluator, _preprocess
+            ),
         ):
-            with self.assertRaisesRegex(ValueError, "constraint_level must be 1 or 2"):
+            with self.assertRaisesRegex(ValueError, "allow_oracle_assisted"):
                 Agent4DecompileBackend(
                     self._backend_config(Path(temporary), constraint_level=3)
                 )
+
+    def test_l3_uses_explicit_exebench_oracle_context(self):
+        oracle = OracleContext(
+            protocol="exebench_json_io",
+            payload={
+                "io_pairs": [{"input": {}, "output": {"return": 7}}],
+                "cpp_wrapper": "fixture wrapper",
+                "c_deps": "typedef int fixture_type;",
+                "func_head": "int target(void)",
+                "exebench_include": "/fixture/exebench",
+            },
+        )
+        request = replace(self._request(), oracle_context=oracle)
+        completed = subprocess.CompletedProcess(["gcc"], 0, "", "")
+        with tempfile.TemporaryDirectory() as temporary, patch(
+            "plugins.agent4decompile_backend._import_agent4",
+            return_value=(
+                _FakeRefiner, _FakePipeline, _FakeConstraintEvaluator, _preprocess
+            ),
+        ), patch.dict(sys.modules, {"openai": SimpleNamespace(OpenAI=_FakeOpenAI)}), patch(
+            "plugins.agent4decompile_backend.subprocess.run", return_value=completed
+        ):
+            root = Path(temporary)
+            backend = Agent4DecompileBackend(
+                self._backend_config(
+                    root, constraint_level=3, allow_oracle_assisted=True
+                )
+            )
+            artifact_dir = root / "artifacts"
+            result = backend.decompile(request, artifact_dir)
+            metadata = json.loads(
+                (artifact_dir / "agent4_metadata.json").read_text(encoding="utf-8")
+            )
+
+        self.assertTrue(result.success)
+        self.assertTrue(metadata["oracle_assisted"])
+        self.assertTrue(metadata["request_has_private_tests"])
+        self.assertEqual(len(_FakeConstraintEvaluator.calls), 1)
+        self.assertEqual(_FakeConstraintEvaluator.calls[0]["io_pairs"], oracle.payload["io_pairs"])
+        self.assertNotIn("#include <stdint.h>", _FakeConstraintEvaluator.calls[0]["code"])
+
+    def test_decompile_eval_l3_feedback_hides_test_source(self):
+        secret_test = "int main(void) { return target() == 123456789 ? 0 : 7; }"
+        oracle = OracleContext(
+            protocol="decompile_eval_exitcode",
+            payload={"test": secret_test, "feedback_policy": "exitcode_only"},
+        )
+        request = replace(self._request(), oracle_context=oracle)
+        calls = 0
+
+        def fake_run(command, **kwargs):
+            nonlocal calls
+            calls += 1
+            returncode = 7 if calls == 5 else 0
+            return subprocess.CompletedProcess(command, returncode, "", "SECRET_DIAGNOSTIC")
+
+        with tempfile.TemporaryDirectory() as temporary, patch(
+            "plugins.agent4decompile_backend.subprocess.run", side_effect=fake_run
+        ):
+            artifact_dir = Path(temporary)
+            evaluator = FrameworkConstraintEvaluator(
+                request, artifact_dir, timeout=10, optimization="same"
+            )
+            result = evaluator.evaluate_all(
+                "int target(void) { return 0; }",
+                constraint_level=3,
+                exebench_data=oracle.payload,
+            )
+            l3_source = next(artifact_dir.glob("constraint_*_l3_test.c")).read_text(
+                encoding="utf-8"
+            )
+
+        self.assertEqual(calls, 5)
+        self.assertFalse(result["execution"]["pass"])
+        self.assertIn("exit code 7", result["execution"]["message"])
+        self.assertNotIn("123456789", result["execution"]["message"])
+        self.assertNotIn("SECRET_DIAGNOSTIC", result["execution"]["message"])
+        self.assertIn(secret_test, l3_source)
 
     def test_evaluator_fails_closed_if_tests_are_passed(self):
         with tempfile.TemporaryDirectory() as temporary:
             evaluator = FrameworkConstraintEvaluator(
                 self._request(), Path(temporary), timeout=10, optimization="same"
             )
-            with self.assertRaisesRegex(ValueError, "must not receive evaluation test data"):
+            with self.assertRaisesRegex(ValueError, "does not accept generated test_cases"):
                 evaluator.evaluate_all("int target(void) { return 1; }", test_cases=[])
 
 

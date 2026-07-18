@@ -1,4 +1,5 @@
-# Agent4Decompile full traditional consensus, followed by fair L1/L2 refinement.
+# Improved, oracle-assisted Agent4Decompile variant over fixed ExeBench pseudocode.
+# This is an ablation/extension configuration, not the reproduction configuration.
 workspace_root: ../../..
 
 datasets:
@@ -7,34 +8,39 @@ datasets:
     path: data/exebench/1641-Benchmark/exebench_1641_source_multiopt_1100.with-ghidra.dataset.json
     include_path: third_party/exebench/exebench
     assembly_view: objdump_att_instruction_only
+    pseudocode_view: ghidra
     evaluation_protocol:
       type: exebench_json_io
     optimizations: [O0]
+    languages: [c]
     limit: 1
     timeout: 30
 
 decompilers:
-  - id: agent4decompile-consensus-l2
+  - id: agent4decompile-improved-ghidra-pseudo-l3-oracle-assisted
     type: python
-    plugin: plugins.agent4decompile_backend:Agent4DecompileBackend
-    version: agent4decompile-adapter-v3
-    required_inputs: [binary, compile_context]
+    plugin: plugins.agent4decompile_improved_backend:ImprovedAgent4DecompileBackend
+    version: agent4decompile-improved-adapter-v1
+    required_inputs: [pseudocode, compile_context, oracle_context]
     batch_size: 1
     plugin_config:
       agent4_root: ../Agent4Decompile
-      mode: binary_consensus
-      ghidra_path: /path/to/ghidra_11.0.3_PUBLIC
-      retdec_path: /path/to/retdec
-      constraint_level: 2
+      mode: pseudocode_refine
+      constraint_level: 3
+      allow_oracle_assisted: true
       max_iterations: 5
       architecture: x86_64
       allowed_languages: [c]
       compile_optimization: same
+      compile_timeout: 60
+      expose_public_prelude: true
+      protocol_aligned_l3: true
+      stagnation_limit: 2
       llm:
-        provider: openai_compatible
-        base_url: https://api.example.com/v1
-        api_key_env: AGENT4DECOMPILE_API_KEY
-        model: model-name
+        provider: autodl
+        base_url: https://www.autodl.art/api/v1
+        api_key_env: AUTODL_API_KEY
+        model: gpt-5.4-mini
         temperature: 0.2
         max_tokens: 8000
         timeout: 300

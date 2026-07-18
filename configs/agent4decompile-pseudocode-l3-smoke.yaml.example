@@ -1,41 +1,43 @@
-# Agent4Decompile fair L1/L2 refinement over dataset-provided Ghidra pseudocode.
+# Agent4Decompile oracle-assisted L1/L2/L3 refinement over fixed ExeBench Ghidra pseudocode.
+# L3 exposes the benchmark wrapper, inputs, and expected outputs to the iterative refiner.
 workspace_root: ../../..
 
 datasets:
-  - id: decompile-eval-humaneval
-    type: decompile_eval
-    path: data/decompile-eval
-    splits: [humaneval]
-    assembly_view: asm
-    pseudocode_view: ghidra_pseudo
+  - id: exebench-1100
+    type: exebench_flat
+    path: data/exebench/1641-Benchmark/exebench_1641_source_multiopt_1100.with-ghidra.dataset.json
+    include_path: third_party/exebench/exebench
+    assembly_view: objdump_att_instruction_only
+    pseudocode_view: ghidra
     evaluation_protocol:
-      type: decompile_eval_exitcode
-    languages: [c]
+      type: exebench_json_io
     optimizations: [O0]
-    limit: 2
+    languages: [c]
+    limit: 1
     timeout: 30
 
 decompilers:
-  - id: agent4decompile-ghidra-l2
+  - id: agent4decompile-ghidra-pseudo-l3-oracle-assisted
     type: python
     plugin: plugins.agent4decompile_backend:Agent4DecompileBackend
     version: agent4decompile-adapter-v3
-    required_inputs: [pseudocode, compile_context]
+    required_inputs: [pseudocode, compile_context, oracle_context]
     batch_size: 1
     plugin_config:
       agent4_root: ../Agent4Decompile
       mode: pseudocode_refine
-      constraint_level: 2
+      constraint_level: 3
+      allow_oracle_assisted: true
       max_iterations: 5
       architecture: x86_64
       allowed_languages: [c]
       compile_optimization: same
       compile_timeout: 60
       llm:
-        provider: openai_compatible
-        base_url: https://api.example.com/v1
-        api_key_env: AGENT4DECOMPILE_API_KEY
-        model: model-name
+        provider: autodl
+        base_url: https://www.autodl.art/api/v1
+        api_key_env: AUTODL_API_KEY
+        model: gpt-5.4-mini
         temperature: 0.2
         max_tokens: 8000
         timeout: 300

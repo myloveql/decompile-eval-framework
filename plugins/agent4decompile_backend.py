@@ -40,7 +40,7 @@ def _agent4_source_hash(root: Path) -> str:
     return digest.hexdigest()
 
 
-def _import_agent4(root: Path) -> tuple[type, type, Callable[[str, str], str]]:
+def _import_agent4(root: Path) -> tuple[type, type, type, Callable[[str, str], str]]:
     """Import Agent4Decompile without copying any of its prompts into this plugin."""
     if not root.is_dir():
         raise ValueError(f"Agent4Decompile root does not exist: {root}")
@@ -63,12 +63,13 @@ def _import_agent4(root: Path) -> tuple[type, type, Callable[[str, str], str]]:
     return (
         refiner_module.MCGDRefiner,
         pipeline_module.Agent4DecompilePipeline,
+        refiner_module.ConstraintEvaluator,
         refiner_module.preprocess_decompiled_code,
     )
 
 
 class FrameworkConstraintEvaluator:
-    """Test-free L1/L2 feedback for a dataset target-function translation unit."""
+    """Dataset-aware L1/L2 feedback plus explicitly enabled benchmark L3 feedback."""
 
     def __init__(
         self,
@@ -77,6 +78,7 @@ class FrameworkConstraintEvaluator:
         *,
         timeout: float,
         optimization: str,
+        native_l3_evaluator: Any | None = None,
     ):
         if request.compile_context is None:
             raise ValueError("Agent4Decompile L1/L2 requires compile_context")
@@ -85,6 +87,7 @@ class FrameworkConstraintEvaluator:
         self.artifact_dir = artifact_dir
         self.timeout = timeout
         self.optimization = self._optimization(optimization)
+        self.native_l3_evaluator = native_l3_evaluator
         self.records: list[dict[str, Any]] = []
         self._evaluation_index = 0
 
@@ -139,6 +142,120 @@ class FrameworkConstraintEvaluator:
             }
             return False, f"timeout after {self.timeout:g}s", record
 
+    def _run_command(self, stage: str, command: list[str]) -> dict[str, Any]:
+        started = time.perf_counter()
+        try:
+            completed = subprocess.run(
+                command,
+                cwd=self.artifact_dir,
+                capture_output=True,
+                text=True,
+                timeout=self.timeout,
+                check=False,
+            )
+            return {
+                "stage": stage,
+                "command": command,
+                "returncode": completed.returncode,
+                "stdout": completed.stdout,
+                "stderr": completed.stderr,
+                "elapsed_seconds": time.perf_counter() - started,
+                "timed_out": False,
+            }
+        except subprocess.TimeoutExpired as error:
+            return {
+                "stage": stage,
+                "command": command,
+                "returncode": None,
+                "stdout": error.stdout or "",
+                "stderr": error.stderr or "",
+                "elapsed_seconds": time.perf_counter() - started,
+                "timed_out": True,
+            }
+
+    def _evaluate_decompile_eval(
+        self, code: str, oracle_data: dict[str, Any]
+    ) -> tuple[bool, str, dict[str, Any], list[dict[str, Any]]]:
+        if oracle_data.get("feedback_policy") != "exitcode_only":
+            raise ValueError("Decompile-Eval L3 only supports exitcode_only feedback")
+        test_code = str(oracle_data.get("test", ""))
+        if not test_code.strip():
+            raise ValueError("Decompile-Eval L3 oracle_context has no test program")
+
+        index = self._evaluation_index
+        cpp = self.context.language.lower() in {"cpp", "c++", "cxx"}
+        source_path = self.artifact_dir / f"constraint_{index:02d}_l3_test.{'cpp' if cpp else 'c'}"
+        object_path = self.artifact_dir / f"constraint_{index:02d}_l3_test.o"
+        executable_path = self.artifact_dir / f"constraint_{index:02d}_l3_test.x"
+        source_path.write_text(
+            f"{self.context.prelude.rstrip()}\n{code.strip()}\n{test_code.rstrip()}\n",
+            encoding="utf-8",
+        )
+
+        compiler = self.context.compiler
+        compile_record = self._run_command(
+            "l3_combined_compile",
+            [
+                compiler,
+                *self._flags(),
+                self.optimization,
+                "-c",
+                str(source_path),
+                "-o",
+                str(object_path),
+            ],
+        )
+        records = [compile_record]
+        if compile_record["timed_out"]:
+            return False, "L3 combined test program compilation timed out", {
+                "outcome": "compile_timeout"
+            }, records
+        if compile_record["returncode"] != 0:
+            return False, (
+                "L3 combined test program failed to compile; detailed diagnostics are "
+                "withheld by the exitcode_only policy"
+            ), {"outcome": "compile_error"}, records
+
+        link_record = self._run_command(
+            "l3_fixture_link",
+            [
+                compiler,
+                self.optimization,
+                str(object_path),
+                "-o",
+                str(executable_path),
+                *self.context.libraries,
+            ],
+        )
+        records.append(link_record)
+        if link_record["timed_out"]:
+            return False, "L3 test program linking timed out", {
+                "outcome": "link_timeout"
+            }, records
+        if link_record["returncode"] != 0:
+            return False, (
+                "L3 test program failed to link; detailed diagnostics are withheld by "
+                "the exitcode_only policy"
+            ), {"outcome": "link_error"}, records
+
+        run_record = self._run_command("l3_execution", [str(executable_path)])
+        records.append(run_record)
+        if run_record["timed_out"]:
+            return False, "L3 test program timed out", {
+                "outcome": "test_timeout",
+                "timed_out": True,
+            }, records
+        returncode = int(run_record["returncode"])
+        if returncode == 0:
+            return True, "L3 Decompile-Eval test program passed", {
+                "outcome": "pass",
+                "returncode": 0,
+            }, records
+        return False, f"L3 Decompile-Eval test program failed with exit code {returncode}", {
+            "outcome": "test_failed",
+            "returncode": returncode,
+        }, records
+
     def evaluate_all(
         self,
         code: str,
@@ -147,11 +264,25 @@ class FrameworkConstraintEvaluator:
         constraint_level: int = 2,
         exebench_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        # These assertions make accidental benchmark-oracle leakage fail closed.
-        if test_cases is not None or exebench_data is not None:
-            raise ValueError("fair Agent4Decompile mode must not receive evaluation test data")
-        if constraint_level not in {1, 2}:
-            raise ValueError("fair Agent4Decompile backend only supports constraint_level 1 or 2")
+        if test_cases is not None:
+            raise ValueError("Agent4Decompile adapter does not accept generated test_cases")
+        if constraint_level not in {1, 2, 3}:
+            raise ValueError("constraint_level must be 1, 2, or 3")
+        oracle = self.request.oracle_context
+        if constraint_level == 3:
+            if oracle is None:
+                raise ValueError("L3 requires required_inputs to include oracle_context")
+            if oracle.protocol not in {"exebench_json_io", "decompile_eval_exitcode"}:
+                raise ValueError(
+                    "L3 only supports exebench_json_io or decompile_eval_exitcode, "
+                    f"got {oracle.protocol!r}"
+                )
+            if exebench_data is None or exebench_data != oracle.payload:
+                raise ValueError("L3 did not receive the request's explicit oracle_context")
+            if oracle.protocol == "exebench_json_io" and self.native_l3_evaluator is None:
+                raise ValueError("L3 native Agent4Decompile evaluator is unavailable")
+        elif exebench_data is not None:
+            raise ValueError("L1/L2 must not receive evaluation oracle data")
 
         compiler = self.context.compiler
         flags = self._flags()
@@ -189,10 +320,47 @@ class FrameworkConstraintEvaluator:
         else:
             compile_message = "Fix syntax first"
 
+        execution_ok = None
+        execution_message = "No evaluation oracle provided"
+        execution_details: dict[str, Any] = {}
+        if (
+            syntax_ok
+            and compile_ok
+            and constraint_level == 3
+            and oracle.protocol == "exebench_json_io"
+        ):
+            execution_ok, execution_message, execution_details = (
+                self.native_l3_evaluator.evaluate_execution_exebench(
+                    code,
+                    io_pairs=exebench_data["io_pairs"],
+                    cpp_wrapper=exebench_data["cpp_wrapper"],
+                    c_deps=exebench_data.get("c_deps", ""),
+                    func_head=exebench_data["func_head"],
+                    exebench_include=exebench_data["exebench_include"],
+                )
+            )
+        elif (
+            syntax_ok
+            and compile_ok
+            and constraint_level == 3
+            and oracle.protocol == "decompile_eval_exitcode"
+        ):
+            (
+                execution_ok,
+                execution_message,
+                execution_details,
+                execution_records,
+            ) = self._evaluate_decompile_eval(code, exebench_data)
+            records.extend(execution_records)
+        elif constraint_level == 3:
+            execution_message = "Fix syntax/compilation first"
+
         entry = {
             "evaluation": self._evaluation_index,
             "syntax_pass": syntax_ok,
             "compilation_pass": compile_ok,
+            "execution_pass": execution_ok,
+            "execution_details": execution_details,
             "commands": records,
         }
         self.records.append(entry)
@@ -203,14 +371,18 @@ class FrameworkConstraintEvaluator:
         return {
             "syntax": {"pass": syntax_ok, "message": syntax_message},
             "compilation": {"pass": compile_ok, "message": compile_message},
-            "execution": {"pass": None, "message": "No evaluation oracle provided", "details": {}},
+            "execution": {
+                "pass": execution_ok,
+                "message": execution_message,
+                "details": execution_details,
+            },
         }
 
 
 class Agent4DecompileBackend:
     """Adapt Agent4Decompile while keeping its original prompt implementation authoritative."""
 
-    version = "agent4decompile-adapter-v1"
+    version = "agent4decompile-adapter-v3"
 
     def __init__(self, config: dict[str, Any]):
         self.config = copy.deepcopy(config)
@@ -223,9 +395,12 @@ class Agent4DecompileBackend:
                 "mode must be pseudocode_refine, binary_single, or binary_consensus"
             )
         self.constraint_level = int(config.get("constraint_level", 2))
-        if self.constraint_level not in {1, 2}:
+        if self.constraint_level not in {1, 2, 3}:
+            raise ValueError("constraint_level must be 1, 2, or 3")
+        self.allow_oracle_assisted = bool(config.get("allow_oracle_assisted", False))
+        if self.constraint_level == 3 and not self.allow_oracle_assisted:
             raise ValueError(
-                "constraint_level must be 1 or 2; benchmark-test L3 is intentionally unavailable"
+                "constraint_level 3 requires allow_oracle_assisted: true"
             )
         self.max_iterations = max(1, int(config.get("max_iterations", 5)))
         self.architecture = str(config.get("architecture", "x86_64"))
@@ -253,9 +428,12 @@ class Agent4DecompileBackend:
         self.thinking_protocol = str(llm.get("thinking_protocol", "auto")).lower()
         self.extra_body = self._thinking_body(dict(llm.get("extra_body", {})))
 
-        self.refiner_class, self.pipeline_class, self.preprocess = _import_agent4(
-            self.agent4_root
-        )
+        (
+            self.refiner_class,
+            self.pipeline_class,
+            self.constraint_evaluator_class,
+            self.preprocess,
+        ) = _import_agent4(self.agent4_root)
         self.agent4_source_sha256 = _agent4_source_hash(self.agent4_root)
         self.prompt_source = str(
             Path(importlib.import_module(self.refiner_class.__module__).__file__).resolve()
@@ -406,8 +584,11 @@ class Agent4DecompileBackend:
             "prompt_source": self.prompt_source,
             "agent4_source_sha256": self.agent4_source_sha256,
             "prompt_policy": "runtime_import_from_agent4decompile",
-            "oracle_assisted": False,
-            "request_has_private_tests": False,
+            "oracle_assisted": self.constraint_level == 3,
+            "request_has_private_tests": request.oracle_context is not None,
+            "oracle_protocol": (
+                request.oracle_context.protocol if request.oracle_context else None
+            ),
         }
         if request.language.lower() not in self.allowed_languages:
             return DecompileResult(
@@ -436,6 +617,18 @@ class Agent4DecompileBackend:
                 artifact_dir,
                 timeout=self.compile_timeout,
                 optimization=self.compile_optimization,
+                native_l3_evaluator=(
+                    self.constraint_evaluator_class(
+                        temp_dir=str(artifact_dir / "l3"),
+                        architecture=self.architecture,
+                    )
+                    if (
+                        self.constraint_level == 3
+                        and request.oracle_context is not None
+                        and request.oracle_context.protocol == "exebench_json_io"
+                    )
+                    else None
+                ),
             )
             refiner, native_call = self._new_refiner(evaluator)
             system_prompt = refiner.SYSTEM_PROMPT
@@ -472,7 +665,11 @@ class Agent4DecompileBackend:
                     decompiler=producer,
                     original_binary_path=None,
                     test_cases=None,
-                    exebench_data=None,
+                    exebench_data=(
+                        request.oracle_context.payload
+                        if self.constraint_level == 3 and request.oracle_context
+                        else None
+                    ),
                 )
             finally:
                 native_client = getattr(refiner, "_client", None)

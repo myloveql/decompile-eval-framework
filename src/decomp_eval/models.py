@@ -40,6 +40,14 @@ class CandidateCompileContext:
     prelude: str = ""
 
 
+@dataclass(frozen=True)
+class OracleContext:
+    """Private benchmark feedback exposed only to explicitly oracle-assisted backends."""
+
+    protocol: str
+    payload: dict[str, Any] = field(default_factory=dict, repr=False)
+
+
 @dataclass
 class CanonicalSample:
     dataset_id: str
@@ -54,6 +62,7 @@ class CanonicalSample:
     binary: BinaryInput | None = None
     pseudocode: PseudocodeInput | None = None
     compile_context: CandidateCompileContext | None = None
+    oracle_context: OracleContext | None = field(default=None, repr=False)
     metadata: dict[str, Any] = field(default_factory=dict)
     private_payload: dict[str, Any] = field(default_factory=dict, repr=False)
 
@@ -77,6 +86,9 @@ class CanonicalSample:
             compile_context=(
                 self.compile_context if "compile_context" in allowed else None
             ),
+            oracle_context=(
+                self.oracle_context if "oracle_context" in allowed else None
+            ),
             metadata=self.metadata,
         )
 
@@ -95,6 +107,7 @@ class DecompileRequest:
     binary: BinaryInput | None = None
     pseudocode: PseudocodeInput | None = None
     compile_context: CandidateCompileContext | None = None
+    oracle_context: OracleContext | None = field(default=None, repr=False)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

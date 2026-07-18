@@ -359,10 +359,16 @@ vLLM 基础模型与 LoRA 服务，并只接收汇编和不含测试答案的公
 
 `plugins/agent4decompile_backend.py` 支持数据集伪代码修复、单传统反编译器和多反编译器共识。
 适配器运行时直接复用 Agent4Decompile 原始 `SYSTEM_PROMPT`、`_build_prompt()`、预处理和迭代
-流程，不复制或改写提示词。公平主实验只开放不含正式测试答案的 L1/L2 约束。
+流程，不复制或改写提示词。公平主实验使用不含正式测试答案的 L1/L2；另提供必须显式启用、
+支持 ExeBench JSON-I/O 和 Decompile-Eval 聚合测试的 L3 oracle-assisted 模式。
 
-三种可运行模板、模型 API 配置、提示词审计、缓存语义和限制见
+五种可运行模板、模型 API 配置、提示词审计、缓存语义和限制见
 [Agent4Decompile 后端使用指南](docs/AGENT4DECOMPILE.md)。
+
+复现实验继续使用上述后端且行为不变。另有独立的
+`plugins.agent4decompile_improved_backend:ImprovedAgent4DecompileBackend`，用于公开编译上下文、
+ExeBench L3 协议对齐和迭代停滞处理等改进实验；两者必须使用不同 backend id 分开报告，详见
+[Agent4Decompile 改进版指南](docs/AGENT4DECOMPILE_IMPROVED.md)。
 
 ## License
 

@@ -7,6 +7,7 @@ from ..models import (
     AssemblyInput,
     CandidateCompileContext,
     CanonicalSample,
+    OracleContext,
     PseudocodeInput,
 )
 from ..util import resolve_path, sha256_json, sha256_text
@@ -88,6 +89,13 @@ class DecompileEvalAdapter:
                             else self.c_libraries
                         ),
                         prelude=str(row.get("func_dep", "")),
+                    ),
+                    oracle_context=OracleContext(
+                        protocol="decompile_eval_exitcode",
+                        payload={
+                            "test": str(row.get("test", "")),
+                            "feedback_policy": "exitcode_only",
+                        },
                     ),
                     metadata={
                         "index": row.get("index"),

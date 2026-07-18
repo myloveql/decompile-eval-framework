@@ -10,6 +10,7 @@ from ..models import (
     BinaryInput,
     CandidateCompileContext,
     CanonicalSample,
+    OracleContext,
     PseudocodeInput,
 )
 from ..util import resolve_path, sha256_json, sha256_text
@@ -111,6 +112,23 @@ class ExeBenchFlatAdapter:
                         (row.get("evaluation") or {}).get("dependencies", ""),
                         for_cpp_wrapper=False,
                     ),
+                ),
+                oracle_context=OracleContext(
+                    protocol="exebench_json_io",
+                    payload={
+                        "io_pairs": (row.get("evaluation") or {}).get("io_pairs", []),
+                        "cpp_wrapper": (row.get("evaluation") or {}).get(
+                            "executable_wrapper", ""
+                        ),
+                        "c_deps": sanitize_dependencies(
+                            (row.get("evaluation") or {}).get("dependencies", ""),
+                            for_cpp_wrapper=True,
+                        ),
+                        "func_head": (row.get("evaluation") or {}).get(
+                            "function_head_used_by_wrapper", ""
+                        ),
+                        "exebench_include": str(self.include_path),
+                    },
                 ),
                 metadata={
                     "source_type": row.get("source_type"),
