@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "samples": {
+    "replace-with-real-sample-id": {
+      "contract": {
+        "contract_id": "K1",
+        "arguments": [
+          {
+            "slot": "RDI",
+            "kind": "pointer",
+            "object_ref": "obj0"
+          },
+          {
+            "slot": "RSI",
+            "kind": "integer"
+          }
+        ],
+        "return": {
+          "kind": "void",
+          "observable": false
+        },
+        "objects": [
+          {
+            "object_id": "obj0",
+            "argument_slot": "RDI",
+            "min_size": 64,
+            "alignment": 8
+          }
+        ]
+      },
+      "inputs": [
+        {
+          "schema_version": 1,
+          "contract_id": "K1",
+          "gpr": {
+            "RDI": {
+              "object_ref": "obj0"
+            },
+            "RSI": 16
+          },
+          "objects": {
+            "obj0": {
+              "size": 64,
+              "bytes_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "placement": "right"
+            }
+          },
+          "globals": {},
+          "seed": 42
+        }
+      ]
+    }
+  }
+}

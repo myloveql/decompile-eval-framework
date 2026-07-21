@@ -1,0 +1,44 @@
+workspace_root: ../../..
+
+# Build this dataset first with code/DecompileBench-main/compile_ossfuzz.py.
+datasets:
+  - id: ossfuzz
+    type: ossfuzz
+    path: data/ossfuzz
+    evaluation_protocol:
+      type: ossfuzz_rsr
+    optimizations: [O0]
+    languages: [c]
+    limit: 5
+    timeout: 30
+
+decompilers:
+  - id: closed-llm-assembly
+    type: python
+    version: closed-llm-v1
+    plugin: plugins.openai_compatible_backend:OpenAICompatibleBackend
+    required_inputs: [assembly]
+    batch_size: 1
+    plugin_config:
+      provider: openai
+      model: gpt-4o
+      api_key_env: OPENAI_API_KEY
+      api_mode: chat_completions
+      temperature: 0.0
+      max_output_tokens: 4096
+
+postprocessors: [markdown_fence]
+metrics: [recompilable]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

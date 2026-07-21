@@ -1,0 +1,55 @@
+# BinOracle strict, test-suite-free backend smoke test.
+# First build the ET_REL dataset with tools/exebench/build_binoracle_objects.py.
+workspace_root: ../../..
+
+datasets:
+  - id: exebench-binoracle
+    type: exebench_flat
+    path: data/exebench/1641-Benchmark/exebench_1641_binoracle.with-ghidra.dataset.json
+    include_path: third_party/exebench/exebench
+    assembly_view: objdump_att_instruction_only
+    pseudocode_view: ghidra
+    expose_signature_metadata: false
+    evaluation_protocol:
+      type: exebench_json_io
+    selection_manifest: code/decompile-eval-framework/configs/selections/binoracle-phase2-10-groups.json
+    timeout: 30
+
+decompilers:
+  - id: binoracle-static-phase2a
+    type: python
+    version: binoracle-backend-v2-phase2a
+    plugin: plugins.binoracle_backend:BinOracleBackend
+    required_inputs: [binary, assembly, pseudocode]
+    batch_size: 1
+    plugin_config:
+      mode: static_passthrough
+      strict_privacy: true
+      require_relocatable: true
+      abi: sysv-x86_64
+
+postprocessors:
+  - markdown_fence
+  - rename_target
+  - ghidra_compat_types
+
+metrics:
+  - recompilable
+  - behavioral_pass
+  - plugins.binoracle_metrics:GeneratedTestCountMetric
+  - plugins.binoracle_metrics:ExecutionCountMetric
+  - plugins.binoracle_metrics:CounterexampleCountMetric
+  - plugins.binoracle_metrics:RepairIterationCountMetric
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

@@ -47,6 +47,9 @@ class ExeBenchFlatAdapter:
         self.optimizations = set(config.get("optimizations", []))
         self.limit = config.get("limit")
         self.timeout = int(config.get("timeout", 30))
+        self.expose_signature_metadata = bool(
+            config.get("expose_signature_metadata", True)
+        )
         include_default = base_dir / "third_party" / "exebench" / "exebench"
         self.include_path = resolve_path(config.get("include_path", include_default), base_dir)
         self.evaluation_protocol = None
@@ -91,6 +94,16 @@ class ExeBenchFlatAdapter:
                         version=pseudocode_record.get("version"),
                         sha256=pseudocode_record.get("sha256") or sha256_text(pseudocode_text),
                     )
+            metadata = {
+                "source_type": row.get("source_type"),
+                "assembly_origin": assembly_record.get(
+                    f"{self.assembly_view}_origin", assembly_record.get("origin")
+                ),
+                "assembly_available": bool(assembly.strip()),
+            }
+            if self.expose_signature_metadata:
+                metadata["signature"] = row.get("source", {}).get("signature", [])
+
             yield CanonicalSample(
                 dataset_id=self.dataset_id,
                 split=self.split,
@@ -130,14 +143,7 @@ class ExeBenchFlatAdapter:
                         "exebench_include": str(self.include_path),
                     },
                 ),
-                metadata={
-                    "source_type": row.get("source_type"),
-                    "signature": row.get("source", {}).get("signature", []),
-                    "assembly_origin": assembly_record.get(
-                        f"{self.assembly_view}_origin", assembly_record.get("origin")
-                    ),
-                    "assembly_available": bool(assembly.strip()),
-                },
+                metadata=metadata,
                 private_payload={"row": row},
             )
             emitted += 1

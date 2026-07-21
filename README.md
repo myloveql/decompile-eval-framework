@@ -370,6 +370,26 @@ vLLM 基础模型与 LoRA 服务，并只接收汇编和不含测试答案的公
 ExeBench L3 协议对齐和迭代停滞处理等改进实验；两者必须使用不同 backend id 分开报告，详见
 [Agent4Decompile 改进版指南](docs/AGENT4DECOMPILE_IMPROVED.md)。
 
+## 接入 FidelityGPT
+
+`plugins/fidelitygpt_backend.py` 支持 FidelityGPT 的完整伪代码失真检测与修正流程，包括官方
+RAG 知识库、动态语义强度选行，以及超过 50 行函数的变量依赖、50/5 切块和可审计自动合并。
+Chat、embedding 与长函数变量分析可分别连接不同的 OpenAI-compatible 服务商；后端只接收
+公开伪代码，不接收正式测试或编译反馈。安装、完整配置和复现约束见
+[FidelityGPT 后端使用指南](docs/FIDELITYGPT.md)。
+
+## 接入 BinOracle
+
+`plugins/binoracle_backend.py` 提供静态审计与 `dynamic_audit` 两种模式。V1已实现
+pyelftools深度ELF事实、x86-64 SysV ABI trampoline、guard-page/fork原始对象Runner，
+以及确定性的`InputCase → Observation` JSON协议。Phase 2进一步加入Contract Graph V2、
+固定O0-O3函数组清单、统一指令IR、寄存器/栈/地址污点和Top-k静态契约候选。当前动态模式
+仍保留人工已知契约上界模式；`contract_audit`可以冻结自动Harness，`differential`可以在冻结后编译
+候选并进行原始/候选差分。当前尚不调用LLM进行自动修复。
+
+安装、ET_REL 数据准备、契约清单、运行配置、审计产物和公平性边界见
+[BinOracle 后端使用指南](docs/BINORACLE.md)。
+
 ## License
 
 [MIT](LICENSE)

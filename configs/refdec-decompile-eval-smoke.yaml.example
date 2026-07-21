@@ -1,0 +1,47 @@
+workspace_root: ../../..
+
+# Start the official model first:
+# vllm serve ylfeng/ReF-Decompile --port 8000 \
+#   --enable-auto-tool-choice --tool-call-parser mistral
+
+datasets:
+  - id: refdec
+    type: refdec
+    path: code/ReF-Dec/data/decompile-eval-gcc-rodata.json
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+    optimizations: [O0]
+    limit: 5
+    timeout: 30
+
+decompilers:
+  - id: refdec-tool
+    type: python
+    version: refdec-adapter-v1
+    plugin: plugins.refdec_backend:ReFDecBackend
+    required_inputs: [assembly]
+    batch_size: 1
+    plugin_config:
+      base_url: http://127.0.0.1:8000/v1
+      model: ylfeng/ReF-Decompile
+      api_key_env: REFDEC_API_KEY
+      enable_tool: true
+      temperature: 0.0
+      max_tokens: 2048
+      timeout: 300
+
+postprocessors: [markdown_fence]
+metrics: [recompilable, behavioral_pass]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

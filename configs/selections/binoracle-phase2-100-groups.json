@@ -1,0 +1,3232 @@
+{
+  "schema": "decomp-eval-selection/v1",
+  "selection_hash": "d7191684da81c8de29714fa56fdc4dd77b2914bf105960b676f5606b6399b424",
+  "sample_count": 400,
+  "entries": [
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:baz_synthetic_O0",
+      "source_group_id": "exebench:synthetic:baz",
+      "optimization": "O0",
+      "content_hash": "6e0455f89d2cc3d83df10d51cbc5b52295692715397e18857a271af1f52dd881"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:baz_synthetic_O1",
+      "source_group_id": "exebench:synthetic:baz",
+      "optimization": "O1",
+      "content_hash": "dc5ad83a60cf06f8069b6ea323bdf6db4245c7186cce205f8a17ed6de3482182"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:baz_synthetic_O2",
+      "source_group_id": "exebench:synthetic:baz",
+      "optimization": "O2",
+      "content_hash": "6dad175eb968bc3c5797175b0011802fd361c11d529bba5b31fbd55c8f0c3cc4"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:baz_synthetic_O3",
+      "source_group_id": "exebench:synthetic:baz",
+      "optimization": "O3",
+      "content_hash": "54fb121e2eb056cac573672c19e76d2138ba8fdfcc7e9332ce7dae945ba073d5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sw_via_E_synthetic_O0",
+      "source_group_id": "exebench:synthetic:sw_via_E",
+      "optimization": "O0",
+      "content_hash": "0bcd755ac6552beb7f30c78ba80b75a83da314e7c81b0a864a65efd1d31dbc7b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sw_via_E_synthetic_O1",
+      "source_group_id": "exebench:synthetic:sw_via_E",
+      "optimization": "O1",
+      "content_hash": "840c78394b940b2d776578864c2166b02c2944778828daa20143965f8a392eda"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sw_via_E_synthetic_O2",
+      "source_group_id": "exebench:synthetic:sw_via_E",
+      "optimization": "O2",
+      "content_hash": "991152e0c126fd704f25e18ed86c5cd88cc9050596a2795f6734a399f60af287"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sw_via_E_synthetic_O3",
+      "source_group_id": "exebench:synthetic:sw_via_E",
+      "optimization": "O3",
+      "content_hash": "74341fe4b2b4d1f0d236abf3f185bdc79f5f9c87d7c015bd4eabff5baff58951"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:write_fun_synthetic_O0",
+      "source_group_id": "exebench:synthetic:write_fun",
+      "optimization": "O0",
+      "content_hash": "9f26b3fe946155c6f7f79439e1a50abdf28bf54f312a6752f584c9aad268b122"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:write_fun_synthetic_O1",
+      "source_group_id": "exebench:synthetic:write_fun",
+      "optimization": "O1",
+      "content_hash": "3489621bc261cbf69238065549910f4941b8fef70f409c1faf488aa511d6fc9f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:write_fun_synthetic_O2",
+      "source_group_id": "exebench:synthetic:write_fun",
+      "optimization": "O2",
+      "content_hash": "d2c0379dbe77b87be20d9a36cff13cf988141d972511f6ff2125046896a60ada"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:write_fun_synthetic_O3",
+      "source_group_id": "exebench:synthetic:write_fun",
+      "optimization": "O3",
+      "content_hash": "2ffd751891b8b2655afd5f4f0b965be770a1913b7a491ce50b4f2b3768389950"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:randominit_synthetic_O0",
+      "source_group_id": "exebench:synthetic:randominit",
+      "optimization": "O0",
+      "content_hash": "d7546d0d90368600f41bb9550067ddfc8e114927eb7e54d9c31178b7687878fd"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:randominit_synthetic_O1",
+      "source_group_id": "exebench:synthetic:randominit",
+      "optimization": "O1",
+      "content_hash": "6dd93097dcdde5293fda69adcb585313589746a43750a7c3106d2ce6ba30ac87"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:randominit_synthetic_O2",
+      "source_group_id": "exebench:synthetic:randominit",
+      "optimization": "O2",
+      "content_hash": "614bcbac589e5708f7781c6245ed09e746d6e8f86ca47fa5b1535a5adae07a1d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:randominit_synthetic_O3",
+      "source_group_id": "exebench:synthetic:randominit",
+      "optimization": "O3",
+      "content_hash": "64a92f8fbcaf6363f4e494c673ef593fe583e890fada3035dfb8a60ed05edd58"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cap_real_O0",
+      "source_group_id": "exebench:real:cap",
+      "optimization": "O0",
+      "content_hash": "67a1c98ab89d6200392dd69a7e53f55e966032c64c4cf38a94b37809c4de5dde"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cap_real_O1",
+      "source_group_id": "exebench:real:cap",
+      "optimization": "O1",
+      "content_hash": "f13f3230516bf5619e01ff7920203055ae42a8b7f53170140a326d57fed22d1c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cap_real_O2",
+      "source_group_id": "exebench:real:cap",
+      "optimization": "O2",
+      "content_hash": "d1bc6921c65b5525ad86b2b5ea29d1eb292de3ca243814a095cee6847040bb6e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cap_real_O3",
+      "source_group_id": "exebench:real:cap",
+      "optimization": "O3",
+      "content_hash": "21bf65280e00603b8d185f8189ba61ed23440e8909326aacc45b5b50538c959d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:int_swap_real_O0",
+      "source_group_id": "exebench:real:int_swap",
+      "optimization": "O0",
+      "content_hash": "4310d34b21477ff42daa08662349ad6b0e35a5bcfdc688d62f15e2bf4768be97"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:int_swap_real_O1",
+      "source_group_id": "exebench:real:int_swap",
+      "optimization": "O1",
+      "content_hash": "735a229edb30fb4388c77d976c9b636bd7e17471ea0c500adc28c9cb44a71af9"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:int_swap_real_O2",
+      "source_group_id": "exebench:real:int_swap",
+      "optimization": "O2",
+      "content_hash": "38f258e0b6a5f43eb7944cc600d588072a540c8b8ce91f484f5e1e93f69c2b58"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:int_swap_real_O3",
+      "source_group_id": "exebench:real:int_swap",
+      "optimization": "O3",
+      "content_hash": "c168ac4e625c99a8f357f8bc64e22a5d5386621d27289a5dd7dbf1dea468c3e8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:strafe_real_O0",
+      "source_group_id": "exebench:real:strafe",
+      "optimization": "O0",
+      "content_hash": "3d2198c9e4e387b3cf7270a7c97dd1889601210a45fcf6ceb5bdd3bac94a25a4"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:strafe_real_O1",
+      "source_group_id": "exebench:real:strafe",
+      "optimization": "O1",
+      "content_hash": "cd9410f15de4c26d2a03fed74b182bfe610086023179f1ddd22a0bebb31eb080"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:strafe_real_O2",
+      "source_group_id": "exebench:real:strafe",
+      "optimization": "O2",
+      "content_hash": "3acd95064dbd81896c197c4aee2e256d536591ecfcb5f7b43accb73c22f9e1d9"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:strafe_real_O3",
+      "source_group_id": "exebench:real:strafe",
+      "optimization": "O3",
+      "content_hash": "3b1bc1f4c8648ba0bf4ecba287d2d853c853e7640c16741f710f87e12b2c10ee"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:m68k_op_asr_32_r_synthetic_O0",
+      "source_group_id": "exebench:synthetic:m68k_op_asr_32_r",
+      "optimization": "O0",
+      "content_hash": "020dd05b28033c36b3f574bd81b29fd25afbc1cc394675691228242268656300"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:m68k_op_asr_32_r_synthetic_O1",
+      "source_group_id": "exebench:synthetic:m68k_op_asr_32_r",
+      "optimization": "O1",
+      "content_hash": "22062ea45a1c25094c6839dcacaadc40faeed7060d9c8a64a60b5c707a8d17ba"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:m68k_op_asr_32_r_synthetic_O2",
+      "source_group_id": "exebench:synthetic:m68k_op_asr_32_r",
+      "optimization": "O2",
+      "content_hash": "4c4d1f0bef1ce7edc7d0463b62350a9a272e521a59fdb1220e11bc7ebfe6c16e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:m68k_op_asr_32_r_synthetic_O3",
+      "source_group_id": "exebench:synthetic:m68k_op_asr_32_r",
+      "optimization": "O3",
+      "content_hash": "5896fd8c8aba61bfdfb7a71222d71a1332096328829a7e57baf2437213a9a501"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RemovePiece_synthetic_O0",
+      "source_group_id": "exebench:synthetic:RemovePiece",
+      "optimization": "O0",
+      "content_hash": "4b88e317b7a890da1b6cb1fe1638b2a154dc6817733284f0e32c52f605156cae"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RemovePiece_synthetic_O1",
+      "source_group_id": "exebench:synthetic:RemovePiece",
+      "optimization": "O1",
+      "content_hash": "15149e006262ebebd67d8f72138fe59cb6b443a966518c07375ef261fd722667"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RemovePiece_synthetic_O2",
+      "source_group_id": "exebench:synthetic:RemovePiece",
+      "optimization": "O2",
+      "content_hash": "22d44136a77ae1ec2da987b1f9ccac3e337763f79a5980393f452e09f81c2090"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RemovePiece_synthetic_O3",
+      "source_group_id": "exebench:synthetic:RemovePiece",
+      "optimization": "O3",
+      "content_hash": "7df573bab3af3849011f37c084541e7c99ddbe15d2f89a061e770e2ec122d322"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:arc4random_addrandom_real_O0",
+      "source_group_id": "exebench:real:arc4random_addrandom",
+      "optimization": "O0",
+      "content_hash": "c1a26b023acb6f6d3dec25bd4d8d0292dd9029be1bf6126194d21973f9d150f3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:arc4random_addrandom_real_O1",
+      "source_group_id": "exebench:real:arc4random_addrandom",
+      "optimization": "O1",
+      "content_hash": "6865b42612154d6c44513c04f770bec03a8d7875409145fa8259779be4d9331f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:arc4random_addrandom_real_O2",
+      "source_group_id": "exebench:real:arc4random_addrandom",
+      "optimization": "O2",
+      "content_hash": "bdbdc3ef60ad2c82655fec065709443afcf4f8c55fda5f64dd82175a6d5e8e2a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:arc4random_addrandom_real_O3",
+      "source_group_id": "exebench:real:arc4random_addrandom",
+      "optimization": "O3",
+      "content_hash": "08c4ceda11fb67351bc312f451131e9b6e0b3fd379ca96141292719c82f173eb"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:on_tick_synthetic_O0",
+      "source_group_id": "exebench:synthetic:on_tick",
+      "optimization": "O0",
+      "content_hash": "50160eaa7dad3f07dc2354febee7b3c98ddd53219bb5198d755a933c34d0cfb8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:on_tick_synthetic_O1",
+      "source_group_id": "exebench:synthetic:on_tick",
+      "optimization": "O1",
+      "content_hash": "7da6af2c8036bdc71097e584d0c2b05fa1f345ec495d6c33477683871bccea94"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:on_tick_synthetic_O2",
+      "source_group_id": "exebench:synthetic:on_tick",
+      "optimization": "O2",
+      "content_hash": "e685344ba5364912e6ac8dd1e9370394ca2082247f26c57c1594094a9bbb901f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:on_tick_synthetic_O3",
+      "source_group_id": "exebench:synthetic:on_tick",
+      "optimization": "O3",
+      "content_hash": "dbf9142c1cbc972deb9d1eaf802268464e9f57b0d7b52e94aefe1f68b8c26581"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:iep_set_yuv_black_screen_synthetic_O0",
+      "source_group_id": "exebench:synthetic:iep_set_yuv_black_screen",
+      "optimization": "O0",
+      "content_hash": "94fe483e31834e1369b12135a192c631a4a6b9881f50ed2c31949c6c92bc5e5b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:iep_set_yuv_black_screen_synthetic_O1",
+      "source_group_id": "exebench:synthetic:iep_set_yuv_black_screen",
+      "optimization": "O1",
+      "content_hash": "f11ba204f0611be8996212d6feb9ea34f413a513b85de6b73f8c7e506ad1c19d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:iep_set_yuv_black_screen_synthetic_O2",
+      "source_group_id": "exebench:synthetic:iep_set_yuv_black_screen",
+      "optimization": "O2",
+      "content_hash": "1e922563fb4d3520ed1497ea3b928bb2d522a4bf63c880c9b56654be734a370d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:iep_set_yuv_black_screen_synthetic_O3",
+      "source_group_id": "exebench:synthetic:iep_set_yuv_black_screen",
+      "optimization": "O3",
+      "content_hash": "341815cbeb41375ece13d81b3652327198a41d51f0e4dc2b6931a2195e233301"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:msRectIntersect_synthetic_O0",
+      "source_group_id": "exebench:synthetic:msRectIntersect",
+      "optimization": "O0",
+      "content_hash": "5bc7da89dfd1dd82cbb457deaaac0bf1fad336ca4f5d41eb8cc4b7cf73ff98e9"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:msRectIntersect_synthetic_O1",
+      "source_group_id": "exebench:synthetic:msRectIntersect",
+      "optimization": "O1",
+      "content_hash": "1a1c2b2c4a26766e4ad101711c55f6ffe7ccc103290313067a338e5ce9572ab2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:msRectIntersect_synthetic_O2",
+      "source_group_id": "exebench:synthetic:msRectIntersect",
+      "optimization": "O2",
+      "content_hash": "325e7656cdece24b0eaea6de5c6d82fea4713ccd03addbef43bf7fcde019b83b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:msRectIntersect_synthetic_O3",
+      "source_group_id": "exebench:synthetic:msRectIntersect",
+      "optimization": "O3",
+      "content_hash": "6a55eeaf8a1cb84c081363b92cb10b987b47e4ea2de4451f673c906b103ce1fa"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:multiply_matrix_vector_di3_real_O0",
+      "source_group_id": "exebench:real:multiply_matrix_vector_di3",
+      "optimization": "O0",
+      "content_hash": "b4b9e2cd3d1a66ecbf56428a49876d98de7431ebb8780d39fbc2d867aff41153"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:multiply_matrix_vector_di3_real_O1",
+      "source_group_id": "exebench:real:multiply_matrix_vector_di3",
+      "optimization": "O1",
+      "content_hash": "a597477691bb11383e94a2a955c4f2fc3bbe3fcef6f86d701532218d302142f0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:multiply_matrix_vector_di3_real_O2",
+      "source_group_id": "exebench:real:multiply_matrix_vector_di3",
+      "optimization": "O2",
+      "content_hash": "8dbec3b560ccf177fae34bdd1f163ff77556e15ad3035a24da4b6bb0a10b64ca"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:multiply_matrix_vector_di3_real_O3",
+      "source_group_id": "exebench:real:multiply_matrix_vector_di3",
+      "optimization": "O3",
+      "content_hash": "e298bedd115e0e456420bdb69b6cf3186cc07fdf9badb712528f01d49864585a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pwmStop_synthetic_O0",
+      "source_group_id": "exebench:synthetic:pwmStop",
+      "optimization": "O0",
+      "content_hash": "931ab641cab3c110c797ca836e2384bce5ea4d5045f99c437f618ab9a8567009"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pwmStop_synthetic_O1",
+      "source_group_id": "exebench:synthetic:pwmStop",
+      "optimization": "O1",
+      "content_hash": "a5fe6083a3cab81660a94eb7d571cb93754c64a2ed4ea98ba50f274df8dfc750"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pwmStop_synthetic_O2",
+      "source_group_id": "exebench:synthetic:pwmStop",
+      "optimization": "O2",
+      "content_hash": "50accf260dcd59356501787cb32b3ebac8676d88fcf8341ecfef21c52eb5e88d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pwmStop_synthetic_O3",
+      "source_group_id": "exebench:synthetic:pwmStop",
+      "optimization": "O3",
+      "content_hash": "123848aeb7f355b7de9e256e1e451a9a34b388a85d5f89891e914f444751679b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SetKindOfSort_synthetic_O0",
+      "source_group_id": "exebench:synthetic:SetKindOfSort",
+      "optimization": "O0",
+      "content_hash": "667acdc5e4a6eda7e9e8845e974874da20b52ecfa0123b09162b50e5b402c30b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SetKindOfSort_synthetic_O1",
+      "source_group_id": "exebench:synthetic:SetKindOfSort",
+      "optimization": "O1",
+      "content_hash": "4d3d285f8129b3f59377c3b5e0d0c45afbba2d6f534b94075086794f1363fbf4"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SetKindOfSort_synthetic_O2",
+      "source_group_id": "exebench:synthetic:SetKindOfSort",
+      "optimization": "O2",
+      "content_hash": "57255dbdff6d0632fbfdcd0d214d6ad3cecabfc7e19c8ed52f29ef0b059c9910"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SetKindOfSort_synthetic_O3",
+      "source_group_id": "exebench:synthetic:SetKindOfSort",
+      "optimization": "O3",
+      "content_hash": "11927adae9263606bf1b110118e190f925617fcdde02df8745fcabfcc8611f80"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:read_csi_buf_real_O0",
+      "source_group_id": "exebench:real:read_csi_buf",
+      "optimization": "O0",
+      "content_hash": "3ceca789d9887f3675877140e3d58e4dde0cc47814509cac776067a860a30912"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:read_csi_buf_real_O1",
+      "source_group_id": "exebench:real:read_csi_buf",
+      "optimization": "O1",
+      "content_hash": "3cc24b641dd3f6179854db9772763d32ca488ca1f866c88824916f3ec6f9f9c0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:read_csi_buf_real_O2",
+      "source_group_id": "exebench:real:read_csi_buf",
+      "optimization": "O2",
+      "content_hash": "d2ffb660b540e0920ba830430054867a4a8427908b77ec2d90fc18b646bfaf20"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:read_csi_buf_real_O3",
+      "source_group_id": "exebench:real:read_csi_buf",
+      "optimization": "O3",
+      "content_hash": "137e723c5ca6a160b6b235b7ae96dc0e49c5a7894bb12ca7e7ad65f6cb798bda"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:matMakeScale_real_O0",
+      "source_group_id": "exebench:real:matMakeScale",
+      "optimization": "O0",
+      "content_hash": "ac38387a79773bc162b9fe9b9c05a2b7d5264404f491e0b6e8382a5fb4d9f4b2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:matMakeScale_real_O1",
+      "source_group_id": "exebench:real:matMakeScale",
+      "optimization": "O1",
+      "content_hash": "2b8c9444bf9a5eba90a515bbcb434815e771c246e655542420481b46cf68404b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:matMakeScale_real_O2",
+      "source_group_id": "exebench:real:matMakeScale",
+      "optimization": "O2",
+      "content_hash": "2cdfcedbdf39c04b3aab50a282fcedee7a26ca6fb9f73b8f1da7749254ed40cf"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:matMakeScale_real_O3",
+      "source_group_id": "exebench:real:matMakeScale",
+      "optimization": "O3",
+      "content_hash": "fc71cd76bb4740a58f792f47c31b1897db42f2101e631535656776ce3e2fe5f3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:_scan_un_real_O0",
+      "source_group_id": "exebench:real:_scan_un",
+      "optimization": "O0",
+      "content_hash": "01e959f6a385b951a1cca047267993d87660db1b6abace957c4f2d02c1f80e65"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:_scan_un_real_O1",
+      "source_group_id": "exebench:real:_scan_un",
+      "optimization": "O1",
+      "content_hash": "fd6ca57f7e11e6a9ed6df7f32b38282caacfc0fe25cfb5246bb5dca70670ff9a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:_scan_un_real_O2",
+      "source_group_id": "exebench:real:_scan_un",
+      "optimization": "O2",
+      "content_hash": "ba0221104ea068a9afeef762c759945b7d3a29233f25adde0705a69d10d9a804"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:_scan_un_real_O3",
+      "source_group_id": "exebench:real:_scan_un",
+      "optimization": "O3",
+      "content_hash": "f8cc1bb410cc8599f61ddd891ebf4488987b075e232afe6899391753a05741d6"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:iorder_real_O0",
+      "source_group_id": "exebench:real:iorder",
+      "optimization": "O0",
+      "content_hash": "87d3a43fa7fd8aee5df29259fbc304d26e38352b9cc704d1223d6e680062f9ea"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:iorder_real_O1",
+      "source_group_id": "exebench:real:iorder",
+      "optimization": "O1",
+      "content_hash": "0ee773ee65116a3160e1220dddf811cab722d90e533dfbd75ce7b3dae512357d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:iorder_real_O2",
+      "source_group_id": "exebench:real:iorder",
+      "optimization": "O2",
+      "content_hash": "92736f867c3839b5d65be1573e8f76371c6b463336598e32638b6c16df63b74b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:iorder_real_O3",
+      "source_group_id": "exebench:real:iorder",
+      "optimization": "O3",
+      "content_hash": "0da3d7f11750aaf569575e2b035a1bd7e73b7b1d9717ba9f3574fe5640e37361"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:compdir_absolute_ldir_absolute_file_basename_different_synthetic_O0",
+      "source_group_id": "exebench:synthetic:compdir_absolute_ldir_absolute_file_basename_different",
+      "optimization": "O0",
+      "content_hash": "5b850f8771167c547658777f059c82a9392f85fb605b23eb524e5d542d0214ee"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:compdir_absolute_ldir_absolute_file_basename_different_synthetic_O1",
+      "source_group_id": "exebench:synthetic:compdir_absolute_ldir_absolute_file_basename_different",
+      "optimization": "O1",
+      "content_hash": "b6cee39925e68bff4c934960f2cec6e6ce3cac3afcf2f33b64aba6c15eb6ba4c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:compdir_absolute_ldir_absolute_file_basename_different_synthetic_O2",
+      "source_group_id": "exebench:synthetic:compdir_absolute_ldir_absolute_file_basename_different",
+      "optimization": "O2",
+      "content_hash": "ffe17d8ab74190c42adc0c72adf5b1ab32906312fe544589a7d6a79e5b296602"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:compdir_absolute_ldir_absolute_file_basename_different_synthetic_O3",
+      "source_group_id": "exebench:synthetic:compdir_absolute_ldir_absolute_file_basename_different",
+      "optimization": "O3",
+      "content_hash": "a1e857525d0760ef7c245581d88a687721289906e61ce3e53ee5ef66d026d34f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:xsltSetDebuggerStatus_synthetic_O0",
+      "source_group_id": "exebench:synthetic:xsltSetDebuggerStatus",
+      "optimization": "O0",
+      "content_hash": "a14cdc2691bb04e8b1c95e54b3810688eda1f11afc493cb3d05a4321cea69fe3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:xsltSetDebuggerStatus_synthetic_O1",
+      "source_group_id": "exebench:synthetic:xsltSetDebuggerStatus",
+      "optimization": "O1",
+      "content_hash": "3891a839ab63bd64f90eb6e7056333e94a27ae863f6d73cb82e1fefbeac03d97"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:xsltSetDebuggerStatus_synthetic_O2",
+      "source_group_id": "exebench:synthetic:xsltSetDebuggerStatus",
+      "optimization": "O2",
+      "content_hash": "8c63afefbdc287d864fdf43c0718b2a47fe38c5b9f437022465a8dde21d94e99"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:xsltSetDebuggerStatus_synthetic_O3",
+      "source_group_id": "exebench:synthetic:xsltSetDebuggerStatus",
+      "optimization": "O3",
+      "content_hash": "4310a2288e030c4c12a3e27a3d0954f705396b254ccc3ddcb48cebf266211801"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:egcd_real_O0",
+      "source_group_id": "exebench:real:egcd",
+      "optimization": "O0",
+      "content_hash": "8d23277d49521d3657662a9734466c92a05ef694a110cac1334a4eb9e6a6f113"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:egcd_real_O1",
+      "source_group_id": "exebench:real:egcd",
+      "optimization": "O1",
+      "content_hash": "c961fbe2b4bc35bcfc2366bc7b6c34f9b351f0ee9be84c4241ce8bb59a34675f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:egcd_real_O2",
+      "source_group_id": "exebench:real:egcd",
+      "optimization": "O2",
+      "content_hash": "8524919e2dec0646a398c371d0537872ca5da99c5306781149410e59886e1746"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:egcd_real_O3",
+      "source_group_id": "exebench:real:egcd",
+      "optimization": "O3",
+      "content_hash": "b07a5b7001b77427b68861625a7d4c575c0f29d3de9c2d982cda3aae0cf3c8b0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cneg_real_O0",
+      "source_group_id": "exebench:real:cneg",
+      "optimization": "O0",
+      "content_hash": "7e5b4bd99d0264c8569b4b5b2b00b92ac07af795bf00bd650e039c71a6404ad8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cneg_real_O1",
+      "source_group_id": "exebench:real:cneg",
+      "optimization": "O1",
+      "content_hash": "431e8a319a22b2063c69f62b902098e63543a71c720f08363758184a2af6c7bf"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cneg_real_O2",
+      "source_group_id": "exebench:real:cneg",
+      "optimization": "O2",
+      "content_hash": "66233e63a4ea316a8c10f1cb19b505b99e1ce19f639493a260d2ebada628b748"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cneg_real_O3",
+      "source_group_id": "exebench:real:cneg",
+      "optimization": "O3",
+      "content_hash": "d3f94c48233a787c3209f5bfc96030edc7b9e2ca1a8306bc752d0679cc7bdb1a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:star_real_O0",
+      "source_group_id": "exebench:real:star",
+      "optimization": "O0",
+      "content_hash": "d3a0cceeb38b39a2d270d4ca50ff2f7e9846cdb070612f34340c30179797596d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:star_real_O1",
+      "source_group_id": "exebench:real:star",
+      "optimization": "O1",
+      "content_hash": "f403c4d6cde962bb871bd619edaee8a5c6fe66ecd98e7863acfc435f47dc30e6"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:star_real_O2",
+      "source_group_id": "exebench:real:star",
+      "optimization": "O2",
+      "content_hash": "7a8acee129fda49ee142fedbeaca2d9188be600cc12306e3c9ef6fefb2d73daa"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:star_real_O3",
+      "source_group_id": "exebench:real:star",
+      "optimization": "O3",
+      "content_hash": "ea410ebf298b31f0a17fb967f920b83644b07177cea7f3f5d4872773e178438f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:prod_escalar_real_O0",
+      "source_group_id": "exebench:real:prod_escalar",
+      "optimization": "O0",
+      "content_hash": "e7362aba7f4c1d70246e8ec08b2a394fccf22fdd827e5c0db3ac599c3650069f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:prod_escalar_real_O1",
+      "source_group_id": "exebench:real:prod_escalar",
+      "optimization": "O1",
+      "content_hash": "4782b91644cee979442cb1a8934f68af0be52e5c33c7ed5fb8db0172c8fac555"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:prod_escalar_real_O2",
+      "source_group_id": "exebench:real:prod_escalar",
+      "optimization": "O2",
+      "content_hash": "23beff331fce215835338cfbfa7a995a26bab224c048db8a9dae117adce8dc64"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:prod_escalar_real_O3",
+      "source_group_id": "exebench:real:prod_escalar",
+      "optimization": "O3",
+      "content_hash": "439fdef952a0cbc4430d8ee8cbc514fa47a78b6859fa6132da1199f91007d9ee"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:clock_hi_synthetic_O0",
+      "source_group_id": "exebench:synthetic:clock_hi",
+      "optimization": "O0",
+      "content_hash": "249f798acbce223f596477272ab71cef56e6b5160711da22292ab76479ce2c00"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:clock_hi_synthetic_O1",
+      "source_group_id": "exebench:synthetic:clock_hi",
+      "optimization": "O1",
+      "content_hash": "c722d3294f88533b20837fdd30aeed9c87d9525189850eeb4c7a4c5feef91b8d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:clock_hi_synthetic_O2",
+      "source_group_id": "exebench:synthetic:clock_hi",
+      "optimization": "O2",
+      "content_hash": "ac185228cf38220d4a1ee2eee844e6da721ca973ab7143be7e5b011a5bb1d248"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:clock_hi_synthetic_O3",
+      "source_group_id": "exebench:synthetic:clock_hi",
+      "optimization": "O3",
+      "content_hash": "f6e5ac31dec86d3ac1ba1396a509777092256684c10ea55e22bf95fbde4f582b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cdrcimg_set_fname_synthetic_O0",
+      "source_group_id": "exebench:synthetic:cdrcimg_set_fname",
+      "optimization": "O0",
+      "content_hash": "9cd27c76dde57bce79bb9d85f6266170fa45667e00dbd5e270eec6012cec65d3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cdrcimg_set_fname_synthetic_O1",
+      "source_group_id": "exebench:synthetic:cdrcimg_set_fname",
+      "optimization": "O1",
+      "content_hash": "127ffa6cef1abbc20b4b24c67a67acfc27460a5ed8bb4b8df161b71b1f023053"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cdrcimg_set_fname_synthetic_O2",
+      "source_group_id": "exebench:synthetic:cdrcimg_set_fname",
+      "optimization": "O2",
+      "content_hash": "21effab101025f29c49877af397128006789809155ff2e17c03db2ac6622995c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cdrcimg_set_fname_synthetic_O3",
+      "source_group_id": "exebench:synthetic:cdrcimg_set_fname",
+      "optimization": "O3",
+      "content_hash": "1ed0bedf915ee2f62ea5ec4d80a97745ca62b75dcac8b5ba9256deea3d17087a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterMultMMX_real_O0",
+      "source_group_id": "exebench:real:SDL_imageFilterMultMMX",
+      "optimization": "O0",
+      "content_hash": "1c6ef933d2e5e74ed7b00ddf02a4f422dc401706f68cf3a31c0b529c28218a90"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterMultMMX_real_O1",
+      "source_group_id": "exebench:real:SDL_imageFilterMultMMX",
+      "optimization": "O1",
+      "content_hash": "344503e1abe307429c4a0c8ce52d6aee85cd95ef10fcc5078feba414e6ae4f7e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterMultMMX_real_O2",
+      "source_group_id": "exebench:real:SDL_imageFilterMultMMX",
+      "optimization": "O2",
+      "content_hash": "64cceadb5da67d08ef44eefb080ee3a210e544600542c0d72aba485edda833c3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterMultMMX_real_O3",
+      "source_group_id": "exebench:real:SDL_imageFilterMultMMX",
+      "optimization": "O3",
+      "content_hash": "078724508ab3b8da1cae92a633a0a17ee9ceee18bb40f4207b64f69c5aa19fb4"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:select_sort_real_O0",
+      "source_group_id": "exebench:real:select_sort",
+      "optimization": "O0",
+      "content_hash": "b73877de51a9f7bc478e1818240d4c3ca67605b2c50e8950369ac7c205c941d6"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:select_sort_real_O1",
+      "source_group_id": "exebench:real:select_sort",
+      "optimization": "O1",
+      "content_hash": "3a76b562bf391fbbe4d8c63bc62e36c96eb48953beff56b69f3f04db9a443b67"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:select_sort_real_O2",
+      "source_group_id": "exebench:real:select_sort",
+      "optimization": "O2",
+      "content_hash": "bd466dc2e63d8761e3b58b0d5592778c4b38216982f6d8259720e254b16228ed"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:select_sort_real_O3",
+      "source_group_id": "exebench:real:select_sort",
+      "optimization": "O3",
+      "content_hash": "062b3201abab55dfe71bf961a6b1ecb891e6cf2d269828e9eef2920701f3e947"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cs_etm_decoder__gen_etmv3_config_synthetic_O0",
+      "source_group_id": "exebench:synthetic:cs_etm_decoder__gen_etmv3_config",
+      "optimization": "O0",
+      "content_hash": "de9fd31528ae5458e70957da32fcd80a12fd002a3c6a70f1fe6176fb23a04aba"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cs_etm_decoder__gen_etmv3_config_synthetic_O1",
+      "source_group_id": "exebench:synthetic:cs_etm_decoder__gen_etmv3_config",
+      "optimization": "O1",
+      "content_hash": "b948c1a4a821a92815b994bdbecd62cfa1621ff8db369ea311d8199965ca5358"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cs_etm_decoder__gen_etmv3_config_synthetic_O2",
+      "source_group_id": "exebench:synthetic:cs_etm_decoder__gen_etmv3_config",
+      "optimization": "O2",
+      "content_hash": "2831995940f41d0e44a6df58f236c1dfd220eeec68586ec9b2810da5d18c1b08"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cs_etm_decoder__gen_etmv3_config_synthetic_O3",
+      "source_group_id": "exebench:synthetic:cs_etm_decoder__gen_etmv3_config",
+      "optimization": "O3",
+      "content_hash": "50ee1f837408b49b77c5fe504cb2afa2a3888276ae031e37af1e887613a1576e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:geom_matmat3d_real_O0",
+      "source_group_id": "exebench:real:geom_matmat3d",
+      "optimization": "O0",
+      "content_hash": "7ddf3577be2110bae5ea2bfc4d254ab2af38d46f394a7ea8e93749985dc4afc6"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:geom_matmat3d_real_O1",
+      "source_group_id": "exebench:real:geom_matmat3d",
+      "optimization": "O1",
+      "content_hash": "72eba256dab7dd6a254ca11202530c5d48f57d65d8910a2d0893f2a35d256764"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:geom_matmat3d_real_O2",
+      "source_group_id": "exebench:real:geom_matmat3d",
+      "optimization": "O2",
+      "content_hash": "fd458d587565762edc72d793b745600af4cd3f6b49bb8503b5fda11c32ea74a8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:geom_matmat3d_real_O3",
+      "source_group_id": "exebench:real:geom_matmat3d",
+      "optimization": "O3",
+      "content_hash": "21092e00a1d4e07c3b19a2ed3700fdf7d4f5402ba1227c77db5deb4662d1f6e1"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:InitBitFile_synthetic_O0",
+      "source_group_id": "exebench:synthetic:InitBitFile",
+      "optimization": "O0",
+      "content_hash": "25be68180cb3dd5253b64b9b24bf6db022c9d0ca472036d1519d6526cf4b3e3f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:InitBitFile_synthetic_O1",
+      "source_group_id": "exebench:synthetic:InitBitFile",
+      "optimization": "O1",
+      "content_hash": "00888cc6b99127d33d704ff62f5dfac6b250fda4e9ddd27d15741b49190664a6"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:InitBitFile_synthetic_O2",
+      "source_group_id": "exebench:synthetic:InitBitFile",
+      "optimization": "O2",
+      "content_hash": "9c46f6e67f4b49305e8338ceba86f17fb91393346d031f05f0066f72a8750a86"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:InitBitFile_synthetic_O3",
+      "source_group_id": "exebench:synthetic:InitBitFile",
+      "optimization": "O3",
+      "content_hash": "cf5e6b33ed64277051bf99a0362e44b855174568e1e3d52c704a395fecee8bbc"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:qe_put_snum_synthetic_O0",
+      "source_group_id": "exebench:synthetic:qe_put_snum",
+      "optimization": "O0",
+      "content_hash": "339ff4a7ff32950b6abbc847586da78883508840b5a05324686cf4f269a13fd7"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:qe_put_snum_synthetic_O1",
+      "source_group_id": "exebench:synthetic:qe_put_snum",
+      "optimization": "O1",
+      "content_hash": "ad596ad5c2f260acba618370a03712ed6b438317c4555e7de812e002ddfee837"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:qe_put_snum_synthetic_O2",
+      "source_group_id": "exebench:synthetic:qe_put_snum",
+      "optimization": "O2",
+      "content_hash": "1272f3a4ce9a36181fd34392230560ee428021007f8eb3b2ccfcf8fd64558084"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:qe_put_snum_synthetic_O3",
+      "source_group_id": "exebench:synthetic:qe_put_snum",
+      "optimization": "O3",
+      "content_hash": "cd87823625a43ab723c70cf0fd396dd9f1a3ff34e5e642bc9743aa8ac68adeba"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:writepng_real_O0",
+      "source_group_id": "exebench:real:writepng",
+      "optimization": "O0",
+      "content_hash": "abf2038100764ed6b308b9f60a16a9a360d0599112443e3fb35676aeade50069"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:writepng_real_O1",
+      "source_group_id": "exebench:real:writepng",
+      "optimization": "O1",
+      "content_hash": "455bb63ff49acdef0b7a6338743b3edd7916cee452bf4266cfd77b48c9824b38"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:writepng_real_O2",
+      "source_group_id": "exebench:real:writepng",
+      "optimization": "O2",
+      "content_hash": "0b4950025707c605d596f0b3ff7a3cfc072e29d3bd8351ebd2e72b634f180fe8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:writepng_real_O3",
+      "source_group_id": "exebench:real:writepng",
+      "optimization": "O3",
+      "content_hash": "254402b70a39614de8a36bb1b6b2f6724198fbdef3ea574376dbc21523aef157"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pplane_points_start_synthetic_O0",
+      "source_group_id": "exebench:synthetic:pplane_points_start",
+      "optimization": "O0",
+      "content_hash": "c922106ed2bdf35843c46a4274fff73361983522f5402703bec389e57d9d2662"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pplane_points_start_synthetic_O1",
+      "source_group_id": "exebench:synthetic:pplane_points_start",
+      "optimization": "O1",
+      "content_hash": "8cb90c208a96b7ca361d0e36e1d1a3b7ec54344159a682a90e632a81a6195a69"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pplane_points_start_synthetic_O2",
+      "source_group_id": "exebench:synthetic:pplane_points_start",
+      "optimization": "O2",
+      "content_hash": "9c169a0faf614a4d2581d2540bd008060e02d0c4fa89a97aaf99f671ad0d4031"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pplane_points_start_synthetic_O3",
+      "source_group_id": "exebench:synthetic:pplane_points_start",
+      "optimization": "O3",
+      "content_hash": "36b1f4df38708d0f2487cdf0b84e5c5b70f0446ea5a5b26369d4cffc5b790d5a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:reject_request_synthetic_O0",
+      "source_group_id": "exebench:synthetic:reject_request",
+      "optimization": "O0",
+      "content_hash": "d4cf499784bf05a9996d89795190a7eaadb91325147c5a57809624343bfe9284"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:reject_request_synthetic_O1",
+      "source_group_id": "exebench:synthetic:reject_request",
+      "optimization": "O1",
+      "content_hash": "59c33857d64b4473edf509c268d08b7b1de3f8e156079131b4d425c37680e56e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:reject_request_synthetic_O2",
+      "source_group_id": "exebench:synthetic:reject_request",
+      "optimization": "O2",
+      "content_hash": "4b4a5fb7591e41686a568d85ecba47e92b70b5cebd422b72e5c8f472be56603e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:reject_request_synthetic_O3",
+      "source_group_id": "exebench:synthetic:reject_request",
+      "optimization": "O3",
+      "content_hash": "2f7ebd31d1279e0798ed5838b8b5483127b3ff707d7cae81aea6c90a936e46a8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:reduce_double_grid_address_real_O0",
+      "source_group_id": "exebench:real:reduce_double_grid_address",
+      "optimization": "O0",
+      "content_hash": "70f6d229ec3a2cbf12392ba2c5a2b2364c6dee9a2bca808d61ea6b4a0704184f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:reduce_double_grid_address_real_O1",
+      "source_group_id": "exebench:real:reduce_double_grid_address",
+      "optimization": "O1",
+      "content_hash": "2bc215308db6d25da388eb1a5ea37286c37fdef411e65fb6d892ddeb76b58002"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:reduce_double_grid_address_real_O2",
+      "source_group_id": "exebench:real:reduce_double_grid_address",
+      "optimization": "O2",
+      "content_hash": "ada7840081ecc5b18648ee1e6e39df575d0f30ec39a30d5e9b3f733030fc8626"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:reduce_double_grid_address_real_O3",
+      "source_group_id": "exebench:real:reduce_double_grid_address",
+      "optimization": "O3",
+      "content_hash": "3267fa2b60d08308974ce3ad6abd0c4b917cb83a3b3c1d2d54975f87896b29a0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:z80_03_inc_bc_synthetic_O0",
+      "source_group_id": "exebench:synthetic:z80_03_inc_bc",
+      "optimization": "O0",
+      "content_hash": "0571d0e50c64e167ce5ca9fcd6b2b98b22e265539e6b66a565dcc11a5ed98ec2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:z80_03_inc_bc_synthetic_O1",
+      "source_group_id": "exebench:synthetic:z80_03_inc_bc",
+      "optimization": "O1",
+      "content_hash": "d79730d1bdb59c6ea7e5ba70e84be5e388d0c4956a1be5132eb06be19010bc7a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:z80_03_inc_bc_synthetic_O2",
+      "source_group_id": "exebench:synthetic:z80_03_inc_bc",
+      "optimization": "O2",
+      "content_hash": "6df90174cba681313312508b0fbeafb8e2d90a4a2c514786e7ff978deb3d254b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:z80_03_inc_bc_synthetic_O3",
+      "source_group_id": "exebench:synthetic:z80_03_inc_bc",
+      "optimization": "O3",
+      "content_hash": "cbe86181941808cd40433f5d863d1a9b2a96d8334be667e0e1510892b26a7407"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:aaed2000_clcd_enable_synthetic_O0",
+      "source_group_id": "exebench:synthetic:aaed2000_clcd_enable",
+      "optimization": "O0",
+      "content_hash": "ff1130653ddc4bb9e19ec4799b0ab2e2c830a3ee61c34851585bcce3bc06ad4c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:aaed2000_clcd_enable_synthetic_O1",
+      "source_group_id": "exebench:synthetic:aaed2000_clcd_enable",
+      "optimization": "O1",
+      "content_hash": "0805d333063d01c2ceca0a3de682562311e6670be6a826cebf02be3da1bd6298"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:aaed2000_clcd_enable_synthetic_O2",
+      "source_group_id": "exebench:synthetic:aaed2000_clcd_enable",
+      "optimization": "O2",
+      "content_hash": "37608bfbc8c39ce57714caf71b3cd43c7b8490c9a87d82058c7688128659e028"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:aaed2000_clcd_enable_synthetic_O3",
+      "source_group_id": "exebench:synthetic:aaed2000_clcd_enable",
+      "optimization": "O3",
+      "content_hash": "67e58d120515642e301681d18e423dac4e461fb070c1926524b18bc0caa70696"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:unlzham_real_O0",
+      "source_group_id": "exebench:real:unlzham",
+      "optimization": "O0",
+      "content_hash": "658a6a15effa83162219bd2e73b5fe085b91ab1ef2341f192d79bacd1c5aea64"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:unlzham_real_O1",
+      "source_group_id": "exebench:real:unlzham",
+      "optimization": "O1",
+      "content_hash": "ef5fdce1177c9446300be35fdfd8908badf05d5a1a55dedc0bae64503eec5733"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:unlzham_real_O2",
+      "source_group_id": "exebench:real:unlzham",
+      "optimization": "O2",
+      "content_hash": "c6ca10ac5383ccaf6ff3fa6c0ab75d52e082c7420ea728de2d677906a706e32a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:unlzham_real_O3",
+      "source_group_id": "exebench:real:unlzham",
+      "optimization": "O3",
+      "content_hash": "d8914432b3c8fe8e856f097fac1b57b7fd29ef7465411069ccaa0547bd9d7140"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:is_4in6_real_O0",
+      "source_group_id": "exebench:real:is_4in6",
+      "optimization": "O0",
+      "content_hash": "5292e572adae8887b55db38fb629077af259243ada77460f5804056204c1a870"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:is_4in6_real_O1",
+      "source_group_id": "exebench:real:is_4in6",
+      "optimization": "O1",
+      "content_hash": "ca8ca0d5f15bab9538c9c050d393f0b8ccb596d59320c1959132086e205474e0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:is_4in6_real_O2",
+      "source_group_id": "exebench:real:is_4in6",
+      "optimization": "O2",
+      "content_hash": "1979468f38041321fee80397d14f8673beeea38c16d9d7e079a66436c170ceb1"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:is_4in6_real_O3",
+      "source_group_id": "exebench:real:is_4in6",
+      "optimization": "O3",
+      "content_hash": "920705a021d7eeda1534d46f356b7e4816da95a505a63ea98abd30bbaf2e784a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:setDeadLine_Job_synthetic_O0",
+      "source_group_id": "exebench:synthetic:setDeadLine_Job",
+      "optimization": "O0",
+      "content_hash": "9f21d32c05d96acab973ee39fd5376cff3e35792ca2c792b34b8f45d365f333f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:setDeadLine_Job_synthetic_O1",
+      "source_group_id": "exebench:synthetic:setDeadLine_Job",
+      "optimization": "O1",
+      "content_hash": "37d0fafc0520c4b1667d93e1ecaa813f69a2368a10c43583a559222f933ded48"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:setDeadLine_Job_synthetic_O2",
+      "source_group_id": "exebench:synthetic:setDeadLine_Job",
+      "optimization": "O2",
+      "content_hash": "7e6bfeba141a95179d1a89775c5d2bc8b207250566b51db741ce06410284a607"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:setDeadLine_Job_synthetic_O3",
+      "source_group_id": "exebench:synthetic:setDeadLine_Job",
+      "optimization": "O3",
+      "content_hash": "640aa894c12367bfd2855cc8733b01be088974c76e68f2caad28af1dc4bf40a2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:wcslcpy_real_O0",
+      "source_group_id": "exebench:real:wcslcpy",
+      "optimization": "O0",
+      "content_hash": "f3226c3b9eb081a44288f6ece31fac3917f0dad618cb807839130f7c168b313d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:wcslcpy_real_O1",
+      "source_group_id": "exebench:real:wcslcpy",
+      "optimization": "O1",
+      "content_hash": "51f73b492046689f633a7e63f0fa77146b7c7b1f38c69d36f4e5484c19132348"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:wcslcpy_real_O2",
+      "source_group_id": "exebench:real:wcslcpy",
+      "optimization": "O2",
+      "content_hash": "9b89580a8ec02b654752c4285a41e042bc42c713287ccb12e546376ee80c1179"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:wcslcpy_real_O3",
+      "source_group_id": "exebench:real:wcslcpy",
+      "optimization": "O3",
+      "content_hash": "ff44bad01c1621f89b4107f923b1a5c4fdcf237440e52d5bd2daea2479d88ce8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:tnc_log_tcall_synthetic_O0",
+      "source_group_id": "exebench:synthetic:tnc_log_tcall",
+      "optimization": "O0",
+      "content_hash": "6118c9a50a2239af6f868c7db477df124b6f15e3a19aa13818b8e54d7800672a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:tnc_log_tcall_synthetic_O1",
+      "source_group_id": "exebench:synthetic:tnc_log_tcall",
+      "optimization": "O1",
+      "content_hash": "6b87fea328138cb4efc875c27fb07397311b17583d42ff2c23946daedd9c7169"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:tnc_log_tcall_synthetic_O2",
+      "source_group_id": "exebench:synthetic:tnc_log_tcall",
+      "optimization": "O2",
+      "content_hash": "c58d2e46a495c890da17953d9326551174dfb8d9cf03896065c61cd7bdff8f8a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:tnc_log_tcall_synthetic_O3",
+      "source_group_id": "exebench:synthetic:tnc_log_tcall",
+      "optimization": "O3",
+      "content_hash": "d54cd53ebaede3b6b64dd81bac0eb4b86686df1239062eb5b3d9e7ea434594e8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:_HXMutexSetBit_real_O0",
+      "source_group_id": "exebench:real:_HXMutexSetBit",
+      "optimization": "O0",
+      "content_hash": "46718935f62a3af347651e7ca0577ae930834bbfcde5fe3c68958fc116f0354a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:_HXMutexSetBit_real_O1",
+      "source_group_id": "exebench:real:_HXMutexSetBit",
+      "optimization": "O1",
+      "content_hash": "f3b69a2d6276c3d8123e4c8add1673f5d7917636f2dfa3f4c529f1e3e6b62684"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:_HXMutexSetBit_real_O2",
+      "source_group_id": "exebench:real:_HXMutexSetBit",
+      "optimization": "O2",
+      "content_hash": "dacada6326d905bfb76950c97dc0faf27045dd882c7e529d3060eaed5923710d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:_HXMutexSetBit_real_O3",
+      "source_group_id": "exebench:real:_HXMutexSetBit",
+      "optimization": "O3",
+      "content_hash": "c196811c851a1764dd10bba290a82019616b19318699c3b7f25c5f895ce3f1d9"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:translate_oregon_real_O0",
+      "source_group_id": "exebench:real:translate_oregon",
+      "optimization": "O0",
+      "content_hash": "a036d590c84e49314ab771892407d572b37efdfee0b8bed7e1ab50849391ed06"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:translate_oregon_real_O1",
+      "source_group_id": "exebench:real:translate_oregon",
+      "optimization": "O1",
+      "content_hash": "e6a0e011cb45e17806b899d49b67bf6b4933ffad61a55d9899db234e9a121a43"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:translate_oregon_real_O2",
+      "source_group_id": "exebench:real:translate_oregon",
+      "optimization": "O2",
+      "content_hash": "b7d254c9e8d7c6ef2bb59b7b1d3c110720a2f034e6c5307df58cd817cdf67ec5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:translate_oregon_real_O3",
+      "source_group_id": "exebench:real:translate_oregon",
+      "optimization": "O3",
+      "content_hash": "42dc1cbca82099956afcaf003fc406b87f2d9726bf2858e68ef18c4b4ae0a604"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ares_version_real_O0",
+      "source_group_id": "exebench:real:ares_version",
+      "optimization": "O0",
+      "content_hash": "99c9dad54921b757eb391a01b159202aae637dece1965e9dac91c14b9ed567bd"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ares_version_real_O1",
+      "source_group_id": "exebench:real:ares_version",
+      "optimization": "O1",
+      "content_hash": "efa02c20f6f531940fc4d37fd8645562eba96d801e5f1ae0d41abdb1f038acb1"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ares_version_real_O2",
+      "source_group_id": "exebench:real:ares_version",
+      "optimization": "O2",
+      "content_hash": "c0e6756198782f502d468bcf45d30cca30a74d5a8d96de7a617cfaefc363ad32"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ares_version_real_O3",
+      "source_group_id": "exebench:real:ares_version",
+      "optimization": "O3",
+      "content_hash": "efadcb9e17dc95c001dc924506601731dd550109b15627a670fc6a4f4673ba55"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:putoctl_real_O0",
+      "source_group_id": "exebench:real:putoctl",
+      "optimization": "O0",
+      "content_hash": "51dab89c36b11371b864187ee075366d9d8718f7fbf549bdd9bf9c0cd11c1942"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:putoctl_real_O1",
+      "source_group_id": "exebench:real:putoctl",
+      "optimization": "O1",
+      "content_hash": "129d6ab1985f81ad8e2e3f6444b8e7706ac1780cf9c8f4d2b486e851c5f538ae"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:putoctl_real_O2",
+      "source_group_id": "exebench:real:putoctl",
+      "optimization": "O2",
+      "content_hash": "4600162d4e56859f309871c63283d89d3d51a2e5c4c1e04644403d68fd14fa36"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:putoctl_real_O3",
+      "source_group_id": "exebench:real:putoctl",
+      "optimization": "O3",
+      "content_hash": "6d6bf24ac844635ca995ecfbb5dd0664213c970921caa504a512b57bbb39845f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:r3mx_real_O0",
+      "source_group_id": "exebench:real:r3mx",
+      "optimization": "O0",
+      "content_hash": "82bef647e21ccb81d827b38b289c87b9601c2fee3a765ff67f1293a2f0c2c528"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:r3mx_real_O1",
+      "source_group_id": "exebench:real:r3mx",
+      "optimization": "O1",
+      "content_hash": "a21e40eb46c5c757bc861d27df868bee36270d4b460a5c43713f343de3dc99c9"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:r3mx_real_O2",
+      "source_group_id": "exebench:real:r3mx",
+      "optimization": "O2",
+      "content_hash": "d978f231249ca86ba776b57504c6c2607822cb4dc7a3c65bf969770e49d30d0d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:r3mx_real_O3",
+      "source_group_id": "exebench:real:r3mx",
+      "optimization": "O3",
+      "content_hash": "beeb7334328a468619132e3d67a03535d83bf540c876cf25ab10a66805896c01"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:init_flashram_synthetic_O0",
+      "source_group_id": "exebench:synthetic:init_flashram",
+      "optimization": "O0",
+      "content_hash": "4c6ad278528527c8867022cbfe00a5fe806e8d7133459b8f77dbedc267adef0c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:init_flashram_synthetic_O1",
+      "source_group_id": "exebench:synthetic:init_flashram",
+      "optimization": "O1",
+      "content_hash": "bf3fe9bd9469639fe082d3b9b123113a9ff5875e72561e7bf1db8fb7789852f6"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:init_flashram_synthetic_O2",
+      "source_group_id": "exebench:synthetic:init_flashram",
+      "optimization": "O2",
+      "content_hash": "81592c68a5734b4dfeece9d59e2479bbf83c047cc7da6b0b01c587136e7aaf89"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:init_flashram_synthetic_O3",
+      "source_group_id": "exebench:synthetic:init_flashram",
+      "optimization": "O3",
+      "content_hash": "c1fa46a165370364af499a33e085876dd6e522790e18c5bac65d666d85cec47e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:file_perms_parse_mode_real_O0",
+      "source_group_id": "exebench:real:file_perms_parse_mode",
+      "optimization": "O0",
+      "content_hash": "56ba0213ad548472a4ffe7250e535d14ab68aa77f441319bf86d7dc1140d7a40"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:file_perms_parse_mode_real_O1",
+      "source_group_id": "exebench:real:file_perms_parse_mode",
+      "optimization": "O1",
+      "content_hash": "35b33aa5fe39a32041ed37e74708facdf560ee86623fa083b417f3a226c6b1a7"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:file_perms_parse_mode_real_O2",
+      "source_group_id": "exebench:real:file_perms_parse_mode",
+      "optimization": "O2",
+      "content_hash": "e40a05e9db680471547152ec2163069b8610c7e20bff738b9d6286db89398d09"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:file_perms_parse_mode_real_O3",
+      "source_group_id": "exebench:real:file_perms_parse_mode",
+      "optimization": "O3",
+      "content_hash": "fbdd41f23ecec5d6f4f9699604178eb22f6fe5066e13fd0d9551377aae9707de"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterAddByteMMX_real_O0",
+      "source_group_id": "exebench:real:SDL_imageFilterAddByteMMX",
+      "optimization": "O0",
+      "content_hash": "44b73f0fd2934715d79bf031b67b5e300fccbc224a298838dc6dfd6416a53a7d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterAddByteMMX_real_O1",
+      "source_group_id": "exebench:real:SDL_imageFilterAddByteMMX",
+      "optimization": "O1",
+      "content_hash": "596d968ae535643823509c325bc6d5a5b1a1ee35ecdbb5e45a0410422406acf4"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterAddByteMMX_real_O2",
+      "source_group_id": "exebench:real:SDL_imageFilterAddByteMMX",
+      "optimization": "O2",
+      "content_hash": "66f9470d8220473d41694f37bb2a48c4844249ee52358a444cdc9a781a9d2f05"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterAddByteMMX_real_O3",
+      "source_group_id": "exebench:real:SDL_imageFilterAddByteMMX",
+      "optimization": "O3",
+      "content_hash": "11fa0e7c3457c635d4c1687157092dccae8a5f8164e57f27b2e10404d05e1cbb"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:restoreTreeDataValuesFromCheckpoint_synthetic_O0",
+      "source_group_id": "exebench:synthetic:restoreTreeDataValuesFromCheckpoint",
+      "optimization": "O0",
+      "content_hash": "192b2e9d68683e0527ebea414fedc4c0a85c9bf3d22e11fe6f37f08ce2d071fb"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:restoreTreeDataValuesFromCheckpoint_synthetic_O1",
+      "source_group_id": "exebench:synthetic:restoreTreeDataValuesFromCheckpoint",
+      "optimization": "O1",
+      "content_hash": "6993b55d22107c02925b14192c8bd12d8e754944f0ad176eb50a11c8509481e9"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:restoreTreeDataValuesFromCheckpoint_synthetic_O2",
+      "source_group_id": "exebench:synthetic:restoreTreeDataValuesFromCheckpoint",
+      "optimization": "O2",
+      "content_hash": "27322f789a86050cefaf2f1a19a98b147b34b2fa327e1b1378c3003cf2046418"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:restoreTreeDataValuesFromCheckpoint_synthetic_O3",
+      "source_group_id": "exebench:synthetic:restoreTreeDataValuesFromCheckpoint",
+      "optimization": "O3",
+      "content_hash": "39738b074c8da0a9793d72a3ebb5768abddb871775e4d138ff84efd04d006aac"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:timespec_add_real_O0",
+      "source_group_id": "exebench:real:timespec_add",
+      "optimization": "O0",
+      "content_hash": "8820be947483864631e7e854889f56bb4fb1dd3d0fb5b0cfd9595d0f4d0c72ce"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:timespec_add_real_O1",
+      "source_group_id": "exebench:real:timespec_add",
+      "optimization": "O1",
+      "content_hash": "82d5a3b2a699ea791bd52fee7996aa94a5dd1ff34ba98ede6f7ba9aa27f830ed"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:timespec_add_real_O2",
+      "source_group_id": "exebench:real:timespec_add",
+      "optimization": "O2",
+      "content_hash": "be61d1c11cb7ae9cbfd2e67f05f43bb73b21aaeef231d20a97ba7594af8d135c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:timespec_add_real_O3",
+      "source_group_id": "exebench:real:timespec_add",
+      "optimization": "O3",
+      "content_hash": "bdb542d2b4c3d6e139e74b349a264b29e2168f6a0cc9c58f3a525f55d912afe8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pack_s8s8uL_s64_synthetic_O0",
+      "source_group_id": "exebench:synthetic:pack_s8s8uL_s64",
+      "optimization": "O0",
+      "content_hash": "7e919c27c1c1511d50d388b680b8b822ca7ed91183230fc117451582186158e6"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pack_s8s8uL_s64_synthetic_O1",
+      "source_group_id": "exebench:synthetic:pack_s8s8uL_s64",
+      "optimization": "O1",
+      "content_hash": "b673e107ef4feed05c0ca87efeee81d0d196db72c7e15727813d0a7d2b7a72ec"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pack_s8s8uL_s64_synthetic_O2",
+      "source_group_id": "exebench:synthetic:pack_s8s8uL_s64",
+      "optimization": "O2",
+      "content_hash": "b548532ea3569dbfa052c0441cc9beec8b808abf860349ce48cd3f0f566db91d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:pack_s8s8uL_s64_synthetic_O3",
+      "source_group_id": "exebench:synthetic:pack_s8s8uL_s64",
+      "optimization": "O3",
+      "content_hash": "72695cdb3d1c8de0a49bafb349b4c3bdddd1ed271e491f3dd48fb19dbb9de050"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:test2_synthetic_O0",
+      "source_group_id": "exebench:synthetic:test2",
+      "optimization": "O0",
+      "content_hash": "29c1bef3eadfb7360f289e099c9d3639618315f9e28a5a9915d3670338f361c5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:test2_synthetic_O1",
+      "source_group_id": "exebench:synthetic:test2",
+      "optimization": "O1",
+      "content_hash": "03861001f3275d504d8e1ae9fedd8f7e8c64ad704f703aceb3ea2b7c58abb53d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:test2_synthetic_O2",
+      "source_group_id": "exebench:synthetic:test2",
+      "optimization": "O2",
+      "content_hash": "e23eb378d27a782f1bc827da4d5c6ce746c9ce346efc9a856b0e265d2a135b94"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:test2_synthetic_O3",
+      "source_group_id": "exebench:synthetic:test2",
+      "optimization": "O3",
+      "content_hash": "6a30301713f88af7550b2d8dcf7530d3fe092754efde54016a8de735490063ed"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:announcement_register_observer_callback_synthetic_O0",
+      "source_group_id": "exebench:synthetic:announcement_register_observer_callback",
+      "optimization": "O0",
+      "content_hash": "339c4412736e3e0222ea4004deb58cd48cacdd028fb733406c699e7f2b7033da"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:announcement_register_observer_callback_synthetic_O1",
+      "source_group_id": "exebench:synthetic:announcement_register_observer_callback",
+      "optimization": "O1",
+      "content_hash": "b06e9e46c4bae9304024cf0712ec78c0923e4100526ef2fff68b2ef896c64353"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:announcement_register_observer_callback_synthetic_O2",
+      "source_group_id": "exebench:synthetic:announcement_register_observer_callback",
+      "optimization": "O2",
+      "content_hash": "f021f4fc20a7cacdfc32acf7b180605e4132e72e01c7f25a22343f13af9ff12a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:announcement_register_observer_callback_synthetic_O3",
+      "source_group_id": "exebench:synthetic:announcement_register_observer_callback",
+      "optimization": "O3",
+      "content_hash": "6e09c2c039e6e1229bba99832906ba96362e26c05e7e7e02b3e5cd90536df135"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RGB555toRGB24_real_O0",
+      "source_group_id": "exebench:real:RGB555toRGB24",
+      "optimization": "O0",
+      "content_hash": "f9b991d3e3c87e919329f8ce6f8764c0885932fc240fd6c7fc536db32ecb2f63"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RGB555toRGB24_real_O1",
+      "source_group_id": "exebench:real:RGB555toRGB24",
+      "optimization": "O1",
+      "content_hash": "d09f0cd5c43cb07f5f6fdcde4f257653fd152552bca1104c596345edeec7a31c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RGB555toRGB24_real_O2",
+      "source_group_id": "exebench:real:RGB555toRGB24",
+      "optimization": "O2",
+      "content_hash": "042f70de293886afbb3045a41b43ec2eed6a3f1a79f72a4db590b9bc37ce354a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RGB555toRGB24_real_O3",
+      "source_group_id": "exebench:real:RGB555toRGB24",
+      "optimization": "O3",
+      "content_hash": "83c02924a48e33331e9534182049477a61a6df67976e854fb00cf8cf101282d5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:linked_list_current_synthetic_O0",
+      "source_group_id": "exebench:synthetic:linked_list_current",
+      "optimization": "O0",
+      "content_hash": "82983c99134a600dbf84554c6ac3607ae1a073b02eb3e3c5c009740fd84be4e2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:linked_list_current_synthetic_O1",
+      "source_group_id": "exebench:synthetic:linked_list_current",
+      "optimization": "O1",
+      "content_hash": "aaf00d3a52603544a68e31ea536e9f8afbfa8103f9fb727ea44cb01f34e9efbb"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:linked_list_current_synthetic_O2",
+      "source_group_id": "exebench:synthetic:linked_list_current",
+      "optimization": "O2",
+      "content_hash": "0930dff48dcf69b252db738855fccd564a9ce9fb7f4a5fe53af50510f8f97b16"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:linked_list_current_synthetic_O3",
+      "source_group_id": "exebench:synthetic:linked_list_current",
+      "optimization": "O3",
+      "content_hash": "e9f0903eab1e8ce3d96515f7aa7729aa4e0552b3becf3bae2012f8ab78148f0d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:mtxInverse_real_O0",
+      "source_group_id": "exebench:real:mtxInverse",
+      "optimization": "O0",
+      "content_hash": "1f1fd00bc9a160f35eed93a64428565c921e2968a636f3e6318f64b8f02c4fa2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:mtxInverse_real_O1",
+      "source_group_id": "exebench:real:mtxInverse",
+      "optimization": "O1",
+      "content_hash": "082466e2d6b41164bf9498c636d48eeba98adbe7ac1dc9b651c24c417ba16db8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:mtxInverse_real_O2",
+      "source_group_id": "exebench:real:mtxInverse",
+      "optimization": "O2",
+      "content_hash": "abfbd98ca8b615ccd13960e478cd529cde19b92b0b53b06ff9b6874a8bfed751"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:mtxInverse_real_O3",
+      "source_group_id": "exebench:real:mtxInverse",
+      "optimization": "O3",
+      "content_hash": "b1e2f5c2737bd4212286e1274d5ff88ac81ef1dc64292380d1291236b3ff99e5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:GetSymbol_real_O0",
+      "source_group_id": "exebench:real:GetSymbol",
+      "optimization": "O0",
+      "content_hash": "64604e846d3fececed883268bbf54f4db78931062528204b98d14a18e841c710"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:GetSymbol_real_O1",
+      "source_group_id": "exebench:real:GetSymbol",
+      "optimization": "O1",
+      "content_hash": "75465c1101b7616e4f5c8793acb1978983d8a18a06715ad6c75596ade5647b1a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:GetSymbol_real_O2",
+      "source_group_id": "exebench:real:GetSymbol",
+      "optimization": "O2",
+      "content_hash": "69bcf97e927a66d7f26614e54b11739e75fc5a080deb4c108f18557921af5894"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:GetSymbol_real_O3",
+      "source_group_id": "exebench:real:GetSymbol",
+      "optimization": "O3",
+      "content_hash": "054357897aede5084cfb3b75fb1318d6c5b9f52d72b363cb40a7e110689e246f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sortedActivePlayers_synthetic_O0",
+      "source_group_id": "exebench:synthetic:sortedActivePlayers",
+      "optimization": "O0",
+      "content_hash": "f0050288ea658a7b0168232088b3b5054003119dee47b16b8971e39aba7aaf8d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sortedActivePlayers_synthetic_O1",
+      "source_group_id": "exebench:synthetic:sortedActivePlayers",
+      "optimization": "O1",
+      "content_hash": "1eba99ec716f903b57275f23556d1353a1c74da937a4c9c27808b7c2bee4b2f8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sortedActivePlayers_synthetic_O2",
+      "source_group_id": "exebench:synthetic:sortedActivePlayers",
+      "optimization": "O2",
+      "content_hash": "c8ccda339d947b10e30a8c6e93070419aa3ef751f6bc9f62a650f2f0b5c1597c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sortedActivePlayers_synthetic_O3",
+      "source_group_id": "exebench:synthetic:sortedActivePlayers",
+      "optimization": "O3",
+      "content_hash": "e4d36255d904e21bdd25e2f2699e00fb75f6c6afe16cb9ed2263ce2480196617"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RowColumnConvert_real_O0",
+      "source_group_id": "exebench:real:RowColumnConvert",
+      "optimization": "O0",
+      "content_hash": "296d0d66f0d5dcaa1d48ca555ec77403fd4fbbe9386c57b985bb900945ccd389"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RowColumnConvert_real_O1",
+      "source_group_id": "exebench:real:RowColumnConvert",
+      "optimization": "O1",
+      "content_hash": "0f22e44e5064093ae8f16913e260fdd15af3134849c4b247aacb9ed8f5c4d508"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RowColumnConvert_real_O2",
+      "source_group_id": "exebench:real:RowColumnConvert",
+      "optimization": "O2",
+      "content_hash": "d12fb19daf25baf2c038d7ac1afe5f8a61379a45bd8546bcc2d40b4a25bd00a0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:RowColumnConvert_real_O3",
+      "source_group_id": "exebench:real:RowColumnConvert",
+      "optimization": "O3",
+      "content_hash": "77651543c76307cfe3b87df6cf1ee5065af14f412e7b82cf99f38ac1583dfef2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterShiftRightMMX_real_O0",
+      "source_group_id": "exebench:real:SDL_imageFilterShiftRightMMX",
+      "optimization": "O0",
+      "content_hash": "c4eedaa00ccb3599ed0665a4bf0c83a8d79b15784098dbab8b33d3959c1cb14e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterShiftRightMMX_real_O1",
+      "source_group_id": "exebench:real:SDL_imageFilterShiftRightMMX",
+      "optimization": "O1",
+      "content_hash": "3b34f82974279084dddb8905ff734566a99fe170da59e75b325f07eae3e03cc3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterShiftRightMMX_real_O2",
+      "source_group_id": "exebench:real:SDL_imageFilterShiftRightMMX",
+      "optimization": "O2",
+      "content_hash": "630ed610d16e7839551483ee5727fba801047f52a685794475317eb0fe3a9441"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:SDL_imageFilterShiftRightMMX_real_O3",
+      "source_group_id": "exebench:real:SDL_imageFilterShiftRightMMX",
+      "optimization": "O3",
+      "content_hash": "3485febbb00221e32630cba7238504fea30666335df813b9e8f91f505023cf9a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:C_a_c_Initialize_synthetic_O0",
+      "source_group_id": "exebench:synthetic:C_a_c_Initialize",
+      "optimization": "O0",
+      "content_hash": "06464fca637cd4f0032315cbd894c7c7ee2c10d03f3ddc88e54161269a27e71f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:C_a_c_Initialize_synthetic_O1",
+      "source_group_id": "exebench:synthetic:C_a_c_Initialize",
+      "optimization": "O1",
+      "content_hash": "23c58e32092866fe7d0457ef6e9f1d5afa27de06a4a4a4e443735a780fa0b26d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:C_a_c_Initialize_synthetic_O2",
+      "source_group_id": "exebench:synthetic:C_a_c_Initialize",
+      "optimization": "O2",
+      "content_hash": "1ab033db89bb723967f3e5136efb2078cc5e3a7071ce377ddae62efa43b04a6a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:C_a_c_Initialize_synthetic_O3",
+      "source_group_id": "exebench:synthetic:C_a_c_Initialize",
+      "optimization": "O3",
+      "content_hash": "790685868cd1350c212961f5724c17f3a2e2fcfd803ef9ec983cdb0344dd65ce"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:poke16_real_O0",
+      "source_group_id": "exebench:real:poke16",
+      "optimization": "O0",
+      "content_hash": "29134c757e89ad0c9385ecdfb5d4dfd576bf12e40571419257d2be3103402f7e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:poke16_real_O1",
+      "source_group_id": "exebench:real:poke16",
+      "optimization": "O1",
+      "content_hash": "78665db6609e7bcd9dbd78aa0cefb6c07a165e029e9d6579fb1c2b31f422ee60"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:poke16_real_O2",
+      "source_group_id": "exebench:real:poke16",
+      "optimization": "O2",
+      "content_hash": "52b4c3ec2d41251ecea1bb5cb83b0583faba37a5711317db72ca9ef2a9815704"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:poke16_real_O3",
+      "source_group_id": "exebench:real:poke16",
+      "optimization": "O3",
+      "content_hash": "d753e54916e6b0627d85ff410b7d718ebbad990402c5cd0cf9177c2a956350a7"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:intersect_triangle1_real_O0",
+      "source_group_id": "exebench:real:intersect_triangle1",
+      "optimization": "O0",
+      "content_hash": "5b022b9bc0da3de7657225a1806b2e41edd200cfd3e69e85105036efbad2bda2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:intersect_triangle1_real_O1",
+      "source_group_id": "exebench:real:intersect_triangle1",
+      "optimization": "O1",
+      "content_hash": "13f55a0c2f534d5bac44bf547f575c891ba67c9926483189382aad7eabe48645"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:intersect_triangle1_real_O2",
+      "source_group_id": "exebench:real:intersect_triangle1",
+      "optimization": "O2",
+      "content_hash": "7dc226ac5f5205d39281de33df3be86492c5b5931ffc71e797ae7a11e58a9fff"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:intersect_triangle1_real_O3",
+      "source_group_id": "exebench:real:intersect_triangle1",
+      "optimization": "O3",
+      "content_hash": "e52c74668bc52a5aed6bb2dbb461f565ecb3efa16393c5ba4f6f268973580c84"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:boardInit_synthetic_O0",
+      "source_group_id": "exebench:synthetic:boardInit",
+      "optimization": "O0",
+      "content_hash": "99cd8f516ec4bfd52366471b60f2c263c773e4b6c276095277003705b83d7e06"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:boardInit_synthetic_O1",
+      "source_group_id": "exebench:synthetic:boardInit",
+      "optimization": "O1",
+      "content_hash": "e6bce5c1bd30f51704fd8ea1eee199af77bf24d623b30d3236e6e7690bacbbff"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:boardInit_synthetic_O2",
+      "source_group_id": "exebench:synthetic:boardInit",
+      "optimization": "O2",
+      "content_hash": "fb34b6e78380e195ba4b9ddcc69e28921775e1f21d81d7416a56f22fde1d7163"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:boardInit_synthetic_O3",
+      "source_group_id": "exebench:synthetic:boardInit",
+      "optimization": "O3",
+      "content_hash": "1b2558c226a67fb6d20def5e294bfa571dd1e98504ac64312e03e66310483eaf"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:signal_shutdown_synthetic_O0",
+      "source_group_id": "exebench:synthetic:signal_shutdown",
+      "optimization": "O0",
+      "content_hash": "1a2c8b6b1b9ebb60fc5b902def452197a6d9559987ee4b12dc18c6c94e762cec"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:signal_shutdown_synthetic_O1",
+      "source_group_id": "exebench:synthetic:signal_shutdown",
+      "optimization": "O1",
+      "content_hash": "dea3082bec98007253b0ef49cdbd5cb86596a1365220318c5d9a281b8b5af26a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:signal_shutdown_synthetic_O2",
+      "source_group_id": "exebench:synthetic:signal_shutdown",
+      "optimization": "O2",
+      "content_hash": "fd6846dd60dfa97eb05c16bacc052e9b7d4cbca4ec1a373e3f699aefd2db75bc"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:signal_shutdown_synthetic_O3",
+      "source_group_id": "exebench:synthetic:signal_shutdown",
+      "optimization": "O3",
+      "content_hash": "453f9060a5fcebf9c2081ec0483e259c741e5baf8050e8db8e957c2d058049ce"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ext4_es_clear_referenced_synthetic_O0",
+      "source_group_id": "exebench:synthetic:ext4_es_clear_referenced",
+      "optimization": "O0",
+      "content_hash": "24da83d4da610999a197f31f83c6a8188bc4036e4d25cd26a00644ae3a8dd481"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ext4_es_clear_referenced_synthetic_O1",
+      "source_group_id": "exebench:synthetic:ext4_es_clear_referenced",
+      "optimization": "O1",
+      "content_hash": "0c7c32884f52b2398ed05827f7ca85855c59dd89fc9cd00d74906b24aee3030d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ext4_es_clear_referenced_synthetic_O2",
+      "source_group_id": "exebench:synthetic:ext4_es_clear_referenced",
+      "optimization": "O2",
+      "content_hash": "3f2179e396d0bb50fc68c3196a7bfe6b2bf3e45a00a3ed2f87896d7c187f537f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ext4_es_clear_referenced_synthetic_O3",
+      "source_group_id": "exebench:synthetic:ext4_es_clear_referenced",
+      "optimization": "O3",
+      "content_hash": "de436473ceb3fe6dff46f4d368b0c54df768f3ec19b15fc7528deb6b3072d9ae"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:change_arrays_real_O0",
+      "source_group_id": "exebench:real:change_arrays",
+      "optimization": "O0",
+      "content_hash": "06e487865038bb5461f5d3eb902fad3d6b5a9e1b520f1772901b4e2cdc7ffa74"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:change_arrays_real_O1",
+      "source_group_id": "exebench:real:change_arrays",
+      "optimization": "O1",
+      "content_hash": "d449abce3b92916aa7ac48aab64377e0c71c20c1b15e36805d0e75ad5b61a7b1"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:change_arrays_real_O2",
+      "source_group_id": "exebench:real:change_arrays",
+      "optimization": "O2",
+      "content_hash": "d6fd26c672d75d4532fde5014bd4c60a35f8164fc90c23d9132db86fef7f3f4f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:change_arrays_real_O3",
+      "source_group_id": "exebench:real:change_arrays",
+      "optimization": "O3",
+      "content_hash": "275846e1c2582c2cad94598f32b5ea68aeb4d07e9853193b8bec743709d3e599"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:updateHistory_real_O0",
+      "source_group_id": "exebench:real:updateHistory",
+      "optimization": "O0",
+      "content_hash": "c6f52839179258cff853988f481a6d583d07d10d08bb454637e5d5958ca91741"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:updateHistory_real_O1",
+      "source_group_id": "exebench:real:updateHistory",
+      "optimization": "O1",
+      "content_hash": "b5af09678f023a93fa0bcb96d3fe61dbbeddc0a6b3158c0bb749ad0c3e168202"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:updateHistory_real_O2",
+      "source_group_id": "exebench:real:updateHistory",
+      "optimization": "O2",
+      "content_hash": "ee253a35cca190337c842716253356e058ff51d65c7584baafd69cc81c630a3a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:updateHistory_real_O3",
+      "source_group_id": "exebench:real:updateHistory",
+      "optimization": "O3",
+      "content_hash": "f27e329436601c98266835cfaf7b583204305fb59b07f8823797930208d65730"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:PIDSetTunings_synthetic_O0",
+      "source_group_id": "exebench:synthetic:PIDSetTunings",
+      "optimization": "O0",
+      "content_hash": "6d425170e03b479db7126e8142d53d06a363d0b9e97ccce63d8283ddf033c2b1"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:PIDSetTunings_synthetic_O1",
+      "source_group_id": "exebench:synthetic:PIDSetTunings",
+      "optimization": "O1",
+      "content_hash": "829b4592c5fcf9e41ef5d7f765c599d4442a58d92fb94548617543d7baf69de5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:PIDSetTunings_synthetic_O2",
+      "source_group_id": "exebench:synthetic:PIDSetTunings",
+      "optimization": "O2",
+      "content_hash": "7ee7312a3caea0ac549c352114d0a12d7237292b964e0e294135a374827deb89"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:PIDSetTunings_synthetic_O3",
+      "source_group_id": "exebench:synthetic:PIDSetTunings",
+      "optimization": "O3",
+      "content_hash": "7ec9defd045fb6a3b42601a91fa636a52b77944fd8f633403c9ff0b35268ce9d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ia_set_debug_synthetic_O0",
+      "source_group_id": "exebench:synthetic:ia_set_debug",
+      "optimization": "O0",
+      "content_hash": "abccbf6504983e5f7a6522fdc12570c7a9d4df8c3b159bdace4b2c1c96785e9a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ia_set_debug_synthetic_O1",
+      "source_group_id": "exebench:synthetic:ia_set_debug",
+      "optimization": "O1",
+      "content_hash": "b70642dd62b6714b6c37fb95efd79d527839ea17ca08ba51d694ee3fb8ad9eab"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ia_set_debug_synthetic_O2",
+      "source_group_id": "exebench:synthetic:ia_set_debug",
+      "optimization": "O2",
+      "content_hash": "da384d839a000d09b771b23865d79aa1a95586dff497a4c53007bd3b82f7ba13"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:ia_set_debug_synthetic_O3",
+      "source_group_id": "exebench:synthetic:ia_set_debug",
+      "optimization": "O3",
+      "content_hash": "f549946f2fd84129b1d46c1a098344e5c6a442184d3700618bc70610a0ac6dbc"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:gb_vec2_div_synthetic_O0",
+      "source_group_id": "exebench:synthetic:gb_vec2_div",
+      "optimization": "O0",
+      "content_hash": "9a28fe15a8bd62c9989f5f4225390211073132f33d0ba95645a0491c8db63ddb"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:gb_vec2_div_synthetic_O1",
+      "source_group_id": "exebench:synthetic:gb_vec2_div",
+      "optimization": "O1",
+      "content_hash": "4f9edb9b51c4b08e2f375d28f9bc5a56b5cbb72d220a6a4a87793efa3ec231c3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:gb_vec2_div_synthetic_O2",
+      "source_group_id": "exebench:synthetic:gb_vec2_div",
+      "optimization": "O2",
+      "content_hash": "b3468166f5996a1dacd3fdaf51afe493eb082153f40fb8155f3299139291bef9"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:gb_vec2_div_synthetic_O3",
+      "source_group_id": "exebench:synthetic:gb_vec2_div",
+      "optimization": "O3",
+      "content_hash": "dd7090e1dcdf2006aad4e341c87eb2e15fb9660a8c99bfe9ab3bdfbdcd918f6f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sm_disk_root_size_synthetic_O0",
+      "source_group_id": "exebench:synthetic:sm_disk_root_size",
+      "optimization": "O0",
+      "content_hash": "4a4766e0f4192d92159bc618bc97aca60fa7233f72bb6c51a31b5c4ec6cbce08"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sm_disk_root_size_synthetic_O1",
+      "source_group_id": "exebench:synthetic:sm_disk_root_size",
+      "optimization": "O1",
+      "content_hash": "8ef4e35096685609b7e83762be00e07799ed66d86ee988ad14576542f671b462"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sm_disk_root_size_synthetic_O2",
+      "source_group_id": "exebench:synthetic:sm_disk_root_size",
+      "optimization": "O2",
+      "content_hash": "a6b27798837fe00ca59e430cf0769125b3d8def780aef9458e77bd9a81afa4c8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:sm_disk_root_size_synthetic_O3",
+      "source_group_id": "exebench:synthetic:sm_disk_root_size",
+      "optimization": "O3",
+      "content_hash": "59ce65143af40d9157761d1782e904bca42a8272c2448d55bb89a86879e6234a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:PrefixOption_synthetic_O0",
+      "source_group_id": "exebench:synthetic:PrefixOption",
+      "optimization": "O0",
+      "content_hash": "f898b3af4f46510e8483925af5bf8d2901ef869c6bb0a29d2edf801fd70c9964"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:PrefixOption_synthetic_O1",
+      "source_group_id": "exebench:synthetic:PrefixOption",
+      "optimization": "O1",
+      "content_hash": "0d2440b508588ab328c2bb1f981a6b558b632e9b7e4f4fa43c5c53d7745d4c77"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:PrefixOption_synthetic_O2",
+      "source_group_id": "exebench:synthetic:PrefixOption",
+      "optimization": "O2",
+      "content_hash": "8fb38524676427601d569f5f959abd0795eda73fc84d92acbc2a22993930b87e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:PrefixOption_synthetic_O3",
+      "source_group_id": "exebench:synthetic:PrefixOption",
+      "optimization": "O3",
+      "content_hash": "a051fcea4775e3e2d17b586edea5f80c674478a93d389067eec8336dd10dd7f9"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:z80_6d_ld_l_l_synthetic_O0",
+      "source_group_id": "exebench:synthetic:z80_6d_ld_l_l",
+      "optimization": "O0",
+      "content_hash": "9cf745160f8e86275cefb69a0fe29602acd8a722565bab53c88e0710fcd03807"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:z80_6d_ld_l_l_synthetic_O1",
+      "source_group_id": "exebench:synthetic:z80_6d_ld_l_l",
+      "optimization": "O1",
+      "content_hash": "45f11a07f8ba78bfe57e50c1674be5c5bc95848690efa8875bd4b8a745af3f6a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:z80_6d_ld_l_l_synthetic_O2",
+      "source_group_id": "exebench:synthetic:z80_6d_ld_l_l",
+      "optimization": "O2",
+      "content_hash": "e59424f10f2d523117d77ebeeea8f25f4634a39bba34ed4964026138c70d5692"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:z80_6d_ld_l_l_synthetic_O3",
+      "source_group_id": "exebench:synthetic:z80_6d_ld_l_l",
+      "optimization": "O3",
+      "content_hash": "5f796064bf824b61c65a6a3571271a3faab965a5b9d428ca85b2a3ab6a7b1386"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:moveLeft_synthetic_O0",
+      "source_group_id": "exebench:synthetic:moveLeft",
+      "optimization": "O0",
+      "content_hash": "0e38e2fd69656ae8361036e2a02257e4f830f79f1bd9d63935c3e49cfb9980db"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:moveLeft_synthetic_O1",
+      "source_group_id": "exebench:synthetic:moveLeft",
+      "optimization": "O1",
+      "content_hash": "9260ed51f64cc4fea766111ccd3f46f6274e5b142390099828248969427db4fe"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:moveLeft_synthetic_O2",
+      "source_group_id": "exebench:synthetic:moveLeft",
+      "optimization": "O2",
+      "content_hash": "6b2b2b54a7dbb58e953841ad9c1c0deb6bebc55c9bd101fc880ef9857a9f712f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:moveLeft_synthetic_O3",
+      "source_group_id": "exebench:synthetic:moveLeft",
+      "optimization": "O3",
+      "content_hash": "caa41eab211fe870b2d2bc152a3cc6d8e4f67d338e141e2d1bfb6e66a6476caa"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:check_union512_synthetic_O0",
+      "source_group_id": "exebench:synthetic:check_union512",
+      "optimization": "O0",
+      "content_hash": "5e5ab33279dafe7ce72a9714060d112e5ec8d76a08d9d8683b820510e769d1a9"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:check_union512_synthetic_O1",
+      "source_group_id": "exebench:synthetic:check_union512",
+      "optimization": "O1",
+      "content_hash": "7f979e05b396531985847017b38f7b35d8274a096cf1b438ecb30ba2f02e8d2d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:check_union512_synthetic_O2",
+      "source_group_id": "exebench:synthetic:check_union512",
+      "optimization": "O2",
+      "content_hash": "1e9cd34550d135160066d94486143287dce7817246fd8e8ce01efffe2f7040b3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:check_union512_synthetic_O3",
+      "source_group_id": "exebench:synthetic:check_union512",
+      "optimization": "O3",
+      "content_hash": "4fb04ea2b983bcc1b7469258d05e219d508f7a7a18f0f42807eb9899deae7bf5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:obdRevConvert_1F_real_O0",
+      "source_group_id": "exebench:real:obdRevConvert_1F",
+      "optimization": "O0",
+      "content_hash": "64710d50d50cc1f49b81508048eb1bdf03b3f05ff6fc61b2e0d1362b74ec2a0d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:obdRevConvert_1F_real_O1",
+      "source_group_id": "exebench:real:obdRevConvert_1F",
+      "optimization": "O1",
+      "content_hash": "80c4bda524a9b7586f3ae700578ac51844e93b42cde2b6175b13764e05050e98"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:obdRevConvert_1F_real_O2",
+      "source_group_id": "exebench:real:obdRevConvert_1F",
+      "optimization": "O2",
+      "content_hash": "961bcedec1dc4b1979b3379d6cb86f1d26e8b13ba1764f2b0700a4aa2fbf5956"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:obdRevConvert_1F_real_O3",
+      "source_group_id": "exebench:real:obdRevConvert_1F",
+      "optimization": "O3",
+      "content_hash": "30825719aa139670f358ebc1e383751df13a3d0c54e0ade479b49e8daae100c5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cover_synthetic_O0",
+      "source_group_id": "exebench:synthetic:cover",
+      "optimization": "O0",
+      "content_hash": "a8e5bf8833902a9c66771311103567d67dce24e3461a9a47c9ab5da803aa4014"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cover_synthetic_O1",
+      "source_group_id": "exebench:synthetic:cover",
+      "optimization": "O1",
+      "content_hash": "6c21b5db907d8dbe7a0367fa5b8082c76cb2cba836c94c4814cde27f06838663"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cover_synthetic_O2",
+      "source_group_id": "exebench:synthetic:cover",
+      "optimization": "O2",
+      "content_hash": "ccfbb596512b1e934f9354fd12012deb936a6b82de5ac61af0d8b48eea51bde5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:cover_synthetic_O3",
+      "source_group_id": "exebench:synthetic:cover",
+      "optimization": "O3",
+      "content_hash": "0ce7efae5e119ff0a17d8d5437ef6d3c762d3c9e1f42ddde5089da82f376cb03"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:atomic_incsa_real_O0",
+      "source_group_id": "exebench:real:atomic_incsa",
+      "optimization": "O0",
+      "content_hash": "94788d9ed0b023dadc0cb4f9f5881f1b469b6af4cce794cac142d7d5a9f8fb75"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:atomic_incsa_real_O1",
+      "source_group_id": "exebench:real:atomic_incsa",
+      "optimization": "O1",
+      "content_hash": "019f0d26c84e6dfa0fa82679f9139351b2ce2eb7e647cd971ba648f5d886e6a5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:atomic_incsa_real_O2",
+      "source_group_id": "exebench:real:atomic_incsa",
+      "optimization": "O2",
+      "content_hash": "2241fa0dc61ced8a58d41a39829060a307a1abbb84e08c6a5e171bbe4fa3e1ac"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:atomic_incsa_real_O3",
+      "source_group_id": "exebench:real:atomic_incsa",
+      "optimization": "O3",
+      "content_hash": "1613700fd8f05331cb5689b9d4e6041cfdf6e44040bcafab177631841ee5862b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:random_init_real_O0",
+      "source_group_id": "exebench:real:random_init",
+      "optimization": "O0",
+      "content_hash": "9dab2d1db2a418a2eccd838ecc04c40e5d0f19499003baa60a8c015e5715d286"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:random_init_real_O1",
+      "source_group_id": "exebench:real:random_init",
+      "optimization": "O1",
+      "content_hash": "c15dd993b0e1870aac9a447a3c2f24076b798b41b5756856251ff04c8ac9f6c1"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:random_init_real_O2",
+      "source_group_id": "exebench:real:random_init",
+      "optimization": "O2",
+      "content_hash": "f32b9151e5f035e6e68f65dd746491e1932e7e9f24a3ca173a3501e8668f0f3d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:random_init_real_O3",
+      "source_group_id": "exebench:real:random_init",
+      "optimization": "O3",
+      "content_hash": "2c4fef1ac66f3ed5e7fe6ec08b7ab09f13fd4baa09142069708afa2bb39adcf0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:meson_pmx_calc_reg_and_offset_synthetic_O0",
+      "source_group_id": "exebench:synthetic:meson_pmx_calc_reg_and_offset",
+      "optimization": "O0",
+      "content_hash": "e8be65c9bb11d0e773bf7bb25cee53b027d19fc4d1b65cf430dfe9cdeb04bb6b"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:meson_pmx_calc_reg_and_offset_synthetic_O1",
+      "source_group_id": "exebench:synthetic:meson_pmx_calc_reg_and_offset",
+      "optimization": "O1",
+      "content_hash": "0ba5a78ed604c77dc50d1c93b3e7206b6db38df96b2f83381746668e4b2cbd49"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:meson_pmx_calc_reg_and_offset_synthetic_O2",
+      "source_group_id": "exebench:synthetic:meson_pmx_calc_reg_and_offset",
+      "optimization": "O2",
+      "content_hash": "2b13ddbf353a8185128c422fbbb02c81792521fe8d484d830f2e12510064ba50"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:meson_pmx_calc_reg_and_offset_synthetic_O3",
+      "source_group_id": "exebench:synthetic:meson_pmx_calc_reg_and_offset",
+      "optimization": "O3",
+      "content_hash": "484b7fc0f10522ecce774fe6fbb6c08fb339bfcb57a23c226a5c55043e88a7a7"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Opb580_synthetic_O0",
+      "source_group_id": "exebench:synthetic:Opb580",
+      "optimization": "O0",
+      "content_hash": "52526a4290c0aab5a6ea091c62570d5ef33abf11effb02951f4b1a0ece73fc44"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Opb580_synthetic_O1",
+      "source_group_id": "exebench:synthetic:Opb580",
+      "optimization": "O1",
+      "content_hash": "cffce1042f77207c6a6bb9cb43da99a7ca3c76535eda5cb544d202eab068511f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Opb580_synthetic_O2",
+      "source_group_id": "exebench:synthetic:Opb580",
+      "optimization": "O2",
+      "content_hash": "2f047ac8c8236ee595e7745b8a5c9923b0e841e1e546489ed64341c68a795a78"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Opb580_synthetic_O3",
+      "source_group_id": "exebench:synthetic:Opb580",
+      "optimization": "O3",
+      "content_hash": "1f73278bbe7b960d31009c10d75a2dfc8d3078f70d4be43b0c3b3cbab1dbfd5c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:geom_matinv2f_real_O0",
+      "source_group_id": "exebench:real:geom_matinv2f",
+      "optimization": "O0",
+      "content_hash": "702e55ff182dfeead621564b19b718474e9e1552a7ba3e949508aa8f8db828dc"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:geom_matinv2f_real_O1",
+      "source_group_id": "exebench:real:geom_matinv2f",
+      "optimization": "O1",
+      "content_hash": "d7061c31e5273eff628e6665f99462dc325c58fba5fcfec45dc10f4bffe528d2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:geom_matinv2f_real_O2",
+      "source_group_id": "exebench:real:geom_matinv2f",
+      "optimization": "O2",
+      "content_hash": "963410a800a88e621115dd9c010293a1237e4130fb1c935282261158981f0d7d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:geom_matinv2f_real_O3",
+      "source_group_id": "exebench:real:geom_matinv2f",
+      "optimization": "O3",
+      "content_hash": "f10a2965e68d71fb1673078db13e84e3f8e4f1d8628c2d4a8bcf71a953d1f24c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:DFT4_real_O0",
+      "source_group_id": "exebench:real:DFT4",
+      "optimization": "O0",
+      "content_hash": "9dfad2f62592537c33f8ab6864bcbfbb3cbccbb59ab6c196f377063c281f6648"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:DFT4_real_O1",
+      "source_group_id": "exebench:real:DFT4",
+      "optimization": "O1",
+      "content_hash": "edef11239e11b1bd8eb4e8cdcad9085fb844e87f5b71199f3d31e854583d927c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:DFT4_real_O2",
+      "source_group_id": "exebench:real:DFT4",
+      "optimization": "O2",
+      "content_hash": "2575426e61bc5c187b4f28e5cc3306da8e307a12d85f0bb2bd413b06031e1bee"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:DFT4_real_O3",
+      "source_group_id": "exebench:real:DFT4",
+      "optimization": "O3",
+      "content_hash": "e63599ad1f48b4f56736bbd5449ba1babd65ededeac5ef9d9d6f0c2755af21fa"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:parse_cgmm_synthetic_O0",
+      "source_group_id": "exebench:synthetic:parse_cgmm",
+      "optimization": "O0",
+      "content_hash": "a1a2eef2e2363dc9649a25bc991dd2e73caa3a8c65efccc02aa4e1e05bed7f07"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:parse_cgmm_synthetic_O1",
+      "source_group_id": "exebench:synthetic:parse_cgmm",
+      "optimization": "O1",
+      "content_hash": "1fcb6acd5f1827a6f9dfa29c7979aa8764fcbbb41895e20ab482834a1cc6b7e4"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:parse_cgmm_synthetic_O2",
+      "source_group_id": "exebench:synthetic:parse_cgmm",
+      "optimization": "O2",
+      "content_hash": "96feb465e9c3f8b19d8bde7323a7fd353d068e5b2cab90d80c1ab919ba3ce94c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:parse_cgmm_synthetic_O3",
+      "source_group_id": "exebench:synthetic:parse_cgmm",
+      "optimization": "O3",
+      "content_hash": "e1d0b1cc79434a79b9c46085df5a0c1896869e34ca8a87a2a888c0e691361636"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Q_init_synthetic_O0",
+      "source_group_id": "exebench:synthetic:Q_init",
+      "optimization": "O0",
+      "content_hash": "19f843700600ba491faa2fc90411dbc30a741f9aee35d83f34abbb89db5583c3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Q_init_synthetic_O1",
+      "source_group_id": "exebench:synthetic:Q_init",
+      "optimization": "O1",
+      "content_hash": "cd0f45f1376d932da8015f6ec01c7a816c0b0cf7b3000602bc527f7e5095bc1c"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Q_init_synthetic_O2",
+      "source_group_id": "exebench:synthetic:Q_init",
+      "optimization": "O2",
+      "content_hash": "542f86930fa47ccec75847616fa1ab5d7e9699da094976d5f285e7b364443f1f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Q_init_synthetic_O3",
+      "source_group_id": "exebench:synthetic:Q_init",
+      "optimization": "O3",
+      "content_hash": "6cf4e0fc19c172f218ba8aa19766e984cedaa82e263e023da462de03d7226e79"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:AddBacktraceAGS_synthetic_O0",
+      "source_group_id": "exebench:synthetic:AddBacktraceAGS",
+      "optimization": "O0",
+      "content_hash": "4d852b4efb780d79ab4370a04178a098c5203e00834abfb2e5c3bfafebb60832"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:AddBacktraceAGS_synthetic_O1",
+      "source_group_id": "exebench:synthetic:AddBacktraceAGS",
+      "optimization": "O1",
+      "content_hash": "1abdf2777eb23fc1a22415bace3c7adb7d72d67c422f97549ba0bd51ce8faa6e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:AddBacktraceAGS_synthetic_O2",
+      "source_group_id": "exebench:synthetic:AddBacktraceAGS",
+      "optimization": "O2",
+      "content_hash": "8271b6ba2ffac177df1a47bc77d11ea56c26cf7ed604281fa60314f060915f29"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:AddBacktraceAGS_synthetic_O3",
+      "source_group_id": "exebench:synthetic:AddBacktraceAGS",
+      "optimization": "O3",
+      "content_hash": "65c43a1437a9c536e04240f9d6a1ec79236cc83db168527a3b5c45697f5cd1a0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:target_blinky_real_O0",
+      "source_group_id": "exebench:real:target_blinky",
+      "optimization": "O0",
+      "content_hash": "dc8c0da2c35f875fb3e738445bd4a3fd5ac0aba6774773ce7d7d67e33acf9c3a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:target_blinky_real_O1",
+      "source_group_id": "exebench:real:target_blinky",
+      "optimization": "O1",
+      "content_hash": "88946def9ca2726ba04cf8a2bee3a573efe80360417a5008124bd8284710360d"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:target_blinky_real_O2",
+      "source_group_id": "exebench:real:target_blinky",
+      "optimization": "O2",
+      "content_hash": "716b7aa8e388a5b84c2f5150328b7f2b1775267a5c7d541912321b3ba1436ea5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:target_blinky_real_O3",
+      "source_group_id": "exebench:real:target_blinky",
+      "optimization": "O3",
+      "content_hash": "5d8d8f1b57205113b33f7afd2eae50f486765ddd76abe047e39b2364398b97b8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:set_move_real_O0",
+      "source_group_id": "exebench:real:set_move",
+      "optimization": "O0",
+      "content_hash": "7e2e655a7daf07cf3c1ec830932dd926dbf2415c39d1153dcfb4822a7a9357a3"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:set_move_real_O1",
+      "source_group_id": "exebench:real:set_move",
+      "optimization": "O1",
+      "content_hash": "6331d36e8ef1e6b3cf1f5bcb574cd9c5536581384fb7e9e62ec13469ed5cc71a"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:set_move_real_O2",
+      "source_group_id": "exebench:real:set_move",
+      "optimization": "O2",
+      "content_hash": "f6c07d06f1ec3e233afd6d2981083b8229cd9addcaab53f19b9340f74d5ce4d0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:set_move_real_O3",
+      "source_group_id": "exebench:real:set_move",
+      "optimization": "O3",
+      "content_hash": "3c8e6ca2cdf88cbe31b614a2ca0c2d590d3ed818a394de7843e23ef13651f476"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Op9fc8_synthetic_O0",
+      "source_group_id": "exebench:synthetic:Op9fc8",
+      "optimization": "O0",
+      "content_hash": "dedb35cd4084552800776270ea3c35e6fb7d16958f2be61c167dbaf2772b13fe"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Op9fc8_synthetic_O1",
+      "source_group_id": "exebench:synthetic:Op9fc8",
+      "optimization": "O1",
+      "content_hash": "c965614bf92d7cd814a33a36459d1b54d654902047c49873ffd8e22fb88f4373"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Op9fc8_synthetic_O2",
+      "source_group_id": "exebench:synthetic:Op9fc8",
+      "optimization": "O2",
+      "content_hash": "c124e8c17d278ae82870c1276730ca583b0f830f2debdfa58e0e9164b5a814a2"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:Op9fc8_synthetic_O3",
+      "source_group_id": "exebench:synthetic:Op9fc8",
+      "optimization": "O3",
+      "content_hash": "e02ff97d7a5f2474da74a00f49e173e9941c9ef69cab10af338c677bb065883f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:qp_set_rate_npb_synthetic_O0",
+      "source_group_id": "exebench:synthetic:qp_set_rate_npb",
+      "optimization": "O0",
+      "content_hash": "4418c3069595a66e143ae92cb92ac81f82d2a898b457976e9c18de9c1ad196a0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:qp_set_rate_npb_synthetic_O1",
+      "source_group_id": "exebench:synthetic:qp_set_rate_npb",
+      "optimization": "O1",
+      "content_hash": "4a66294cda97471be261bfe71ca8c6b91a1b6f0e2437275257314b0483b09b10"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:qp_set_rate_npb_synthetic_O2",
+      "source_group_id": "exebench:synthetic:qp_set_rate_npb",
+      "optimization": "O2",
+      "content_hash": "4af0f8e483c8052ac9c7dac40861feb6f9366231482faf0c1ab4cdb2ec31c319"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:qp_set_rate_npb_synthetic_O3",
+      "source_group_id": "exebench:synthetic:qp_set_rate_npb",
+      "optimization": "O3",
+      "content_hash": "9d3c410708ed98baf83763b77a1d81126f18f61d18218d1e6f07373949203cf6"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:xfs_bulk_ireq_teardown_synthetic_O0",
+      "source_group_id": "exebench:synthetic:xfs_bulk_ireq_teardown",
+      "optimization": "O0",
+      "content_hash": "e654e35af1a75e3ad22b987d14a2fa4bb618bc8b3b2782bfbee08324a2dfd864"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:xfs_bulk_ireq_teardown_synthetic_O1",
+      "source_group_id": "exebench:synthetic:xfs_bulk_ireq_teardown",
+      "optimization": "O1",
+      "content_hash": "da8afc09fbcc338f222247d9d4640840f546b9e6e05ea58edf3ef00491612cdf"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:xfs_bulk_ireq_teardown_synthetic_O2",
+      "source_group_id": "exebench:synthetic:xfs_bulk_ireq_teardown",
+      "optimization": "O2",
+      "content_hash": "05d74e49492d54da90016a90c326cbd880e76565166fc4429d159eb46c6d700f"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:xfs_bulk_ireq_teardown_synthetic_O3",
+      "source_group_id": "exebench:synthetic:xfs_bulk_ireq_teardown",
+      "optimization": "O3",
+      "content_hash": "17208fa7068242cafaffe5043b29c6315a13c5ce860b94301f7821780993dcb0"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:vmathP3SubV3_synthetic_O0",
+      "source_group_id": "exebench:synthetic:vmathP3SubV3",
+      "optimization": "O0",
+      "content_hash": "f13b4880efb77df3089301ecb540ef051f237c42c441108babed65bbc843c689"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:vmathP3SubV3_synthetic_O1",
+      "source_group_id": "exebench:synthetic:vmathP3SubV3",
+      "optimization": "O1",
+      "content_hash": "620d8741e213138a4c1b3fe4ba7c93fe13f707b6316b7f5cb1e8879ba778f6ac"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:vmathP3SubV3_synthetic_O2",
+      "source_group_id": "exebench:synthetic:vmathP3SubV3",
+      "optimization": "O2",
+      "content_hash": "bff334d86046ee2523d65b323f9e3b0aa395f8a9047f4f861173442a741f5493"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:vmathP3SubV3_synthetic_O3",
+      "source_group_id": "exebench:synthetic:vmathP3SubV3",
+      "optimization": "O3",
+      "content_hash": "5b3453fbee703c2578577d4e1c0f977fae8d4aa78069b1b81ff8469601410535"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:DSPOp06_synthetic_O0",
+      "source_group_id": "exebench:synthetic:DSPOp06",
+      "optimization": "O0",
+      "content_hash": "49811271b1d1b6f5484cc5ccd0f3acd3141f407b06deace3974f1117cc0001e8"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:DSPOp06_synthetic_O1",
+      "source_group_id": "exebench:synthetic:DSPOp06",
+      "optimization": "O1",
+      "content_hash": "443f534259024ba5ea1bbdb42e3d98482233e4ad34b5833fe20ff865b255924e"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:DSPOp06_synthetic_O2",
+      "source_group_id": "exebench:synthetic:DSPOp06",
+      "optimization": "O2",
+      "content_hash": "fd7acfa450b5315c272dd7322ac542ee35d88eab9904cda28cf08a54d49c7321"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:DSPOp06_synthetic_O3",
+      "source_group_id": "exebench:synthetic:DSPOp06",
+      "optimization": "O3",
+      "content_hash": "96de22e45c09274dba5981064abb31b2604bf1c87c02677dde90f87ce5e36cd5"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:tableStartATH_real_O0",
+      "source_group_id": "exebench:real:tableStartATH",
+      "optimization": "O0",
+      "content_hash": "8e0c8e7dcc29371ed6e258082850968e55d4ee8c52b769d5717f4ac4a7c40eff"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:tableStartATH_real_O1",
+      "source_group_id": "exebench:real:tableStartATH",
+      "optimization": "O1",
+      "content_hash": "9083ec69506a455bab32ceb073be2f926e72dc2f001e58c8037e4bad57bc6e71"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:tableStartATH_real_O2",
+      "source_group_id": "exebench:real:tableStartATH",
+      "optimization": "O2",
+      "content_hash": "e175f4699f8f3742f6006b0c107bcce615f74875ad4f42ac51c4210434ed7f87"
+    },
+    {
+      "dataset_id": "exebench-binoracle",
+      "split": "benchmark",
+      "sample_id": "eb1641:tableStartATH_real_O3",
+      "source_group_id": "exebench:real:tableStartATH",
+      "optimization": "O3",
+      "content_hash": "8eade562e9af3bc8305b4052f3e677362be780931b4089202380b7077d9bb88a"
+    }
+  ],
+  "binoracle_selection": {
+    "schema": "binoracle.phase2-selection/v1",
+    "seed": 20260720,
+    "group_count": 100,
+    "required_optimizations": [
+      "O0",
+      "O1",
+      "O2",
+      "O3"
+    ],
+    "assembly_view": "objdump_att_instruction_only",
+    "selection_policy": "complete_source_groups_stratified_by_public_assembly",
+    "stratum_group_counts": {
+      "pointer=0,max_args=0": 19,
+      "pointer=0,max_args=1": 13,
+      "pointer=0,max_args=2": 2,
+      "pointer=0,max_args=3": 11,
+      "pointer=1,max_args=1": 19,
+      "pointer=1,max_args=2": 18,
+      "pointer=1,max_args=3": 18
+    },
+    "eligible_group_count": 275,
+    "excluded_group_count": 0,
+    "excluded_groups": []
+  }
+}

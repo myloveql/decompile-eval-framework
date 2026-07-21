@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://binoracle.local/schemas/repair-response.v1.json",
+  "title": "BinOracle Repair Response V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "revised_source", "rationale_codes", "evidence_ids", "changed_regions", "abstain"],
+  "properties": {
+    "schema_version": {"const": "binoracle.repair-response.v1"},
+    "revised_source": {"type": "string"},
+    "rationale_codes": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "changed_regions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "abstain": {"type": "boolean"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"abstain": {"const": false}}},
+      "then": {
+        "properties": {
+          "revised_source": {"minLength": 1},
+          "evidence_ids": {"minItems": 1},
+          "changed_regions": {"minItems": 1}
+        }
+      }
+    }
+  ]
+}

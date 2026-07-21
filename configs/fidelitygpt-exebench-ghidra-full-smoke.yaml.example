@@ -1,0 +1,80 @@
+# Full FidelityGPT transfer evaluation over dataset-provided ExeBench Ghidra pseudocode.
+# Chat and embedding services may be different OpenAI-compatible providers.
+workspace_root: ../../..
+
+datasets:
+  - id: exebench-1100
+    type: exebench_flat
+    path: data/exebench/1641-Benchmark/exebench_1641_source_multiopt_1100.with-ghidra.dataset.json
+    include_path: third_party/exebench/exebench
+    assembly_view: objdump_att_instruction_only
+    pseudocode_view: ghidra
+    evaluation_protocol:
+      type: exebench_json_io
+    optimizations: [O0]
+    languages: [c]
+    limit: 1
+    timeout: 30
+
+decompilers:
+  - id: fidelitygpt-ghidra-pseudo-full
+    type: python
+    plugin: plugins.fidelitygpt_backend:FidelityGPTBackend
+    version: fidelitygpt-adapter-v1
+    required_inputs: [pseudocode]
+    batch_size: 1
+    plugin_config:
+      fidelitygpt_root: ../FidelityGPT
+      expected_commit: b464960961ec48c63dea16069740b3d8003193bc
+      allowed_languages: [c]
+      knowledge_base: auto
+      # The upstream artifact always derives semantic weights from fidelity_new.c.
+      pattern_weight_database: official_default
+      retrieval_k: 1
+      distance: l2
+      embedding_batch_size: 128
+      embedding_cache_dir: .cache/fidelitygpt-embeddings
+      block_size: 50
+      overlap: 5
+      # union automates the upstream artifact's manual overlap reconciliation.
+      overlap_conflict_policy: union
+
+      chat:
+        base_url: https://chat-provider.example/v1
+        api_key_env: FIDELITYGPT_CHAT_API_KEY
+        model: chat-model-name
+        temperature: 0.5
+        max_tokens: 8000
+        timeout: 300
+        max_retries: 5
+
+      embedding:
+        base_url: https://embedding-provider.example/v1
+        api_key_env: FIDELITYGPT_EMBEDDING_API_KEY
+        model: embedding-model-name
+        timeout: 300
+        max_retries: 5
+
+      # Optional overrides for the long-function variable-dependency call.
+      # Omitted fields inherit from chat; temperature defaults to the upstream 0.5.
+      variable_llm:
+        base_url: https://chat-provider.example/v1
+        api_key_env: FIDELITYGPT_CHAT_API_KEY
+        model: chat-model-name
+        temperature: 0.5
+
+postprocessors: [markdown_fence]
+metrics: [recompilable, behavioral_pass]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

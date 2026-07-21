@@ -1,0 +1,81 @@
+# BinOracle hybrid deterministic + OpenAI evidence-bounded repair on 10 fixed groups.
+# Requires OPENAI_API_KEY. The remote model receives no reference source or private metadata.
+workspace_root: ../../..
+
+datasets:
+  - id: exebench-binoracle
+    type: exebench_flat
+    path: data/exebench/1641-Benchmark/exebench_1641_binoracle.with-ghidra.dataset.json
+    include_path: third_party/exebench/exebench
+    assembly_view: objdump_att_instruction_only
+    pseudocode_view: ghidra
+    expose_signature_metadata: false
+    selection_manifest: code/decompile-eval-framework/configs/selections/binoracle-phase2-10-groups.json
+    timeout: 30
+
+decompilers:
+  - id: binoracle-dynamic-repair-openai-phase3
+    type: python
+    version: binoracle-backend-v3-phase3b
+    plugin: plugins.binoracle_backend:BinOracleBackend
+    required_inputs: [binary, assembly, pseudocode]
+    batch_size: 1
+    plugin_config:
+      mode: dynamic_repair
+      strict_privacy: true
+      require_relocatable: true
+      abi: sysv-x86_64
+      max_contract_candidates: 4
+      probe_seed: 20260720
+      probe_repetitions: 2
+      probe_executions_per_contract: 32
+      audit_min_safe_observations: 4
+      audit_min_valid: 0.90
+      audit_min_stable: 1.0
+      audit_min_effect: 0.05
+      audit_min_boundary: 0.90
+      audit_min_score_margin: 0.05
+      candidate_compiler: gcc
+      candidate_compile_timeout: 120
+      minimize_counterexamples: true
+      max_minimized_counterexamples: 3
+      max_minimization_attempts: 8
+      max_repair_iterations: 3
+      repair_resume: true
+      repairer: hybrid
+      repair_model: gpt-5.6-terra
+      repair_reasoning_effort: medium
+      repair_max_output_tokens: 4096
+      max_repair_model_calls: 2
+      max_repair_tokens: 8192
+      candidate_namespace_isolation: true
+      candidate_read_only_mount: true
+      runner_compiler: gcc
+      runner_build_timeout: 120
+      runner_execution_timeout_ms: 100
+      max_executions: 1000
+
+postprocessors: [markdown_fence, rename_target, ghidra_compat_types]
+metrics:
+  - recompilable
+  - behavioral_pass
+  - plugins.binoracle_metrics:GeneratedTestCountMetric
+  - plugins.binoracle_metrics:ExecutionCountMetric
+  - plugins.binoracle_metrics:CounterexampleCountMetric
+  - plugins.binoracle_metrics:HarnessFrozenMetric
+  - plugins.binoracle_metrics:CandidateCompileMetric
+  - plugins.binoracle_metrics:CandidateLinkMetric
+  - plugins.binoracle_metrics:DifferentialPassMetric
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

@@ -1,0 +1,45 @@
+workspace_root: ../../..
+
+datasets:
+  - id: decompile-eval-humaneval
+    type: decompile_eval
+    path: data/decompile-eval
+    splits: [humaneval]
+    assembly_view: asm
+    pseudocode_view: ghidra_pseudo
+    evaluation_protocol:
+      type: decompile_eval_exitcode
+    languages: [c]
+    optimizations: [O0]
+    limit: 5
+    timeout: 30
+
+decompilers:
+  - id: degpt-ghidra-pseudocode
+    type: python
+    version: degpt-adapter-v1
+    plugin: plugins.degpt_backend:DeGPTBackend
+    required_inputs: [pseudocode]
+    batch_size: 1
+    plugin_config:
+      degpt_root: ../DeGPT
+      model: gpt-4o
+      base_url: https://api.openai.com/v1/
+      api_key_env: DEGPT_API_KEY
+      temperature: 0.2
+
+postprocessors: [markdown_fence, ghidra_compat_types]
+metrics: [recompilable, behavioral_pass]
+
+executor:
+  type: local
+  require_linux: true
+  memory_mb: 4096
+  max_file_mb: 64
+
+preflight:
+  mode: strict
+
+output:
+  root: runs
+  cache: .cache/decomp-eval

@@ -1066,9 +1066,16 @@ dependencies = [
 api = [
     { name = "openai" },
 ]
+binoracle = [
+    { name = "pyelftools" },
+]
 dev = [
     { name = "pytest" },
     { name = "ruff" },
+]
+fidelitygpt = [
+    { name = "networkx", version = "3.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "networkx", version = "3.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
 llm4decompile = [
     { name = "accelerate" },
@@ -1092,7 +1099,9 @@ requires-dist = [
     { name = "accelerate", marker = "extra == 'llm4decompile'", specifier = ">=0.29" },
     { name = "accelerate", marker = "extra == 'sk2decompile'", specifier = ">=0.29" },
     { name = "datasets", specifier = ">=2.18" },
+    { name = "networkx", marker = "extra == 'fidelitygpt'", specifier = ">=3.2,<4" },
     { name = "openai", marker = "extra == 'api'", specifier = ">=1.70" },
+    { name = "pyelftools", marker = "extra == 'binoracle'", specifier = ">=0.31" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8.0" },
     { name = "pyyaml", specifier = ">=6.0" },
@@ -1103,7 +1112,7 @@ requires-dist = [
     { name = "transformers", marker = "extra == 'sk2decompile'", specifier = ">=4.52" },
     { name = "vllm", marker = "extra == 'vllm'", specifier = ">=0.7,<1" },
 ]
-provides-extras = ["test", "llm4decompile", "sk2decompile", "vllm", "api", "dev"]
+provides-extras = ["test", "llm4decompile", "sk2decompile", "vllm", "api", "fidelitygpt", "binoracle", "dev"]
 
 [[package]]
 name = "depyf"

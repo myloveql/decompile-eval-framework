@@ -15,6 +15,16 @@ llm4decompile = ["torch>=2.1", "transformers>=4.40", "accelerate>=0.29"]
 sk2decompile = ["torch>=2.1", "transformers>=4.52", "accelerate>=0.29"]
 vllm = ["vllm>=0.7,<1"]
 api = ["openai>=1.70"]
+fidelitygpt = ["networkx>=3.2,<4"]
+degpt = [
+    "openai>=1.28",
+    "tiktoken>=0.2",
+    "python-levenshtein>=0.21",
+    "cinspector==0.0.1",
+    "tree-sitter==0.21.0",
+]
+refdec = ["openai>=1.70"]
+binoracle = ["pyelftools>=0.31"]
 dev = ["pytest>=8.0", "ruff>=0.5"]
 
 [project.scripts]
